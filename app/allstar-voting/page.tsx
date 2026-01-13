@@ -72,6 +72,25 @@ function AllstarVotingContent() {
 
   useEffect(() => {
     const loadVotes = async () => {
+      // Prüfe ob es ein Reload war - wenn ja, lösche zuerst alle Votes
+      const wasReload = sessionStorage.getItem('wasReload')
+      if (wasReload === 'true') {
+        // Lösche alle Votes vom Server
+        try {
+          await fetch('/api/votes/clear-session', { method: 'POST' })
+        } catch (e) {
+          console.error('Fehler beim Löschen der Votes nach Reload', e)
+        }
+        sessionStorage.removeItem('wasReload')
+        // Setze Selections zurück
+        setSelections({
+          1: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+          2: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+          3: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null }
+        })
+        return
+      }
+
       try {
         const res = await fetch(`/api/allstar-votes?league=${league}`)
         if (!res.ok) return

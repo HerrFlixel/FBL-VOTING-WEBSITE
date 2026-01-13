@@ -347,19 +347,19 @@ function FairPlayVotingContent() {
               </button>
             </div>
 
-            <div className="p-4 border-b border-gray-200 space-y-3">
-              <div className="flex flex-col sm:flex-row gap-3">
+            <div className="p-3 sm:p-4 border-b border-gray-200 space-y-2 sm:space-y-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input
                   type="text"
                   placeholder="Spieler suchen..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full sm:flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full sm:flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="w-full sm:w-48 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  className="w-full sm:w-48 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="">Alle Teams</option>
                   {availableTeams.map((team) => (
@@ -371,7 +371,7 @@ function FairPlayVotingContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'default' | 'team' | 'name')}
-                  className="w-full sm:w-48 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                  className="w-full sm:w-48 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                 >
                   <option value="default">Standard</option>
                   <option value="team">Nach Team</option>
@@ -380,7 +380,7 @@ function FairPlayVotingContent() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               {loadingPlayers ? (
                 <div className="text-center py-8 text-gray-500">Lade Spieler...</div>
               ) : filteredPlayers.length === 0 ? (
@@ -400,7 +400,7 @@ function FairPlayVotingContent() {
                       <div className="mb-3 pb-2 border-b-2 border-primary-500">
                         <h3 className="font-heading text-sm text-gray-900">{team}</h3>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                         {players.map((player) => (
                           <div
                             key={player.id}
@@ -536,20 +536,20 @@ function FairPlayVotingContent() {
               )}
             </div>
 
-            <div className="p-4 border-t border-gray-200 flex justify-end gap-2">
+            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2">
               <button
                 onClick={() => {
                   setModalOpen(false)
                   setSelectedPlayerId(null)
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading"
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm"
               >
                 Abbrechen
               </button>
               <button
                 onClick={handleSave}
                 disabled={!selectedPlayerId || saving}
-                className={`px-4 py-2 rounded-lg font-heading ${
+                className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm ${
                   selectedPlayerId && !saving
                     ? 'bg-primary-600 hover:bg-primary-700 text-white'
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'

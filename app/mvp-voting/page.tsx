@@ -344,13 +344,13 @@ function MVPVotingContent() {
       {modalOpen && selectedRank && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="bg-white border border-gray-300 rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <div>
-                <div className="font-heading text-xl text-gray-900">Platz {selectedRank} ({11 - selectedRank} Punkte)</div>
-                <div className="text-sm text-gray-600">Spieler auswählen</div>
+            <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+              <div className="flex-1 min-w-0">
+                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">Platz {selectedRank} ({11 - selectedRank} Punkte)</div>
+                <div className="text-xs sm:text-sm text-gray-600">Spieler auswählen</div>
               </div>
               <button
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+                className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl ml-2 flex-shrink-0"
                 onClick={() => {
                   setModalOpen(false)
                   setSelectedRank(null)
@@ -361,8 +361,8 @@ function MVPVotingContent() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 overflow-hidden flex-1 flex flex-col">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="p-3 sm:p-6 space-y-3 sm:space-y-4 overflow-hidden flex-1 flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -412,7 +412,7 @@ function MVPVotingContent() {
                           <div className="mb-3 pb-2 border-b-2 border-primary-500">
                             <h3 className="font-heading text-sm text-gray-900">{team}</h3>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                             {players.map((p) => {
                               const taken = isTaken(p.id) && selectedPlayerId !== p.id
                               const isSelected = selectedPlayerId === p.id

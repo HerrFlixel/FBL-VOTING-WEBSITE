@@ -271,23 +271,23 @@ function RefereeVotingContent() {
               </button>
             </div>
 
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-3 sm:p-4 border-b border-gray-200">
               <input
                 type="text"
                 placeholder="Schiedsrichter-Paar suchen..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               {loadingPairs ? (
                 <div className="text-center py-8 text-gray-500">Lade Schiedsrichter-Paare...</div>
               ) : filteredPairs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">Keine Schiedsrichter-Paare gefunden</div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {filteredPairs.map((pair) => (
                     <div
                       key={pair.id}
@@ -329,20 +329,20 @@ function RefereeVotingContent() {
               )}
             </div>
 
-            <div className="p-4 border-t border-gray-200 flex justify-end gap-2">
+            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2">
               <button
                 onClick={() => {
                   setModalOpen(false)
                   setSelectedPairId(null)
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading"
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm"
               >
                 Abbrechen
               </button>
               <button
                 onClick={handleSave}
                 disabled={!selectedPairId || saving}
-                className={`px-4 py-2 rounded-lg font-heading ${
+                className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm ${
                   selectedPairId && !saving
                     ? 'bg-primary-600 hover:bg-primary-700 text-white'
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'

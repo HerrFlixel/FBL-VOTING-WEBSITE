@@ -395,8 +395,8 @@ function MVPVotingContent() {
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto border border-gray-200 rounded-xl">
-                <div className="p-4">
+              <div className="flex-1 overflow-y-auto border border-gray-200 rounded-xl min-h-0">
+                <div className="p-2 sm:p-4">
                   {sortBy === 'team' ? (
                     // Gruppiert nach Teams
                     (() => {

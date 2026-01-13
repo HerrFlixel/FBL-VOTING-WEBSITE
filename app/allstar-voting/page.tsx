@@ -1,8 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import clsx from 'clsx'
 import Image from 'next/image'
@@ -33,7 +31,7 @@ const positions: { key: PositionKey; label: string; x: number; y: number }[] = [
   { key: 'rw', label: 'Angreifer', x: 75, y: 20 } // Rechts vorne - nach oben verschoben
 ]
 
-export default function AllstarVotingPage() {
+function AllstarVotingContent() {
   const searchParams = useSearchParams()
   const leagueParam = searchParams.get('league')
   const league: 'herren' | 'damen' = leagueParam === 'damen' ? 'damen' : 'herren'
@@ -720,5 +718,17 @@ export default function AllstarVotingPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function AllstarVotingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <AllstarVotingContent />
+    </Suspense>
   )
 }

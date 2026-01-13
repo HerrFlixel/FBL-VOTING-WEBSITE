@@ -1,10 +1,9 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const userId = searchParams.get('userId')

@@ -1,10 +1,9 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function CrossLeagueVotingPage() {
+function CrossLeagueVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const leagueParam = searchParams.get('league')
@@ -63,6 +62,18 @@ export default function CrossLeagueVotingPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CrossLeagueVotingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <CrossLeagueVotingContent />
+    </Suspense>
   )
 }
 

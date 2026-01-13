@@ -1,8 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 type Coach = {
@@ -13,7 +11,7 @@ type Coach = {
   league: string
 }
 
-export default function CoachVotingPage() {
+function CoachVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const leagueParam = searchParams.get('league')
@@ -342,6 +340,18 @@ export default function CoachVotingPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function CoachVotingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <CoachVotingContent />
+    </Suspense>
   )
 }
 

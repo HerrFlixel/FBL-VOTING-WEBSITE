@@ -9,6 +9,10 @@ const nextConfig = {
         hostname: '**'
       }
     ]
+  },
+  // Deaktiviere statische Generierung für Routen mit useSearchParams
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
   }
 }
 

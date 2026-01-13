@@ -1,8 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ExcelImport from '../../components/admin/ExcelImport'
 import PlayerManagement from '../../components/admin/PlayerManagement'

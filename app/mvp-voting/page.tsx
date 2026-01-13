@@ -588,9 +588,9 @@ function MVPVotingContent() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-2 border-t border-gray-200 px-3 sm:px-0">
                 <button
-                  className="text-sm text-gray-600 hover:text-gray-900 font-heading"
+                  className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-heading px-3 sm:px-0 py-2 sm:py-0"
                   onClick={() => {
                     setModalOpen(false)
                     setSelectedRank(null)
@@ -602,7 +602,7 @@ function MVPVotingContent() {
                 <button
                   onClick={handleSaveRank}
                   disabled={!selectedPlayerId || saving}
-                  className={`px-5 py-2 rounded-lg font-heading uppercase ${
+                  className={`px-4 sm:px-5 py-2 rounded-lg font-heading uppercase text-xs sm:text-sm ${
                     selectedPlayerId && !saving
                       ? 'bg-primary-600 hover:bg-primary-700 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'

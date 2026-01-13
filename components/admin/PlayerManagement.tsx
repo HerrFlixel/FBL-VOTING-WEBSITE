@@ -62,6 +62,37 @@ export default function PlayerManagement() {
     router.push(`/admin/players/${playerId}`)
   }
 
+  const handleDeleteAllByLeague = async (league: 'herren' | 'damen') => {
+    const leagueName = league === 'herren' ? 'Herren' : 'Damen'
+    const count = players.filter(p => p.league === league).length
+    
+    if (count === 0) {
+      alert(`Es gibt keine Spieler in der ${leagueName}-Liga zum Löschen.`)
+      return
+    }
+
+    if (!confirm(`Möchten Sie wirklich ALLE ${count} Spieler der ${leagueName}-Liga löschen? Diese Aktion kann nicht rückgängig gemacht werden!`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/players?league=${league}`, {
+        method: 'DELETE'
+      })
+      if (response.ok) {
+        const data = await response.json()
+        alert(`${data.deletedCount} Spieler der ${leagueName}-Liga wurden erfolgreich gelöscht.`)
+        fetchPlayers()
+      } else {
+        const error = await response.json().catch(() => ({ error: 'Unbekannter Fehler' }))
+        alert(`Fehler beim Löschen: ${error.error || 'Unbekannter Fehler'}`)
+      }
+    } catch (error) {
+      console.error('Fehler beim Löschen', error)
+      alert('Fehler beim Löschen der Spieler')
+    }
+  }
+
   const PlayerAvatar = ({ player }: { player: Player }) => {
     if (player.imageUrl) {
       return (
@@ -100,7 +131,27 @@ export default function PlayerManagement() {
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-2xl font-heading text-gray-900 mb-4">Spieler-Verwaltung</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-heading text-gray-900">Spieler-Verwaltung</h2>
+          <div className="flex gap-2">
+            {selectedLeague === 'herren' && (
+              <button
+                onClick={() => handleDeleteAllByLeague('herren')}
+                className="px-4 py-2 rounded-lg font-heading bg-red-600 hover:bg-red-700 text-white"
+              >
+                Alle Herren löschen
+              </button>
+            )}
+            {selectedLeague === 'damen' && (
+              <button
+                onClick={() => handleDeleteAllByLeague('damen')}
+                className="px-4 py-2 rounded-lg font-heading bg-red-600 hover:bg-red-700 text-white"
+              >
+                Alle Damen löschen
+              </button>
+            )}
+          </div>
+        </div>
         
         <div className="flex gap-4">
           <button

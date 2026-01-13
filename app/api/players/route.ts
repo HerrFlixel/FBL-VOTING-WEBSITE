@@ -20,6 +20,31 @@ export async function GET(req: Request) {
   }
 }
 
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const league = searchParams.get('league')
+
+    if (!league || !['herren', 'damen'].includes(league)) {
+      return NextResponse.json({ error: 'Gültige Liga (herren oder damen) ist erforderlich' }, { status: 400 })
+    }
+
+    // Lösche alle Spieler der angegebenen Liga
+    const result = await prisma.player.deleteMany({
+      where: { league }
+    })
+
+    return NextResponse.json({ 
+      success: true, 
+      deletedCount: result.count,
+      message: `${result.count} Spieler der Liga ${league} wurden gelöscht`
+    })
+  } catch (error) {
+    console.error('Fehler beim Löschen der Spieler', error)
+    return NextResponse.json({ error: 'Fehler beim Löschen der Spieler' }, { status: 500 })
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const data = await req.json()

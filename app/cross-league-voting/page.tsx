@@ -14,8 +14,8 @@ function CrossLeagueVotingContent() {
   const backgroundImage = currentLeague === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
   const handleYes = () => {
-    // Navigiere zum Voting der anderen Liga
-    router.push(`/allstar-voting?league=${otherLeague}`)
+    // Navigiere zum Voting der anderen Liga mit Flag, dass man von Cross-League kommt
+    router.push(`/allstar-voting?league=${otherLeague}&fromCrossLeague=true`)
   }
 
   const handleNo = () => {

@@ -35,6 +35,7 @@ function AllstarVotingContent() {
   const searchParams = useSearchParams()
   const leagueParam = searchParams.get('league')
   const league: 'herren' | 'damen' = leagueParam === 'damen' ? 'damen' : 'herren'
+  const fromCrossLeague = searchParams.get('fromCrossLeague') === 'true'
   const router = useRouter()
 
   const [players, setPlayers] = useState<Player[]>([])
@@ -413,7 +414,16 @@ function AllstarVotingContent() {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 pt-2 px-2">
           <button
             className="text-xs sm:text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1 justify-center sm:justify-start"
-            onClick={() => router.push('/')}
+            onClick={() => {
+              if (fromCrossLeague) {
+                // Wenn man von Cross-League kommt, zurück zur Cross-League-Abfrage
+                const otherLeague = league === 'damen' ? 'herren' : 'damen'
+                router.push(`/cross-league-voting?league=${otherLeague}`)
+              } else {
+                // Sonst zurück zur Startseite
+                router.push('/')
+              }
+            }}
           >
             ← Zurück
           </button>

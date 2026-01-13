@@ -1,4 +1,5 @@
 import { join } from 'path'
+import { existsSync } from 'fs'
 
 /**
  * Gibt den persistenten Datenpfad zurück
@@ -12,8 +13,7 @@ export function getDataPath(): string {
   }
   // Fallback: Prüfe ob /mnt/data existiert (für Render ohne env var)
   if (process.env.NODE_ENV === 'production') {
-    const fs = require('fs')
-    if (fs.existsSync('/mnt/data')) {
+    if (existsSync('/mnt/data')) {
       return '/mnt/data'
     }
   }

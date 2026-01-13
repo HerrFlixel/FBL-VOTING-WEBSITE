@@ -227,7 +227,17 @@ function RefereeVotingContent() {
         </div>
 
         {/* Weiter Button */}
-        <div className="text-center mt-8">
+        <div className="flex justify-between items-center mt-8">
+          <button
+            className="text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1"
+            onClick={() => {
+              // Zurück zu Cross League oder Fair Play, je nachdem ob man cross league gemacht hat
+              // Für jetzt einfach zu Fair Play zurück
+              router.push(`/fair-play-voting?league=${league}`)
+            }}
+          >
+            ← Zurück
+          </button>
           <button
             disabled={!canProceed}
             onClick={() => router.push(`/special-award?league=${league}`)}

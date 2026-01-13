@@ -412,10 +412,10 @@ function AllstarVotingContent() {
 
         <div className="flex justify-between items-center pt-2">
           <button
-            className="text-sm text-white hover:text-gray-200 font-heading drop-shadow-md"
+            className="text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1"
             onClick={() => router.push('/')}
           >
-            ← Zurück zur Startseite
+            ← Zurück
           </button>
           <div className="space-x-3">
             {currentLine > 1 && (

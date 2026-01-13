@@ -101,6 +101,15 @@ function UserFormContent() {
             </p>
           </div>
 
+          <div className="mb-4">
+            <button
+              className="text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
+              onClick={() => router.push(`/special-award?league=${league}`)}
+            >
+              ← Zurück
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">

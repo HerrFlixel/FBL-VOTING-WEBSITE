@@ -38,6 +38,14 @@ function CrossLeagueVotingContent() {
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
         <div className="bg-white/95 rounded-lg shadow-xl p-8 md:p-12 text-center space-y-6">
+          <div className="flex justify-start mb-4">
+            <button
+              className="text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
+              onClick={() => router.push(`/fair-play-voting?league=${currentLeague}`)}
+            >
+              ← Zurück
+            </button>
+          </div>
           <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-4 shadow-lg">
             {currentLeague === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'}
           </div>

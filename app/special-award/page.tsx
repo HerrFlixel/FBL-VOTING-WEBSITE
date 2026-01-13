@@ -132,6 +132,12 @@ function SpecialAwardContent() {
 
             <div className="flex gap-4 pt-4">
               <button
+                className="px-6 py-3 rounded-lg font-heading text-lg uppercase bg-gray-500 hover:bg-gray-600 text-white shadow-lg transition-colors"
+                onClick={() => router.push(`/referee-voting?league=${league}`)}
+              >
+                ← Zurück
+              </button>
+              <button
                 onClick={handleSave}
                 disabled={!canProceed || saving || loading}
                 className={`flex-1 px-6 py-3 rounded-lg font-heading text-lg uppercase ${

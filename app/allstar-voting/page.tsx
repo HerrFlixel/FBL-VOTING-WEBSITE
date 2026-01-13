@@ -329,7 +329,7 @@ export default function AllstarVotingPage() {
             Allstar Team Voting
           </h1>
           <p className="text-sm text-white drop-shadow-md">
-            Reihe 1 muss vollständig sein. Reihen 2 & 3 sind optional.
+            Wähle dein Allstar-Team. Reihe 1 muss vollständig sein, um fortzufahren. Reihen 2 & 3 sind optional.
           </p>
         </div>
 
@@ -339,10 +339,10 @@ export default function AllstarVotingPage() {
               key={ln}
               onClick={() => setCurrentLine(ln as 1 | 2 | 3)}
               className={clsx(
-                'px-4 py-2 rounded-lg font-heading uppercase border-2',
+                'px-4 py-2 rounded-lg font-heading uppercase border-2 transition-all',
                 currentLine === ln
                   ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white'
+                  : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white hover:bg-gray-50'
               )}
             >
               Reihe {ln}

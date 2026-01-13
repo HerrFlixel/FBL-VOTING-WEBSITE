@@ -333,3 +333,15 @@ export default function RefereeVotingPage() {
   )
 }
 
+export default function RefereeVotingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <RefereeVotingContent />
+    </Suspense>
+  )
+}
+

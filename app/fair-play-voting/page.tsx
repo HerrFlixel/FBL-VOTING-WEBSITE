@@ -544,3 +544,15 @@ function FairPlayVotingContent() {
   )
 }
 
+export default function FairPlayVotingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <FairPlayVotingContent />
+    </Suspense>
+  )
+}
+

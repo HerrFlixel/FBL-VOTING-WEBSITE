@@ -172,3 +172,15 @@ function UserFormContent() {
   )
 }
 
+export default function UserFormPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Lade...</div>
+      </div>
+    }>
+      <UserFormContent />
+    </Suspense>
+  )
+}
+

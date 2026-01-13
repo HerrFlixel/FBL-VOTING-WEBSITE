@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getVoterInfo } from '../../../../lib/voter'
-import { prisma } from '../../../../lib/prisma'
+import { getVoterInfo } from '../../../lib/voter'
+import { prisma } from '../../../lib/prisma'
 
 export async function POST(req: Request) {
   try {

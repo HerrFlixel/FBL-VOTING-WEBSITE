@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Player {
+  id           String   @id @default(cuid())
+  name         String
+  team         String?
+  league       String   @default("herren")
+  position     String?
+  imageUrl     String?
+  jerseyNumber Int?
+  goals        Int      @default(0)
+  assists      Int      @default(0)
+  points       Int      @default(0)
+  games        Int      @default(0)
+  scorerRank   Int?
+  pim2         Int      @default(0)
+  pim2x2       Int      @default(0)
+  pim10        Int      @default(0)
+  pimMatch     Int      @default(0)
+
+  votes        Vote[]
+  mvpVotes     MVPVote[]
+  fairPlay     FairPlayVote[]
+  allstarVotes AllstarVote[]
+}
+
+model Coach {
+  id       String   @id @default(cuid())
+  name     String
+  league   String   @default("herren")
+  team     String?
+  imageUrl String?
+
+  votes CoachVote[]
+}
+
+model RefereePair {
+  id        String            @id @default(cuid())
+  name      String
+  imageUrl  String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  votes RefereePairVote[]
+
+  @@index([name])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  isForForm Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  voterId   String
+  voterIp   String
+  league    String?
+  createdAt DateTime @default(now())
+
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  votes             Vote[]
+  teamVotes         TeamVote[]
+  mvpVotes          MVPVote[]
+  coachVotes        CoachVote[]
+  fairPlayVotes     FairPlayVote[]
+  refereePairVotes  RefereePairVote[]
+  specialAwardVotes SpecialAwardVote[]
+  allstarVotes      AllstarVote[]
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  category  String
+  playerId  String?
+  voterId   String
+  voterIp   String
+  league    String
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+  player Player? @relation(fields: [playerId], references: [id])
+}
+
+model TeamVote {
+  id        String   @id @default(cuid())
+  teamName  String   @default("")
+  voterId   String
+  voterIp   String
+  league    String
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User? @relation(fields: [userId], references: [id])
+}
+
+model MVPVote {
+  id        String   @id @default(cuid())
+  playerId  String
+  voterId   String
+  voterIp   String
+  league    String
+  rank      Int
+  points    Int
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+  player Player  @relation(fields: [playerId], references: [id])
+
+  @@unique([voterId, league, rank, userId])
+}
+
+model CoachVote {
+  id        String   @id @default(cuid())
+  coachId   String
+  voterId   String
+  voterIp   String
+  league    String
+  points    Int      @default(1)
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id])
+  coach  Coach  @relation(fields: [coachId], references: [id])
+
+  @@unique([voterId, league, userId])
+}
+
+model FairPlayVote {
+  id        String   @id @default(cuid())
+  playerId  String
+  voterId   String
+  voterIp   String
+  league    String
+  points    Int      @default(1)
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@unique([voterId, league, userId])
+}
+
+model RefereePairVote {
+  id            String   @id @default(cuid())
+  refereePairId String
+  voterId       String
+  voterIp       String
+  league        String
+  points        Int      @default(1)
+  createdAt     DateTime @default(now())
+
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  refereePair RefereePair @relation(fields: [refereePairId], references: [id])
+
+  @@unique([voterId, league, userId])
+}
+
+model SpecialAwardVote {
+  id        String   @id @default(cuid())
+  name      String
+  voterId   String
+  voterIp   String
+  league    String?
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User? @relation(fields: [userId], references: [id])
+
+  @@unique([voterId, userId])
+}
+
+model AllstarVote {
+  id        String   @id @default(cuid())
+  playerId  String
+  voterId   String
+  voterIp   String
+  league    String   // 'herren' | 'damen'
+  line      Int      // 1, 2, 3
+  position  String   // gk, ld, rd, c, lw, rw
+  points    Int
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+  player Player  @relation(fields: [playerId], references: [id])
+
+  @@unique([voterId, league, line, position, userId])
+}
+
+

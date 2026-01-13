@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Futura Extra Bold Oblique';
+  src: url('/fonts/Futura Extra Bold Oblique.otf') format('opentype');
+  font-weight: 700;
+  font-style: oblique;
+  font-display: swap;
+}
+
+html,
+body {
+  @apply h-full;
+}
+
+body {
+  @apply bg-gray-900 text-white;
+  font-family: theme('fontFamily.sans');
+}
+
+* {
+  box-sizing: border-box;
+}
+
+

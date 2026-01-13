@@ -1,0 +1,711 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import clsx from 'clsx'
+import Image from 'next/image'
+
+type Player = {
+  id: string
+  name: string
+  team?: string | null
+  position?: string | null
+  imageUrl?: string | null
+  jerseyNumber?: number | null
+  points?: number
+  goals?: number
+  assists?: number
+  games?: number
+}
+
+type PositionKey = 'gk' | 'ld' | 'rd' | 'c' | 'lw' | 'rw'
+
+type Selection = Record<PositionKey, Player | null>
+
+const positions: { key: PositionKey; label: string; x: number; y: number }[] = [
+  { key: 'gk', label: 'Torwart', x: 50, y: 80 }, // Unten Mitte (Tor) - nach oben verschoben
+  { key: 'ld', label: 'Verteidiger', x: 25, y: 60 }, // Links hinten - nach oben verschoben
+  { key: 'rd', label: 'Verteidiger', x: 75, y: 60 }, // Rechts hinten - nach oben verschoben
+  { key: 'c', label: 'Angreifer', x: 50, y: 40 }, // Mitte - nach oben verschoben
+  { key: 'lw', label: 'Angreifer', x: 25, y: 20 }, // Links vorne - nach oben verschoben
+  { key: 'rw', label: 'Angreifer', x: 75, y: 20 } // Rechts vorne - nach oben verschoben
+]
+
+export default function AllstarVotingPage() {
+  const searchParams = useSearchParams()
+  const leagueParam = searchParams.get('league')
+  const league: 'herren' | 'damen' = leagueParam === 'damen' ? 'damen' : 'herren'
+  const router = useRouter()
+
+  const [players, setPlayers] = useState<Player[]>([])
+  const [loadingPlayers, setLoadingPlayers] = useState(false)
+  const [currentLine, setCurrentLine] = useState<1 | 2 | 3>(1)
+  const [selections, setSelections] = useState<Record<1 | 2 | 3, Selection>>({
+    1: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+    2: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+    3: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null }
+  })
+  const [modalOpen, setModalOpen] = useState(false)
+  const [activePosition, setActivePosition] = useState<PositionKey | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [selectedTeam, setSelectedTeam] = useState<string>('')
+  const [sortBy, setSortBy] = useState<'default' | 'team' | 'name'>('default')
+
+  useEffect(() => {
+    const load = async () => {
+      setLoadingPlayers(true)
+      try {
+        const res = await fetch(`/api/players?league=${league}`)
+        const data = res.ok ? await res.json() : []
+        setPlayers(data)
+      } catch (e) {
+        console.error('Fehler beim Laden der Spieler', e)
+        setPlayers([])
+      } finally {
+        setLoadingPlayers(false)
+      }
+    }
+    load()
+  }, [league])
+
+  useEffect(() => {
+    const loadVotes = async () => {
+      try {
+        const res = await fetch(`/api/allstar-votes?league=${league}`)
+        if (!res.ok) return
+        const data = await res.json()
+        const next = { ...selections }
+        for (const vote of data) {
+          const line = vote.line as 1 | 2 | 3
+          const pos = vote.position as PositionKey
+          if (next[line] && next[line][pos] !== undefined) {
+            next[line][pos] = vote.player
+          }
+        }
+        setSelections(next)
+      } catch (e) {
+        console.error('Fehler beim Laden der Votes', e)
+      }
+    }
+    loadVotes()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [league])
+
+  const openSelect = (pos: PositionKey) => {
+    setActivePosition(pos)
+    const current = selections[currentLine][pos]
+    setSelectedPlayerId(current?.id ?? null)
+    setModalOpen(true)
+  }
+
+  const usedPlayerIds = useMemo(() => {
+    const ids = new Set<string>()
+    Object.values(selections).forEach((line) =>
+      Object.values(line).forEach((plr) => {
+        if (plr) ids.add(plr.id)
+      })
+    )
+    return ids
+  }, [selections])
+
+  const availableTeams = useMemo(() => {
+    const teams = new Set<string>()
+    players.forEach((p) => {
+      if (p.team) teams.add(p.team)
+    })
+    return Array.from(teams).sort()
+  }, [players])
+
+  const filteredPlayers = useMemo(() => {
+    let filtered = players
+
+    // Team-Filter
+    if (selectedTeam) {
+      filtered = filtered.filter((p) => p.team === selectedTeam)
+    }
+
+    // Such-Filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase()
+      filtered = filtered.filter((p) =>
+        [p.name, p.team, p.position]
+          .filter(Boolean)
+          .some((field) => field!.toLowerCase().includes(term))
+      )
+    }
+
+    // Entferne Duplikate basierend auf ID
+    const uniquePlayers = Array.from(
+      new Map(filtered.map((p) => [p.id, p])).values()
+    )
+
+    // Sortierung
+    if (sortBy === 'team') {
+      return [...uniquePlayers].sort((a, b) => {
+        const teamA = a.team || ''
+        const teamB = b.team || ''
+        return teamA.localeCompare(teamB)
+      })
+    } else if (sortBy === 'name') {
+      return [...uniquePlayers].sort((a, b) => {
+        return a.name.localeCompare(b.name)
+      })
+    }
+    // 'default' behält die ursprüngliche Reihenfolge bei
+
+    return uniquePlayers
+  }, [players, searchTerm, selectedTeam, sortBy])
+
+  const saveSelection = async () => {
+    if (!activePosition || !selectedPlayerId) {
+      setModalOpen(false)
+      setActivePosition(null)
+      setSelectedPlayerId(null)
+      return
+    }
+    // Doppel vermeiden
+    if (usedPlayerIds.has(selectedPlayerId) && selections[currentLine][activePosition]?.id !== selectedPlayerId) {
+      alert('Dieser Spieler ist bereits gewählt.')
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/allstar-votes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          line: currentLine,
+          position: activePosition,
+          playerId: selectedPlayerId,
+          league
+        })
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unbekannter Fehler' }))
+        throw new Error(err.error || `Fehler beim Speichern (Status: ${res.status})`)
+      }
+      const player = players.find((p) => p.id === selectedPlayerId)
+      if (player) {
+        setSelections((prev) => ({
+          ...prev,
+          [currentLine]: {
+            ...prev[currentLine],
+            [activePosition]: player
+          }
+        }))
+      }
+    } catch (e: any) {
+      alert(e?.message || 'Fehler beim Speichern')
+    } finally {
+      setSaving(false)
+      setModalOpen(false)
+      setActivePosition(null)
+      setSelectedPlayerId(null)
+    }
+  }
+
+  const clearPosition = async (pos: PositionKey) => {
+    // Entferne auch aus der Datenbank
+    try {
+      const res = await fetch('/api/allstar-votes', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          line: currentLine,
+          position: pos,
+          league
+        })
+      })
+      if (!res.ok) {
+        console.error('Fehler beim Löschen des Votes')
+      }
+    } catch (e) {
+      console.error('Fehler beim Löschen', e)
+    }
+    
+    setSelections((prev) => ({
+      ...prev,
+      [currentLine]: {
+        ...prev[currentLine],
+        [pos]: null
+      }
+    }))
+  }
+
+  const lineComplete = (line: 1 | 2 | 3) =>
+    Object.values(selections[line]).every((p) => p !== null)
+
+  const canGoNext = currentLine === 1 ? lineComplete(1) : true
+
+  const leagueTitle = league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+
+  const PlayerCard = ({ player, position, onClick }: { player: Player | null; position: PositionKey; onClick: () => void }) => {
+    const pos = positions.find((p) => p.key === position)
+    if (!player) {
+      return (
+        <div
+          onClick={onClick}
+          className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
+          style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
+        >
+          <div className="w-24 h-32 sm:w-28 sm:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
+            <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span className="text-xs text-gray-500 mt-2 text-center px-2">{pos?.label}</span>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div
+        onClick={onClick}
+        className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
+        style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
+      >
+        <div className="w-24 h-32 sm:w-28 sm:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-gray-300 hover:border-primary-500 transition-all">
+          {player.imageUrl ? (
+            <div className="relative w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
+              <img
+                src={player.imageUrl}
+                alt={player.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          )}
+          <div className="p-2 text-center space-y-1">
+            <div className="font-heading text-xs font-bold text-gray-900 leading-tight break-words line-clamp-2 min-h-[2rem]">{player.name}</div>
+            {player.team && (
+              <div className="text-[10px] text-gray-600 leading-tight break-words line-clamp-1">{player.team}</div>
+            )}
+            {player.jerseyNumber && (
+              <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>
+            )}
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              clearPosition(position)
+            }}
+            className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
+
+  return (
+    <div className="min-h-screen relative">
+      {/* Hintergrundbild */}
+      <div className="fixed inset-0 z-0">
+        <img
+          src={backgroundImage}
+          alt={`${leagueTitle} Hintergrund`}
+          className="w-full h-full object-cover blur-sm"
+        />
+        <div className="absolute inset-0 bg-black/30"></div>
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-2 shadow-lg">
+            {leagueTitle}
+          </div>
+          <h1 className="text-3xl md:text-5xl font-heading uppercase text-white drop-shadow-lg">
+            Allstar Team Voting
+          </h1>
+          <p className="text-sm text-white drop-shadow-md">
+            Reihe 1 muss vollständig sein. Reihen 2 & 3 sind optional.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center gap-3">
+          {[1, 2, 3].map((ln) => (
+            <button
+              key={ln}
+              onClick={() => setCurrentLine(ln as 1 | 2 | 3)}
+              className={clsx(
+                'px-4 py-2 rounded-lg font-heading uppercase border-2',
+                currentLine === ln
+                  ? 'bg-primary-600 border-primary-600 text-white'
+                  : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white'
+              )}
+            >
+              Reihe {ln}
+            </button>
+          ))}
+        </div>
+
+        {/* Floorball Field */}
+        <div className="relative w-full max-w-4xl mx-auto aspect-[4/3] bg-blue-300 rounded-lg overflow-hidden shadow-2xl">
+          {/* Field Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src="/Feld.png"
+              alt="Floorball Feld"
+              className="w-full h-full object-cover opacity-30"
+            />
+          </div>
+          
+          {/* Field Lines */}
+          <div className="absolute inset-0 border-4 border-white/50">
+            {/* Center Line */}
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/50"></div>
+            {/* Goal Areas */}
+            <div className="absolute bottom-0 left-1/4 right-1/4 h-1/4 border-t-2 border-white/50"></div>
+          </div>
+
+          {/* Player Cards positioned on field */}
+          {positions.map((pos) => (
+            <PlayerCard
+              key={pos.key}
+              player={selections[currentLine][pos.key]}
+              position={pos.key}
+              onClick={() => openSelect(pos.key)}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-between items-center pt-2">
+          <button
+            className="text-sm text-white hover:text-gray-200 font-heading drop-shadow-md"
+            onClick={() => router.push('/')}
+          >
+            ← Zurück zur Startseite
+          </button>
+          <div className="space-x-3">
+            {currentLine > 1 && (
+              <button
+                className="px-4 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-primary-400 bg-white font-heading"
+                onClick={() => setCurrentLine((prev) => (prev - 1) as 1 | 2 | 3)}
+              >
+                Zurück
+              </button>
+            )}
+            {currentLine < 3 ? (
+              <button
+                disabled={!canGoNext}
+                className={clsx(
+                  'px-4 py-2 rounded-lg font-heading uppercase',
+                  canGoNext
+                    ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                )}
+                onClick={() => {
+                  if (canGoNext) {
+                    setCurrentLine((prev) => (prev + 1) as 1 | 2 | 3)
+                  }
+                }}
+              >
+                {currentLine === 1 && !canGoNext
+                  ? 'Reihe 1 muss vollständig sein'
+                  : `Weiter zur Reihe ${currentLine + 1}`
+                }
+              </button>
+            ) : (
+              <button
+                className="px-4 py-2 rounded-lg font-heading uppercase bg-primary-600 hover:bg-primary-700 text-white"
+                onClick={() => router.push(`/mvp-voting?league=${league}`)}
+              >
+                Weiter →
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Player Selection Modal */}
+      {modalOpen && activePosition && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
+          <div className="bg-white border border-gray-300 rounded-2xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <div>
+                <div className="font-heading text-xl text-gray-900">Position: {positions.find((p) => p.key === activePosition)?.label}</div>
+                <div className="text-sm text-gray-600">Reihe {currentLine}</div>
+              </div>
+              <button
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+                onClick={() => {
+                  setModalOpen(false)
+                  setActivePosition(null)
+                  setSelectedPlayerId(null)
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 overflow-hidden flex-1 flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Spieler suchen..."
+                  className="w-full sm:flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                <select
+                  value={selectedTeam}
+                  onChange={(e) => setSelectedTeam(e.target.value)}
+                  className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Alle Teams</option>
+                  {availableTeams.map((team) => (
+                    <option key={team} value={team}>
+                      {team}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'default' | 'team' | 'name')}
+                  className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="default">Standard</option>
+                  <option value="team">Nach Team</option>
+                  <option value="name">Nach Name</option>
+                </select>
+                {loadingPlayers && (
+                  <span className="text-xs text-gray-500">Lade Spieler...</span>
+                )}
+              </div>
+
+              <div className="flex-1 overflow-y-auto border border-gray-200 rounded-xl">
+                <div className="p-4">
+                  {sortBy === 'team' ? (
+                    // Gruppiert nach Teams
+                    (() => {
+                      const grouped = filteredPlayers.reduce((acc, p) => {
+                        const team = p.team || 'Kein Team'
+                        if (!acc[team]) acc[team] = []
+                        acc[team].push(p)
+                        return acc
+                      }, {} as Record<string, typeof filteredPlayers>)
+                      
+                      return Object.entries(grouped).map(([team, players]) => (
+                        <div key={team} className="mb-6 last:mb-0">
+                          <div className="mb-3 pb-2 border-b-2 border-primary-500">
+                            <h3 className="font-heading text-sm text-gray-900">{team}</h3>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {players.map((p) => {
+                              const taken = usedPlayerIds.has(p.id) && selections[currentLine][activePosition]?.id !== p.id
+                              const isSelected = selectedPlayerId === p.id
+                              return (
+                                <div
+                                  key={p.id}
+                                  onClick={() => {
+                                    if (!taken) {
+                                      setSelectedPlayerId(isSelected ? null : p.id)
+                                    }
+                                  }}
+                                  className={clsx(
+                                    'relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all',
+                                    taken
+                                      ? 'opacity-50 cursor-not-allowed border-gray-200'
+                                      : isSelected
+                                      ? 'border-primary-600 shadow-lg scale-105'
+                                      : 'border-gray-300 hover:border-primary-400 hover:shadow-md'
+                                  )}
+                                >
+                                  <div className="bg-white">
+                                    {p.imageUrl ? (
+                                      <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                                        <img
+                                          src={p.imageUrl}
+                                          alt={p.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                      </div>
+                                    )}
+                                    <div className="p-2 text-center space-y-1">
+                                      <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                                      {p.team && (
+                                        <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                                      )}
+                                      {p.jerseyNumber && (
+                                        <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                                      )}
+                                      {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
+                                        <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">
+                                          {p.points !== undefined && (
+                                            <div className="text-[9px] text-green-600 font-semibold">
+                                              P: {p.points}
+                                            </div>
+                                          )}
+                                          {p.goals !== undefined && (
+                                            <div className="text-[9px] text-gray-700">
+                                              T: {p.goals}
+                                            </div>
+                                          )}
+                                          {p.assists !== undefined && (
+                                            <div className="text-[9px] text-gray-700">
+                                              V: {p.assists}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                    {taken && (
+                                      <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
+                                        <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                                      </div>
+                                    )}
+                                    {isSelected && !taken && (
+                                      <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      ))
+                    })()
+                  ) : (
+                    // Standard-Grid ohne Gruppierung
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      {filteredPlayers.map((p) => {
+                        const taken = usedPlayerIds.has(p.id) && selections[currentLine][activePosition]?.id !== p.id
+                        const isSelected = selectedPlayerId === p.id
+                        return (
+                          <div
+                            key={p.id}
+                            onClick={() => {
+                              if (!taken) {
+                                setSelectedPlayerId(isSelected ? null : p.id)
+                              }
+                            }}
+                            className={clsx(
+                              'relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all',
+                              taken
+                                ? 'opacity-50 cursor-not-allowed border-gray-200'
+                                : isSelected
+                                ? 'border-primary-600 shadow-lg scale-105'
+                                : 'border-gray-300 hover:border-primary-400 hover:shadow-md'
+                            )}
+                          >
+                            <div className="bg-white">
+                              {p.imageUrl ? (
+                                <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                                  <img
+                                    src={p.imageUrl}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                  <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div className="p-2 text-center space-y-1">
+                                <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                                {p.team && (
+                                  <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                                )}
+                                {p.jerseyNumber && (
+                                  <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                                )}
+                                {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
+                                  <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">
+                                    {p.points !== undefined && (
+                                      <div className="text-[9px] text-green-600 font-semibold">
+                                        P: {p.points}
+                                      </div>
+                                    )}
+                                    {p.goals !== undefined && (
+                                      <div className="text-[9px] text-gray-700">
+                                        T: {p.goals}
+                                      </div>
+                                    )}
+                                    {p.assists !== undefined && (
+                                      <div className="text-[9px] text-gray-700">
+                                        V: {p.assists}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              {taken && (
+                                <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
+                                  <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                                </div>
+                              )}
+                              {isSelected && !taken && (
+                                <div className="absolute top-2 right-2 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center">
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                      {filteredPlayers.length === 0 && (
+                        <div className="col-span-full text-center py-12 text-gray-500">
+                          Keine Spieler gefunden.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                <button
+                  className="text-sm text-gray-600 hover:text-gray-900 font-heading"
+                  onClick={() => {
+                    setModalOpen(false)
+                    setActivePosition(null)
+                    setSelectedPlayerId(null)
+                  }}
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={saveSelection}
+                  disabled={!selectedPlayerId || saving}
+                  className={clsx(
+                    'px-5 py-2 rounded-lg font-heading uppercase',
+                    selectedPlayerId && !saving
+                      ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  )}
+                >
+                  {saving ? 'Speichere...' : 'Bestätigen'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

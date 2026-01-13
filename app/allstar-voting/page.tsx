@@ -285,9 +285,9 @@ function AllstarVotingContent() {
         className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
         style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
       >
-        <div className="w-24 h-32 sm:w-28 sm:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-gray-300 hover:border-primary-500 transition-all">
+        <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative">
           {player.imageUrl ? (
-            <div className="relative w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
+            <div className="relative w-full h-12 sm:h-16 md:h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
               <img
                 src={player.imageUrl}
                 alt={player.name}
@@ -295,19 +295,19 @@ function AllstarVotingContent() {
               />
             </div>
           ) : (
-            <div className="w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-full h-12 sm:h-16 md:h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           )}
-          <div className="p-2 text-center space-y-1">
-            <div className="font-heading text-xs font-bold text-gray-900 leading-tight break-words line-clamp-2 min-h-[2rem]">{player.name}</div>
+          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1">
+            <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words line-clamp-2 min-h-[1.5rem] sm:min-h-[2rem] px-0.5 sm:px-1">{player.name}</div>
             {player.team && (
-              <div className="text-[10px] text-gray-600 leading-tight break-words line-clamp-1">{player.team}</div>
+              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-600 leading-tight break-words line-clamp-1 px-0.5 sm:px-1">{player.team}</div>
             )}
             {player.jerseyNumber && (
-              <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>
+              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-500">#{player.jerseyNumber}</div>
             )}
           </div>
           <button
@@ -315,7 +315,7 @@ function AllstarVotingContent() {
               e.stopPropagation()
               clearPosition(position)
             }}
-            className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] sm:text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             ×
           </button>

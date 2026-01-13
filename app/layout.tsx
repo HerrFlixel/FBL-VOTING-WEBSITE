@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: 'Allstar Voting 1. Floorball Bundesliga'
 }
 
+import PageReloadHandler from '../components/PageReloadHandler'
+
 export default function RootLayout({
   children
 }: {
@@ -14,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body className="min-h-screen bg-gray-900 text-white">
+        <PageReloadHandler />
         {children}
       </body>
     </html>

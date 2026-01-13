@@ -8,9 +8,18 @@ export default function HomePage() {
 
   useEffect(() => {
     // Session beim Laden der Startseite leeren
-    if (typeof window !== 'undefined') {
-      sessionStorage.clear()
+    const clearSession = async () => {
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear()
+        // Lösche alle nicht-finalisierten Votes vom Server
+        try {
+          await fetch('/api/votes/clear-session', { method: 'POST' })
+        } catch (e) {
+          console.error('Fehler beim Zurücksetzen der Session', e)
+        }
+      }
     }
+    clearSession()
   }, [])
 
   const handleStart = (league: 'herren' | 'damen') => {

@@ -9,13 +9,15 @@ function ThankYouContent() {
   const userId = searchParams.get('userId')
 
   const handleGoHome = async () => {
-    // Session zurücksetzen
+    // Session zurücksetzen - warte auf Abschluss bevor Navigation
     try {
       await fetch('/api/votes/clear-session', { method: 'POST' })
     } catch (e) {
       console.error('Fehler beim Zurücksetzen der Session', e)
     }
     sessionStorage.clear()
+    // Kurze Verzögerung, um sicherzustellen, dass die Löschung abgeschlossen ist
+    await new Promise(resolve => setTimeout(resolve, 100))
     router.push('/')
   }
 

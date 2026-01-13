@@ -7,24 +7,30 @@ export async function POST(req: Request) {
     const { voterId } = getVoterInfo()
 
     // Lösche alle nicht-finalisierten Votes (userId = null) dieses Voters
+    // Verwende deleteMany mit where-Klausel, die auch ohne voterId funktioniert
+    // (für den Fall, dass voterId nicht verfügbar ist beim Reload)
+    const deleteConditions = voterId 
+      ? { voterId, userId: null }
+      : { userId: null }
+
     await Promise.all([
       prisma.allstarVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       }),
       prisma.mVPVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       }),
       prisma.coachVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       }),
       prisma.fairPlayVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       }),
       prisma.refereePairVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       }),
       prisma.specialAwardVote.deleteMany({
-        where: { voterId, userId: null }
+        where: deleteConditions
       })
     ])
 

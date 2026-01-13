@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: fbl-voting-website
+    env: node
+    plan: starter
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: fbl-voting-data
+      mountPath: /opt/render/project/src
+      sizeGB: 1
+

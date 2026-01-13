@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import ExcelImport from '../../components/admin/ExcelImport'
 import PlayerManagement from '../../components/admin/PlayerManagement'
 import CoachManagement from '../../components/admin/CoachManagement'
+import RefereePairManagement from '../../components/admin/RefereePairManagement'
 import TeamManagement from '../../components/admin/TeamManagement'
 import AllstarResults from '../../components/admin/AllstarResults'
 import MVPResults from '../../components/admin/MVPResults'
@@ -16,7 +17,7 @@ import VoterManagement from '../../components/admin/VoterManagement'
 
 type Tab = 
   | 'import-herren' | 'import-damen' 
-  | 'players' | 'coaches' | 'teams'
+  | 'players' | 'coaches' | 'referee-pairs' | 'teams'
   | 'results-allstar-herren' | 'results-allstar-damen'
   | 'results-mvp-herren' | 'results-mvp-damen'
   | 'results-coach-herren' | 'results-coach-damen'
@@ -41,6 +42,7 @@ function AdminContent() {
     { id: 'import-damen' as Tab, label: 'Import Damen' },
     { id: 'players' as Tab, label: 'Spieler' },
     { id: 'coaches' as Tab, label: 'Trainer' },
+    { id: 'referee-pairs' as Tab, label: 'Schiedsrichter-Paare' },
     { id: 'teams' as Tab, label: 'Teams' },
     { id: 'results-allstar-herren' as Tab, label: 'Allstar Herren' },
     { id: 'results-allstar-damen' as Tab, label: 'Allstar Damen' },
@@ -91,6 +93,7 @@ function AdminContent() {
           {activeTab === 'import-damen' && <ExcelImport league="damen" />}
           {activeTab === 'players' && <PlayerManagement />}
           {activeTab === 'coaches' && <CoachManagement />}
+          {activeTab === 'referee-pairs' && <RefereePairManagement />}
           {activeTab === 'teams' && <TeamManagement />}
           {activeTab === 'results-allstar-herren' && <AllstarResults league="herren" />}
           {activeTab === 'results-allstar-damen' && <AllstarResults league="damen" />}

@@ -464,10 +464,22 @@ function AllstarVotingContent() {
               </button>
             ) : (
               <button
-                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm"
-                onClick={() => router.push(`/mvp-voting?league=${league}`)}
+                disabled={saving}
+                className={clsx(
+                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase text-xs sm:text-sm',
+                  saving
+                    ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                    : 'bg-primary-600 hover:bg-primary-700 text-white'
+                )}
+                onClick={async () => {
+                  // Warte bis alle Speicher-Operationen abgeschlossen sind
+                  if (saving) return
+                  // Warte kurz, um sicherzustellen, dass alle API-Calls abgeschlossen sind
+                  await new Promise(resolve => setTimeout(resolve, 100))
+                  router.push(`/mvp-voting?league=${league}`)
+                }}
               >
-                Weiter →
+                {saving ? 'Speichere...' : 'Weiter →'}
               </button>
             )}
           </div>

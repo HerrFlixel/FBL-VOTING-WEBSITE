@@ -323,20 +323,30 @@ function MVPVotingContent() {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 mt-6 sm:mt-8 px-2">
           <button
             className="text-xs sm:text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1 justify-center sm:justify-start"
-            onClick={() => router.push(`/allstar-voting?league=${league}`)}
+            onClick={async () => {
+              // Warte bis alle Speicher-Operationen abgeschlossen sind
+              if (saving) return
+              await new Promise(resolve => setTimeout(resolve, 100))
+              router.push(`/allstar-voting?league=${league}`)
+            }}
           >
             ← Zurück
           </button>
           <button
-            disabled={!canProceed}
-            onClick={() => router.push(`/coach-voting?league=${league}`)}
+            disabled={!canProceed || saving}
+            onClick={async () => {
+              if (!canProceed || saving) return
+              // Warte bis alle Speicher-Operationen abgeschlossen sind
+              await new Promise(resolve => setTimeout(resolve, 100))
+              router.push(`/coach-voting?league=${league}`)
+            }}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
-              canProceed
+              canProceed && !saving
                 ? 'bg-primary-600 hover:bg-primary-700 text-white'
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             }`}
           >
-            Weiter zum Trainer →
+            {saving ? 'Speichere...' : 'Weiter zum Trainer →'}
           </button>
         </div>
       </div>

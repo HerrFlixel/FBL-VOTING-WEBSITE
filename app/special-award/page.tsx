@@ -133,7 +133,12 @@ function SpecialAwardContent() {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-4">
               <button
                 className="px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase bg-gray-500 hover:bg-gray-600 text-white shadow-lg transition-colors"
-                onClick={() => router.push(`/referee-voting?league=${league}`)}
+                onClick={async () => {
+                  if (saving) return
+                  await new Promise(resolve => setTimeout(resolve, 100))
+                  router.push(`/referee-voting?league=${league}`)
+                }}
+                disabled={saving}
               >
                 ← Zurück
               </button>
@@ -143,6 +148,7 @@ function SpecialAwardContent() {
                     alert('Bitte geben Sie einen Namen ein')
                     return
                   }
+                  if (saving) return
                   // Speichere vor dem Weiterleiten
                   setSaving(true)
                   try {
@@ -158,6 +164,8 @@ function SpecialAwardContent() {
                       const err = await res.json().catch(() => ({ error: 'Unbekannter Fehler' }))
                       throw new Error(err.error || `Fehler beim Speichern (Status: ${res.status})`)
                     }
+                    // Warte kurz, um sicherzustellen, dass der API-Call vollständig abgeschlossen ist
+                    await new Promise(resolve => setTimeout(resolve, 200))
                     router.push(`/user-form?league=${league}`)
                   } catch (error: any) {
                     console.error('Fehler beim Speichern', error)

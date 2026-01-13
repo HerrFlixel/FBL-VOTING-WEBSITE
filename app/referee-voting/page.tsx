@@ -230,7 +230,9 @@ function RefereeVotingContent() {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 mt-6 sm:mt-8 px-2">
           <button
             className="text-xs sm:text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1 justify-center sm:justify-start"
-            onClick={() => {
+            onClick={async () => {
+              if (saving) return
+              await new Promise(resolve => setTimeout(resolve, 100))
               // Zurück zu Cross League oder Fair Play, je nachdem ob man cross league gemacht hat
               // Für jetzt einfach zu Fair Play zurück
               router.push(`/fair-play-voting?league=${league}`)
@@ -239,15 +241,20 @@ function RefereeVotingContent() {
             ← Zurück
           </button>
           <button
-            disabled={!canProceed}
-            onClick={() => router.push(`/special-award?league=${league}`)}
+            disabled={!canProceed || saving}
+            onClick={async () => {
+              if (!canProceed || saving) return
+              // Warte bis alle Speicher-Operationen abgeschlossen sind
+              await new Promise(resolve => setTimeout(resolve, 100))
+              router.push(`/special-award?league=${league}`)
+            }}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
-              canProceed
+              canProceed && !saving
                 ? 'bg-primary-600 hover:bg-primary-700 text-white'
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             } shadow-lg transition-colors`}
           >
-            Weiter zum Sonderpreis
+            {saving ? 'Speichere...' : 'Weiter zum Sonderpreis'}
           </button>
         </div>
       </div>

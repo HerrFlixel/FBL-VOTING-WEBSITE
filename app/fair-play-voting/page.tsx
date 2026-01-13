@@ -302,13 +302,20 @@ function FairPlayVotingContent() {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 mt-6 sm:mt-8 px-2">
           <button
             className="text-xs sm:text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1 justify-center sm:justify-start"
-            onClick={() => router.push(`/coach-voting?league=${league}`)}
+            onClick={async () => {
+              if (saving) return
+              await new Promise(resolve => setTimeout(resolve, 100))
+              router.push(`/coach-voting?league=${league}`)
+            }}
           >
             ← Zurück
           </button>
           <button
-            disabled={!canProceed}
-            onClick={() => {
+            disabled={!canProceed || saving}
+            onClick={async () => {
+              if (!canProceed || saving) return
+              // Warte bis alle Speicher-Operationen abgeschlossen sind
+              await new Promise(resolve => setTimeout(resolve, 100))
               if (hasVotedBothLeagues) {
                 // Wenn bereits für beide Ligen gevotet wurde, direkt zum Schiedsrichter-Paar-Voting
                 router.push(`/referee-voting?league=${league}`)
@@ -318,12 +325,12 @@ function FairPlayVotingContent() {
               }
             }}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
-              canProceed
+              canProceed && !saving
                 ? 'bg-primary-600 hover:bg-primary-700 text-white'
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             } shadow-lg transition-colors`}
           >
-            Weiter
+            {saving ? 'Speichere...' : 'Weiter'}
           </button>
         </div>
       </div>

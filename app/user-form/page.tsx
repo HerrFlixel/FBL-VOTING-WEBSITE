@@ -87,32 +87,32 @@ function UserFormContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
-        <div className="bg-white/95 rounded-lg shadow-xl p-8 md:p-12 w-full">
-          <div className="text-center mb-8">
-            <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-3 shadow-lg">
+      <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-2 sm:mb-3 shadow-lg">
               {leagueName}
             </div>
-            <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900 px-2">
               Abschluss
             </h1>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
               Bitte füllen Sie alle Felder aus, um Ihre Stimmen abzugeben
             </p>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <button
-              className="text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
+              className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
               onClick={() => router.push(`/special-award?league=${league}`)}
             >
               ← Zurück
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 Vorname *
               </label>
               <input
@@ -121,12 +121,12 @@ function UserFormContent() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 Nachname *
               </label>
               <input
@@ -135,12 +135,12 @@ function UserFormContent() {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label htmlFor="team" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="team" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 Team *
               </label>
               <select
@@ -149,7 +149,7 @@ function UserFormContent() {
                 onChange={(e) => setTeamId(e.target.value)}
                 required
                 disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
               >
                 <option value="">Bitte wählen...</option>
                 {teams.map((team) => (
@@ -159,14 +159,14 @@ function UserFormContent() {
                 ))}
               </select>
               {loading && (
-                <p className="mt-2 text-sm text-gray-500">Lade Teams...</p>
+                <p className="mt-2 text-xs sm:text-sm text-gray-500">Lade Teams...</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={!canSubmit || submitting || loading}
-              className={`w-full px-6 py-3 rounded-lg font-heading text-lg uppercase ${
+              className={`w-full px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
                 canSubmit && !submitting && !loading
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'

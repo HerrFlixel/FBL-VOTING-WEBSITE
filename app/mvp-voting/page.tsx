@@ -342,9 +342,9 @@ function MVPVotingContent() {
       </div>
 
       {modalOpen && selectedRank && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 sm:p-4">
-          <div className="bg-white border border-gray-300 rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4">
+          <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex-1 min-w-0">
                 <div className="font-heading text-base sm:text-xl text-gray-900 truncate">Platz {selectedRank} ({11 - selectedRank} Punkte)</div>
                 <div className="text-xs sm:text-sm text-gray-600">Spieler auswählen</div>
@@ -361,7 +361,7 @@ function MVPVotingContent() {
               </button>
             </div>
 
-            <div className="p-3 sm:p-6 space-y-3 sm:space-y-4 overflow-hidden flex-1 flex flex-col">
+            <div className="p-3 sm:p-6 space-y-3 sm:space-y-4 overflow-hidden flex-1 flex flex-col min-h-0">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <input
                   value={searchTerm}

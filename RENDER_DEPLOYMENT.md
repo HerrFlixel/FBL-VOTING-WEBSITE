@@ -35,14 +35,17 @@
 
 ### Environment Variables
 
-Aktuell werden keine Environment Variables benötigt. Falls später benötigt, können diese hier hinzugefügt werden.
+Füge folgende Environment Variables hinzu:
+- **DATABASE_URL**: `file:/mnt/data/prisma/dev.db`
+- **PERSISTENT_DISK_PATH**: `/mnt/data`
+- **NODE_ENV**: `production` (wird automatisch gesetzt)
 
 ### Persistent Disk (WICHTIG!)
 
 1. Scrolle nach unten zu "Persistent Disk"
 2. Klicke auf "Add Persistent Disk"
 3. **Name**: `fbl-voting-data`
-4. **Mount Path**: `/opt/render/project/src`
+4. **Mount Path**: `/mnt/data` (⚠️ NICHT `/opt/render/project/src` - das ist reserviert!)
 5. **Size**: 1 GB (ausreichend für SQLite + Uploads)
 
 ⚠️ **WICHTIG**: Ohne Persistent Disk gehen alle Daten bei jedem Deployment verloren!

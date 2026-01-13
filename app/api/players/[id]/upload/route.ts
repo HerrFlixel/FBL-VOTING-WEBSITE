@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, symlink } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { getUploadsPath, getUploadsUrlPath } from '@/lib/paths'
 
 export async function POST(
   req: Request,
@@ -20,12 +21,29 @@ export async function POST(
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Erstelle Upload-Pfad
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'players')
+    // Erstelle Upload-Pfad (persistent disk)
+    const uploadsDir = getUploadsPath()
     
     // Erstelle Verzeichnis falls es nicht existiert
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
+    }
+    
+    // Erstelle Symlink im public-Ordner für Next.js (falls nicht existiert)
+    const publicUploadsDir = join(process.cwd(), 'public', 'uploads', 'players')
+    if (!existsSync(publicUploadsDir)) {
+      try {
+        await mkdir(join(process.cwd(), 'public', 'uploads'), { recursive: true })
+        // Versuche Symlink zu erstellen (nur wenn nicht existiert)
+        if (!existsSync(publicUploadsDir)) {
+          await symlink(uploadsDir, publicUploadsDir, 'dir')
+        }
+      } catch (symlinkError: any) {
+        // Symlink existiert bereits oder Fehler (z.B. Windows) - ignoriere
+        if (symlinkError.code !== 'EEXIST') {
+          console.warn('Konnte Symlink nicht erstellen:', symlinkError.message)
+        }
+      }
     }
     
     const filename = `player-${id}-${Date.now()}.${file.name.split('.').pop()}`
@@ -35,7 +53,7 @@ export async function POST(
     await writeFile(filepath, buffer)
 
     // Aktualisiere Spieler mit Bild-URL
-    const imageUrl = `/uploads/players/${filename}`
+    const imageUrl = `${getUploadsUrlPath()}/${filename}`
     const player = await prisma.player.update({
       where: { id },
       data: { imageUrl }

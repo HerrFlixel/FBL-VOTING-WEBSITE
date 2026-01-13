@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../lib/prisma'
-import { getVoterInfo } from '../../../../lib/voter'
+import { prisma } from '../../../lib/prisma'
+import { getVoterInfo } from '../../../lib/voter'
 
 function pointsForRank(rank: number) {
   return 11 - rank // Platz 1 = 10 Punkte, Platz 10 = 1 Punkt

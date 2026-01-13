@@ -342,8 +342,8 @@ function MVPVotingContent() {
       </div>
 
       {modalOpen && selectedRank && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
-          <div className="bg-white border border-gray-300 rounded-2xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white border border-gray-300 rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
               <div>
                 <div className="font-heading text-xl text-gray-900">Platz {selectedRank} ({11 - selectedRank} Punkte)</div>

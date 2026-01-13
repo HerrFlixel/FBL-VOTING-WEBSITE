@@ -16,14 +16,15 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json()
-    const { name, imageUrl } = data
+    const { name, imageUrl, league } = data
     if (!name) {
       return NextResponse.json({ error: 'Name ist erforderlich' }, { status: 400 })
     }
     const pair = await prisma.refereePair.create({
       data: {
         name,
-        imageUrl
+        imageUrl: imageUrl || null,
+        league: league || 'herren'
       }
     })
     return NextResponse.json(pair, { status: 201 })

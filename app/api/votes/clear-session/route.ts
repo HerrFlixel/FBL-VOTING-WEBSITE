@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server'
-import { getVoterInfo } from '../../../lib/voter'
-import { prisma } from '../../../lib/prisma'
+import { NextResponse } from "next/server"
+import { getVoterInfo } from "../../../../lib/voter"
+import { prisma } from "../../../../lib/prisma"
 
 export async function POST(req: Request) {
   try {
@@ -30,11 +30,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Fehler beim Zurücksetzen der Session', error)
+    console.error("Fehler beim Zurücksetzen der Session", error)
     return NextResponse.json(
-      { error: 'Fehler beim Zurücksetzen der Session' },
+      { error: "Fehler beim Zurücksetzen der Session" },
       { status: 500 }
     )
   }
 }
-

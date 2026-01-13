@@ -96,11 +96,17 @@ function AllstarVotingContent() {
         const res = await fetch(`/api/allstar-votes?league=${league}`)
         if (!res.ok) return
         const data = await res.json()
-        const next = { ...selections }
+        // Initialisiere alle Reihen korrekt, um sicherzustellen, dass alle Votes geladen werden
+        const next: Record<1 | 2 | 3, Selection> = {
+          1: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+          2: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
+          3: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null }
+        }
+        // Lade alle Votes für alle Reihen
         for (const vote of data) {
           const line = vote.line as 1 | 2 | 3
           const pos = vote.position as PositionKey
-          if (next[line] && next[line][pos] !== undefined) {
+          if (next[line] && next[line][pos] !== undefined && vote.player) {
             next[line][pos] = vote.player
           }
         }

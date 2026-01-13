@@ -388,7 +388,7 @@ function AllstarVotingContent() {
         </div>
 
         {/* Floorball Field */}
-        <div className="relative w-full max-w-4xl mx-auto aspect-[4/3] bg-blue-300 rounded-lg overflow-hidden shadow-2xl">
+        <div className={`relative w-full max-w-4xl mx-auto aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ${league === 'damen' ? 'bg-red-200' : 'bg-blue-300'}`}>
           {/* Field Background Image */}
           <div className="absolute inset-0">
             <img

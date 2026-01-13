@@ -138,17 +138,6 @@ function SpecialAwardContent() {
                 ← Zurück
               </button>
               <button
-                onClick={handleSave}
-                disabled={!canProceed || saving || loading}
-                className={`flex-1 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
-                  canProceed && !saving && !loading
-                    ? 'bg-primary-600 hover:bg-primary-700 text-white'
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                } shadow-lg transition-colors`}
-              >
-                {saving ? 'Speichern...' : 'Speichern'}
-              </button>
-              <button
                 onClick={async () => {
                   if (!name.trim()) {
                     alert('Bitte geben Sie einen Namen ein')

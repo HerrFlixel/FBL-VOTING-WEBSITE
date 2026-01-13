@@ -20,7 +20,7 @@ type Selected = {
   player: Player
 }
 
-export default function MVPVotingPage() {
+function MVPVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const leagueParam = searchParams.get('league')

@@ -25,7 +25,7 @@ type Tab =
   | 'results-special-award'
   | 'voters'
 
-export default function AdminPage() {
+function AdminContent() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'import-herren')

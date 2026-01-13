@@ -9,7 +9,7 @@ type RefereePair = {
   imageUrl?: string | null
 }
 
-export default function RefereeVotingPage() {
+function RefereeVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const leagueParam = searchParams.get('league')

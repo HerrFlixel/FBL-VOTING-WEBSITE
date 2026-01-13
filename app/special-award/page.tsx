@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function SpecialAwardPage() {
+function SpecialAwardContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const leagueParam = searchParams.get('league')

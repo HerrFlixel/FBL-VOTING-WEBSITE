@@ -23,11 +23,11 @@ function ThankYouContent() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-800">
-      <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <div className="bg-white rounded-lg shadow-xl p-8 md:p-12">
-          <div className="mb-6">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 text-center">
+        <div className="bg-white rounded-lg shadow-xl p-4 sm:p-8 md:p-12">
+          <div className="mb-4 sm:mb-6">
             <svg
-              className="mx-auto h-16 w-16 text-green-500"
+              className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-green-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -40,21 +40,21 @@ function ThankYouContent() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-5xl font-heading uppercase mb-4 text-gray-900">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-3 sm:mb-4 text-gray-900 px-2">
             Vielen Dank!
           </h1>
-          <p className="text-lg text-gray-700 mb-2">
+          <p className="text-base sm:text-lg text-gray-700 mb-2 px-2">
             Sie haben Ihre Stimmen erfolgreich abgegeben.
           </p>
-          <p className="text-lg text-gray-700 mb-8">
+          <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 px-2">
             Ihre Stimmen sind eingegangen und werden nun ausgewertet.
           </p>
-          <p className="text-sm text-gray-500 mb-8">
+          <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 px-2">
             Sie können diese Seite jetzt schließen.
           </p>
           <button
             onClick={handleGoHome}
-            className="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-lg uppercase shadow-lg transition-colors"
+            className="px-6 sm:px-8 py-2 sm:py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-sm sm:text-lg uppercase shadow-lg transition-colors"
           >
             Zur Startseite
           </button>

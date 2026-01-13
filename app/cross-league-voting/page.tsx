@@ -36,33 +36,33 @@ function CrossLeagueVotingContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 flex items-center justify-center min-h-screen">
-        <div className="bg-white/95 rounded-lg shadow-xl p-8 md:p-12 text-center space-y-6">
-          <div className="flex justify-start mb-4">
+      <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 text-center space-y-4 sm:space-y-6 w-full">
+          <div className="flex justify-start mb-2 sm:mb-4">
             <button
-              className="text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
+              className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
               onClick={() => router.push(`/fair-play-voting?league=${currentLeague}`)}
             >
               ← Zurück
             </button>
           </div>
-          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-4 shadow-lg">
+          <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-3 sm:mb-4 shadow-lg">
             {currentLeague === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'}
           </div>
-          <h1 className="text-3xl md:text-5xl font-heading uppercase text-gray-900 mb-8">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-heading uppercase text-gray-900 mb-6 sm:mb-8 px-2">
             Möchten Sie auch für die <span className="font-heading">{otherLeagueName}</span> abstimmen?
           </h1>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <button
               onClick={handleYes}
-              className="px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-lg uppercase shadow-lg transition-colors"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-base sm:text-lg uppercase shadow-lg transition-colors"
             >
               Ja
             </button>
             <button
               onClick={handleNo}
-              className="px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-heading text-lg uppercase shadow-lg transition-colors"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-heading text-base sm:text-lg uppercase shadow-lg transition-colors"
             >
               Nein
             </button>

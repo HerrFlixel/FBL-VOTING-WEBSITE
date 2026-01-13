@@ -269,11 +269,11 @@ function AllstarVotingContent() {
           className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
           style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
         >
-          <div className="w-24 h-32 sm:w-28 sm:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
-            <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-xs text-gray-500 mt-2 text-center px-2">{pos?.label}</span>
+            <span className="text-[8px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{pos?.label}</span>
           </div>
         </div>
       )
@@ -339,20 +339,20 @@ function AllstarVotingContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <div className="text-center space-y-2">
-          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-2 shadow-lg">
+      <div className="relative z-10 max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        <div className="text-center space-y-1 sm:space-y-2">
+          <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-1 sm:mb-2 shadow-lg">
             {leagueTitle}
           </div>
-          <h1 className="text-3xl md:text-5xl font-heading uppercase text-white drop-shadow-lg">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-heading uppercase text-white drop-shadow-lg px-2">
             Allstar Team Voting
           </h1>
-          <p className="text-sm text-white drop-shadow-md">
+          <p className="text-xs sm:text-sm text-white drop-shadow-md px-2">
             Reihe 1 muss vollständig sein, bevor du zu Reihe 2 oder 3 wechseln kannst. Reihen 2 & 3 sind optional.
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap px-2">
           {[1, 2, 3].map((ln) => {
             const isRow1Complete = lineComplete(1)
             const isDisabled = ln > 1 && !isRow1Complete
@@ -366,7 +366,7 @@ function AllstarVotingContent() {
                 }}
                 disabled={isDisabled}
                 className={clsx(
-                  'px-4 py-2 rounded-lg font-heading uppercase border-2 transition-all',
+                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase border-2 transition-all text-xs sm:text-sm',
                   isDisabled
                     ? 'border-gray-200 text-gray-400 bg-gray-100 cursor-not-allowed'
                     : currentLine === ln
@@ -410,17 +410,17 @@ function AllstarVotingContent() {
           ))}
         </div>
 
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 sm:gap-0 pt-2 px-2">
           <button
-            className="text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1"
+            className="text-xs sm:text-sm text-white hover:text-gray-200 font-heading drop-shadow-md flex items-center gap-1 justify-center sm:justify-start"
             onClick={() => router.push('/')}
           >
             ← Zurück
           </button>
-          <div className="space-x-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3 sm:space-y-0">
             {currentLine > 1 && (
               <button
-                className="px-4 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-primary-400 bg-white font-heading"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-primary-400 bg-white font-heading text-xs sm:text-sm"
                 onClick={() => setCurrentLine((prev) => (prev - 1) as 1 | 2 | 3)}
               >
                 Zurück
@@ -430,7 +430,7 @@ function AllstarVotingContent() {
               <button
                 disabled={!canGoNext}
                 className={clsx(
-                  'px-4 py-2 rounded-lg font-heading uppercase',
+                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase text-xs sm:text-sm',
                   canGoNext
                     ? 'bg-primary-600 hover:bg-primary-700 text-white'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -442,13 +442,13 @@ function AllstarVotingContent() {
                 }}
               >
                 {currentLine === 1 && !canGoNext
-                  ? 'Reihe 1 muss vollständig sein'
-                  : `Weiter zur Reihe ${currentLine + 1}`
+                  ? 'Reihe 1 vollständig'
+                  : `Weiter zu Reihe ${currentLine + 1}`
                 }
               </button>
             ) : (
               <button
-                className="px-4 py-2 rounded-lg font-heading uppercase bg-primary-600 hover:bg-primary-700 text-white"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase bg-primary-600 hover:bg-primary-700 text-white text-xs sm:text-sm"
                 onClick={() => router.push(`/mvp-voting?league=${league}`)}
               >
                 Weiter →
@@ -460,15 +460,15 @@ function AllstarVotingContent() {
 
       {/* Player Selection Modal */}
       {modalOpen && activePosition && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
-          <div className="bg-white border border-gray-300 rounded-2xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <div>
-                <div className="font-heading text-xl text-gray-900">Position: {positions.find((p) => p.key === activePosition)?.label}</div>
-                <div className="text-sm text-gray-600">Reihe {currentLine}</div>
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white border border-gray-300 rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50">
+              <div className="flex-1 min-w-0">
+                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">Position: {positions.find((p) => p.key === activePosition)?.label}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Reihe {currentLine}</div>
               </div>
               <button
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+                className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl ml-2 flex-shrink-0"
                 onClick={() => {
                   setModalOpen(false)
                   setActivePosition(null)
@@ -479,8 +479,8 @@ function AllstarVotingContent() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 overflow-hidden flex-1 flex flex-col">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="p-3 sm:p-6 space-y-3 sm:space-y-4 overflow-hidden flex-1 flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

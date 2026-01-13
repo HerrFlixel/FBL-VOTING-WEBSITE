@@ -329,25 +329,36 @@ export default function AllstarVotingPage() {
             Allstar Team Voting
           </h1>
           <p className="text-sm text-white drop-shadow-md">
-            Wähle dein Allstar-Team. Reihe 1 muss vollständig sein, um fortzufahren. Reihen 2 & 3 sind optional.
+            Reihe 1 muss vollständig sein, bevor du zu Reihe 2 oder 3 wechseln kannst. Reihen 2 & 3 sind optional.
           </p>
         </div>
 
         <div className="flex items-center justify-center gap-3">
-          {[1, 2, 3].map((ln) => (
-            <button
-              key={ln}
-              onClick={() => setCurrentLine(ln as 1 | 2 | 3)}
-              className={clsx(
-                'px-4 py-2 rounded-lg font-heading uppercase border-2 transition-all',
-                currentLine === ln
-                  ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white hover:bg-gray-50'
-              )}
-            >
-              Reihe {ln}
-            </button>
-          ))}
+          {[1, 2, 3].map((ln) => {
+            const isRow1Complete = lineComplete(1)
+            const isDisabled = ln > 1 && !isRow1Complete
+            return (
+              <button
+                key={ln}
+                onClick={() => {
+                  if (!isDisabled) {
+                    setCurrentLine(ln as 1 | 2 | 3)
+                  }
+                }}
+                disabled={isDisabled}
+                className={clsx(
+                  'px-4 py-2 rounded-lg font-heading uppercase border-2 transition-all',
+                  isDisabled
+                    ? 'border-gray-200 text-gray-400 bg-gray-100 cursor-not-allowed'
+                    : currentLine === ln
+                    ? 'bg-primary-600 border-primary-600 text-white'
+                    : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white hover:bg-gray-50'
+                )}
+              >
+                Reihe {ln}
+              </button>
+            )
+          })}
         </div>
 
         {/* Floorball Field */}

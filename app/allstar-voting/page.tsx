@@ -292,9 +292,9 @@ function AllstarVotingContent() {
         className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
         style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
       >
-        <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative">
+        <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
           {player.imageUrl ? (
-            <div className="relative w-full h-12 sm:h-16 md:h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
+            <div className="relative w-full h-10 sm:h-14 md:h-18 lg:h-20 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
               <img
                 src={player.imageUrl}
                 alt={player.name}
@@ -302,14 +302,14 @@ function AllstarVotingContent() {
               />
             </div>
           ) : (
-            <div className="w-full h-12 sm:h-16 md:h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+            <div className="w-full h-10 sm:h-14 md:h-18 lg:h-20 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           )}
-          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1">
-            <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words line-clamp-2 min-h-[1.5rem] sm:min-h-[2rem] px-0.5 sm:px-1">{player.name}</div>
+          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0">
+            <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
             {player.team && (
               <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-600 leading-tight break-words line-clamp-1 px-0.5 sm:px-1">{player.team}</div>
             )}
@@ -388,7 +388,7 @@ function AllstarVotingContent() {
         </div>
 
         {/* Floorball Field */}
-        <div className={`relative w-full max-w-4xl mx-auto aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ${league === 'damen' ? 'bg-red-200' : 'bg-blue-300'}`}>
+        <div className={`relative w-full max-w-3xl mx-auto aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ${league === 'damen' ? 'bg-red-200' : 'bg-blue-300'}`}>
           {/* Field Background Image */}
           <div className="absolute inset-0">
             <img
@@ -596,9 +596,9 @@ function AllstarVotingContent() {
                                       </div>
                                     )}
                                     <div className="p-2 text-center space-y-1">
-                                      <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                                      <div className="font-heading text-xs font-bold text-gray-900 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
                                       {p.team && (
-                                        <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                                        <div className="text-[10px] text-gray-600 break-words" style={{ wordBreak: 'break-word' }}>{p.team}</div>
                                       )}
                                       {p.jerseyNumber && (
                                         <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
@@ -683,9 +683,9 @@ function AllstarVotingContent() {
                                 </div>
                               )}
                               <div className="p-2 text-center space-y-1">
-                                <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                                <div className="font-heading text-xs font-bold text-gray-900 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
                                 {p.team && (
-                                  <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                                  <div className="text-[10px] text-gray-600 break-words" style={{ wordBreak: 'break-word' }}>{p.team}</div>
                                 )}
                                 {p.jerseyNumber && (
                                   <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>

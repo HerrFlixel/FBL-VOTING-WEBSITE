@@ -64,14 +64,25 @@ function CoachVotingContent() {
       }
 
       try {
-        const res = await fetch(`/api/coach-votes?league=${league}`)
-        if (!res.ok) return
+        // Lade Vote für diese Liga - wichtig: warte auf Antwort
+        const res = await fetch(`/api/coach-votes?league=${league}`, {
+          method: 'GET',
+          cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
+        })
+        if (!res.ok) {
+          console.warn('Fehler beim Laden des Votes:', res.status)
+          setSelectedCoach(null)
+          return
+        }
         const data = await res.json()
         if (data && data.coach) {
           setSelectedCoach(data.coach)
+        } else {
+          setSelectedCoach(null) // Stelle sicher, dass State gesetzt wird
         }
       } catch (e) {
         console.error('Fehler beim Laden des Votes', e)
+        setSelectedCoach(null) // Stelle sicher, dass State gesetzt wird
       }
     }
     loadVote()
@@ -266,7 +277,7 @@ function CoachVotingContent() {
 
       {/* Coach Selection Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-2 sm:p-4 bg-black/50">
           <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <h2 className="text-base sm:text-xl font-heading text-gray-900">Trainer auswählen</h2>

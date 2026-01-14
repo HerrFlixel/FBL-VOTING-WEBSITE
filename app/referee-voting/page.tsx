@@ -63,13 +63,20 @@ function RefereeVotingContent() {
 
       try {
         const res = await fetch(`/api/referee-votes?league=${league}`)
-        if (!res.ok) return
+        if (!res.ok) {
+          console.warn('Fehler beim Laden des Votes:', res.status)
+          setSelectedPair(null)
+          return
+        }
         const data = await res.json()
         if (data && data.refereePair) {
           setSelectedPair(data.refereePair)
+        } else {
+          setSelectedPair(null) // Stelle sicher, dass State gesetzt wird
         }
       } catch (e) {
         console.error('Fehler beim Laden des Votes', e)
+        setSelectedPair(null) // Stelle sicher, dass State gesetzt wird
       }
     }
     loadVote()

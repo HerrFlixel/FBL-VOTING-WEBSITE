@@ -73,13 +73,20 @@ function FairPlayVotingContent() {
 
       try {
         const res = await fetch(`/api/fairplay-votes?league=${league}`)
-        if (!res.ok) return
+        if (!res.ok) {
+          console.warn('Fehler beim Laden des Votes:', res.status)
+          setSelectedPlayer(null)
+          return
+        }
         const data = await res.json()
         if (data && data.player) {
           setSelectedPlayer(data.player)
+        } else {
+          setSelectedPlayer(null) // Stelle sicher, dass State gesetzt wird
         }
       } catch (e) {
         console.error('Fehler beim Laden des Votes', e)
+        setSelectedPlayer(null) // Stelle sicher, dass State gesetzt wird
       }
     }
     loadVote()

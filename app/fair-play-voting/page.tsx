@@ -72,7 +72,11 @@ function FairPlayVotingContent() {
       }
 
       try {
-        const res = await fetch(`/api/fairplay-votes?league=${league}`)
+        // Lade Vote für diese Liga - wichtig: warte auf Antwort
+        const res = await fetch(`/api/fairplay-votes?league=${league}`, {
+          method: 'GET',
+          cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
+        })
         if (!res.ok) {
           console.warn('Fehler beim Laden des Votes:', res.status)
           setSelectedPlayer(null)

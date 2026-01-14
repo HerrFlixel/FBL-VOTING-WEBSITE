@@ -117,12 +117,17 @@ function AllstarVotingContent() {
             if (vote && vote.line && vote.position && vote.player) {
               const line = vote.line as 1 | 2 | 3
               const pos = vote.position as PositionKey
-              if (next[line] && next[line][pos] !== undefined) {
+              // Prüfe ob die Position gültig ist und ob next[line] existiert
+              if (next[line] && pos && ['gk', 'ld', 'rd', 'c', 'lw', 'rw'].includes(pos)) {
                 next[line][pos] = vote.player
               }
             }
           }
         }
+        
+        // Debug: Logge geladene Votes
+        console.log('Geladene Votes:', data)
+        console.log('Initialisierte Selections:', next)
         
         // Setze Selections - wichtig: setze immer, auch wenn leer
         setSelections(next)

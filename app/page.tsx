@@ -42,7 +42,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center p-4 sm:p-8 md:justify-center">
-          <h1 className="text-3xl md:text-5xl font-heading mb-3 sm:mb-4 text-white drop-shadow-lg text-center uppercase px-2">
+          <h1 className="text-3xl md:text-5xl font-heading mb-3 sm:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full">
             1. Damen Bundesliga
           </h1>
           <button className="mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-base sm:text-lg shadow-lg uppercase">
@@ -62,7 +62,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center p-4 sm:p-8 md:justify-center">
-          <h1 className="text-3xl md:text-5xl font-heading mb-3 sm:mb-4 text-white drop-shadow-lg text-center uppercase px-2">
+          <h1 className="text-3xl md:text-5xl font-heading mb-3 sm:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full">
             1. Herren Bundesliga
           </h1>
           <button className="mt-3 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-base sm:text-lg shadow-lg uppercase">

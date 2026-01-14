@@ -189,21 +189,48 @@ export default function VoterManagement() {
                 {selectedUser.allstarVotes.length > 0 && (
                   <div>
                     <h5 className="font-heading text-gray-900 mb-2">Allstar Team Votes</h5>
-                    <div className="space-y-1">
-                      {selectedUser.allstarVotes.map((vote) => (
-                        <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-900">
-                            {vote.player.name} - {vote.league} - Reihe {vote.line} - {vote.position}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteVote('allstar', vote.id)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Löschen
-                          </button>
+                    {/* Herren */}
+                    {selectedUser.allstarVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.allstarVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name} - Reihe {vote.line} - {vote.position}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('allstar', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {/* Damen */}
+                    {selectedUser.allstarVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.allstarVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name} - Reihe {vote.line} - {vote.position}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('allstar', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -211,21 +238,48 @@ export default function VoterManagement() {
                 {selectedUser.mvpVotes.length > 0 && (
                   <div>
                     <h5 className="font-heading text-gray-900 mb-2">MVP Votes</h5>
-                    <div className="space-y-1">
-                      {selectedUser.mvpVotes.map((vote) => (
-                        <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-900">
-                            {vote.player.name} - {vote.league} - Platz {vote.rank}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteVote('mvp', vote.id)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Löschen
-                          </button>
+                    {/* Herren */}
+                    {selectedUser.mvpVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.mvpVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name} - Platz {vote.rank}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('mvp', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {/* Damen */}
+                    {selectedUser.mvpVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.mvpVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name} - Platz {vote.rank}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('mvp', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -233,21 +287,48 @@ export default function VoterManagement() {
                 {selectedUser.coachVotes.length > 0 && (
                   <div>
                     <h5 className="font-heading text-gray-900 mb-2">Trainer Votes</h5>
-                    <div className="space-y-1">
-                      {selectedUser.coachVotes.map((vote) => (
-                        <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-900">
-                            {vote.coach.name} - {vote.league}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteVote('coach', vote.id)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Löschen
-                          </button>
+                    {/* Herren */}
+                    {selectedUser.coachVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.coachVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.coach.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('coach', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {/* Damen */}
+                    {selectedUser.coachVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.coachVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.coach.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('coach', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -255,21 +336,48 @@ export default function VoterManagement() {
                 {selectedUser.fairPlayVotes.length > 0 && (
                   <div>
                     <h5 className="font-heading text-gray-900 mb-2">Fair Play Votes</h5>
-                    <div className="space-y-1">
-                      {selectedUser.fairPlayVotes.map((vote) => (
-                        <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-900">
-                            {vote.player.name} - {vote.league}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteVote('fairplay', vote.id)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Löschen
-                          </button>
+                    {/* Herren */}
+                    {selectedUser.fairPlayVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.fairPlayVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('fairplay', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {/* Damen */}
+                    {selectedUser.fairPlayVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.fairPlayVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.player.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('fairplay', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -277,21 +385,48 @@ export default function VoterManagement() {
                 {selectedUser.refereePairVotes.length > 0 && (
                   <div>
                     <h5 className="font-heading text-gray-900 mb-2">Schiedsrichter-Paar Votes</h5>
-                    <div className="space-y-1">
-                      {selectedUser.refereePairVotes.map((vote) => (
-                        <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-900">
-                            {vote.refereePair.name} - {vote.league}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteVote('referee', vote.id)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Löschen
-                          </button>
+                    {/* Herren */}
+                    {selectedUser.refereePairVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.refereePairVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.refereePair.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('referee', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {/* Damen */}
+                    {selectedUser.refereePairVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.refereePairVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.refereePair.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('referee', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

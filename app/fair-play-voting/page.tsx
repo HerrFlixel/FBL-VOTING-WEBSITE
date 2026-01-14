@@ -100,13 +100,39 @@ function FairPlayVotingContent() {
   useEffect(() => {
     const checkBothLeagues = async () => {
       try {
-        const [herrenRes, damenRes] = await Promise.all([
+        // Prüfe alle Voting-Kategorien, nicht nur Fair Play
+        const [herrenAllstar, damenAllstar, herrenMVP, damenMVP, herrenCoach, damenCoach, herrenFairPlay, damenFairPlay] = await Promise.all([
+          fetch('/api/allstar-votes?league=herren'),
+          fetch('/api/allstar-votes?league=damen'),
+          fetch('/api/mvp-votes?league=herren'),
+          fetch('/api/mvp-votes?league=damen'),
+          fetch('/api/coach-votes?league=herren'),
+          fetch('/api/coach-votes?league=damen'),
           fetch('/api/fairplay-votes?league=herren'),
           fetch('/api/fairplay-votes?league=damen')
         ])
-        const herrenData = herrenRes.ok ? await herrenRes.json() : null
-        const damenData = damenRes.ok ? await damenRes.json() : null
-        setHasVotedBothLeagues(!!herrenData && !!damenData)
+        
+        const herrenAllstarData = herrenAllstar.ok ? await herrenAllstar.json() : []
+        const damenAllstarData = damenAllstar.ok ? await damenAllstar.json() : []
+        const herrenMVPData = herrenMVP.ok ? await herrenMVP.json() : []
+        const damenMVPData = damenMVP.ok ? await damenMVP.json() : []
+        const herrenCoachData = herrenCoach.ok ? await herrenCoach.json() : null
+        const damenCoachData = damenCoach.ok ? await damenCoach.json() : null
+        const herrenFairPlayData = herrenFairPlay.ok ? await herrenFairPlay.json() : null
+        const damenFairPlayData = damenFairPlay.ok ? await damenFairPlay.json() : null
+        
+        // Prüfe ob für beide Ligen in mindestens einer Kategorie gevotet wurde
+        const hasVotedHerren = (Array.isArray(herrenAllstarData) && herrenAllstarData.length > 0) ||
+                               (Array.isArray(herrenMVPData) && herrenMVPData.length > 0) ||
+                               (herrenCoachData && herrenCoachData.coach) ||
+                               (herrenFairPlayData && herrenFairPlayData.player)
+        
+        const hasVotedDamen = (Array.isArray(damenAllstarData) && damenAllstarData.length > 0) ||
+                             (Array.isArray(damenMVPData) && damenMVPData.length > 0) ||
+                             (damenCoachData && damenCoachData.coach) ||
+                             (damenFairPlayData && damenFairPlayData.player)
+        
+        setHasVotedBothLeagues(hasVotedHerren && hasVotedDamen)
       } catch (e) {
         console.error('Fehler beim Prüfen beider Ligen', e)
       }

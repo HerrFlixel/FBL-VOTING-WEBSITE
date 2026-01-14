@@ -30,17 +30,41 @@ export async function POST(
       await mkdir(uploadsDir, { recursive: true })
     }
     
-    // Erstelle Symlink im public-Ordner für Next.js (falls nicht existiert)
+    // Erstelle auch lokalen public-Ordner für Next.js (für Development)
     const publicUploadsDir = join(process.cwd(), 'public', 'uploads', 'players')
     if (!existsSync(publicUploadsDir)) {
+      await mkdir(join(process.cwd(), 'public', 'uploads'), { recursive: true })
+      await mkdir(publicUploadsDir, { recursive: true })
+    }
+    
+    // In Production: Versuche Symlink zu erstellen (falls persistent disk verwendet wird)
+    // In Development: Kopiere die Datei auch in den lokalen public-Ordner
+    const isProduction = process.env.NODE_ENV === 'production'
+    const isPersistentDisk = uploadsDir !== publicUploadsDir
+    
+    if (isProduction && isPersistentDisk) {
+      // In Production mit persistent disk: Erstelle Symlink
       try {
-        await mkdir(join(process.cwd(), 'public', 'uploads'), { recursive: true })
-        // Versuche Symlink zu erstellen (nur wenn nicht existiert)
+        // Entferne existierenden Ordner/Symlink falls vorhanden
+        const fs = require('fs')
+        if (existsSync(publicUploadsDir)) {
+          try {
+            const stats = fs.lstatSync(publicUploadsDir)
+            if (stats.isSymbolicLink()) {
+              fs.unlinkSync(publicUploadsDir)
+            } else if (stats.isDirectory()) {
+              // Wenn es ein Verzeichnis ist, lösche es nicht - könnte wichtige Dateien enthalten
+            }
+          } catch (e) {
+            // Ignoriere Fehler
+          }
+        }
+        // Erstelle neuen Symlink
         if (!existsSync(publicUploadsDir)) {
           await symlink(uploadsDir, publicUploadsDir, 'dir')
         }
       } catch (symlinkError: any) {
-        // Symlink existiert bereits oder Fehler (z.B. Windows) - ignoriere
+        // Symlink existiert bereits oder Fehler - ignoriere
         if (symlinkError.code !== 'EEXIST') {
           console.warn('Konnte Symlink nicht erstellen:', symlinkError.message)
         }
@@ -64,8 +88,14 @@ export async function POST(
     const filename = `player-${id}-${Date.now()}.jpg`
     const filepath = join(uploadsDir, filename)
 
-    // Speichere komprimierte Datei
+    // Speichere komprimierte Datei auf persistent disk
     await writeFile(filepath, compressedBuffer)
+    
+    // In Development: Kopiere auch in lokalen public-Ordner (falls unterschiedlich)
+    if (!isProduction || !isPersistentDisk) {
+      const localFilePath = join(publicUploadsDir, filename)
+      await writeFile(localFilePath, compressedBuffer)
+    }
 
     // Aktualisiere Spieler mit Bild-URL
     const imageUrl = `${getUploadsUrlPath()}/${filename}`

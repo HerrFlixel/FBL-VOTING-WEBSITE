@@ -118,16 +118,13 @@ function AllstarVotingContent() {
               const line = vote.line as 1 | 2 | 3
               const pos = vote.position as PositionKey
               // Prüfe ob die Position gültig ist und ob next[line] existiert
-              if (next[line] && pos && ['gk', 'ld', 'rd', 'c', 'lw', 'rw'].includes(pos)) {
+              // Wichtig: explizite Prüfung für alle Positionen inklusive 'gk'
+              if (next[line] && pos && ['gk', 'ld', 'rd', 'c', 'lw', 'rw'].includes(pos) && next[line][pos] !== undefined) {
                 next[line][pos] = vote.player
               }
             }
           }
         }
-        
-        // Debug: Logge geladene Votes
-        console.log('Geladene Votes:', data)
-        console.log('Initialisierte Selections:', next)
         
         // Setze Selections - wichtig: setze immer, auch wenn leer
         setSelections(next)

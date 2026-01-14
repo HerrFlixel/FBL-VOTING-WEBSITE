@@ -93,23 +93,38 @@ function AllstarVotingContent() {
       }
 
       try {
-        const res = await fetch(`/api/allstar-votes?league=${league}`)
-        if (!res.ok) return
+        // Lade alle Votes für diese Liga - wichtig: warte auf Antwort
+        const res = await fetch(`/api/allstar-votes?league=${league}`, {
+          method: 'GET',
+          cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
+        })
+        if (!res.ok) {
+          console.warn('Fehler beim Laden der Votes:', res.status)
+          return
+        }
         const data = await res.json()
+        
         // Initialisiere alle Reihen korrekt, um sicherzustellen, dass alle Votes geladen werden
         const next: Record<1 | 2 | 3, Selection> = {
           1: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
           2: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null },
           3: { gk: null, ld: null, rd: null, c: null, lw: null, rw: null }
         }
-        // Lade alle Votes für alle Reihen
-        for (const vote of data) {
-          const line = vote.line as 1 | 2 | 3
-          const pos = vote.position as PositionKey
-          if (next[line] && next[line][pos] !== undefined && vote.player) {
-            next[line][pos] = vote.player
+        
+        // Lade alle Votes für alle Reihen - wichtig: prüfe ob vote.player existiert
+        if (Array.isArray(data)) {
+          for (const vote of data) {
+            if (vote && vote.line && vote.position && vote.player) {
+              const line = vote.line as 1 | 2 | 3
+              const pos = vote.position as PositionKey
+              if (next[line] && next[line][pos] !== undefined) {
+                next[line][pos] = vote.player
+              }
+            }
           }
         }
+        
+        // Setze Selections - wichtig: setze immer, auch wenn leer
         setSelections(next)
       } catch (e) {
         console.error('Fehler beim Laden der Votes', e)

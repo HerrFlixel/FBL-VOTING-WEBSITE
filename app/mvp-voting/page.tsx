@@ -76,16 +76,32 @@ function MVPVotingContent() {
       }
 
       try {
-        const res = await fetch(`/api/mvp-votes?league=${league}`)
-        if (!res.ok) return
+        // Lade alle Votes für diese Liga - wichtig: warte auf Antwort
+        const res = await fetch(`/api/mvp-votes?league=${league}`, {
+          method: 'GET',
+          cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
+        })
+        if (!res.ok) {
+          console.warn('Fehler beim Laden der Votes:', res.status)
+          return
+        }
         const data = await res.json()
-        const loaded = data.map((vote: any) => ({
-          rank: vote.rank,
-          player: vote.player
-        }))
-        setSelectedPlayers(loaded)
+        
+        // Lade alle Votes - wichtig: prüfe ob vote.player existiert
+        if (Array.isArray(data)) {
+          const loaded = data
+            .filter((vote: any) => vote && vote.rank && vote.player)
+            .map((vote: any) => ({
+              rank: vote.rank,
+              player: vote.player
+            }))
+          setSelectedPlayers(loaded)
+        } else {
+          setSelectedPlayers([])
+        }
       } catch (e) {
         console.error('Fehler beim Laden der Votes', e)
+        setSelectedPlayers([]) // Stelle sicher, dass State gesetzt wird
       }
     }
     loadVotes()

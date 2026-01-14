@@ -37,40 +37,6 @@ export async function POST(
       await mkdir(publicUploadsDir, { recursive: true })
     }
     
-    // In Production: Versuche Symlink zu erstellen (falls persistent disk verwendet wird)
-    // In Development: Kopiere die Datei auch in den lokalen public-Ordner
-    const isProduction = process.env.NODE_ENV === 'production'
-    const isPersistentDisk = uploadsDir !== publicUploadsDir
-    
-    if (isProduction && isPersistentDisk) {
-      // In Production mit persistent disk: Erstelle Symlink
-      try {
-        // Entferne existierenden Ordner/Symlink falls vorhanden
-        const fs = require('fs')
-        if (existsSync(publicUploadsDir)) {
-          try {
-            const stats = fs.lstatSync(publicUploadsDir)
-            if (stats.isSymbolicLink()) {
-              fs.unlinkSync(publicUploadsDir)
-            } else if (stats.isDirectory()) {
-              // Wenn es ein Verzeichnis ist, lösche es nicht - könnte wichtige Dateien enthalten
-            }
-          } catch (e) {
-            // Ignoriere Fehler
-          }
-        }
-        // Erstelle neuen Symlink
-        if (!existsSync(publicUploadsDir)) {
-          await symlink(uploadsDir, publicUploadsDir, 'dir')
-        }
-      } catch (symlinkError: any) {
-        // Symlink existiert bereits oder Fehler - ignoriere
-        if (symlinkError.code !== 'EEXIST') {
-          console.warn('Konnte Symlink nicht erstellen:', symlinkError.message)
-        }
-      }
-    }
-    
     // Komprimiere und optimiere das Bild
     // Maximale Größe: 800x800px, JPEG Qualität: 60 (starke Kompression)
     const compressedBuffer = await sharp(buffer)
@@ -86,13 +52,44 @@ export async function POST(
       .toBuffer()
     
     const filename = `player-${id}-${Date.now()}.jpg`
+    
+    // Prüfe ob wir auf persistent disk sind (Production auf Render)
+    const isProduction = process.env.NODE_ENV === 'production'
+    const isPersistentDisk = uploadsDir !== publicUploadsDir
+    
+    // Speichere immer im persistent disk Verzeichnis (falls vorhanden)
     const filepath = join(uploadsDir, filename)
-
-    // Speichere komprimierte Datei auf persistent disk
     await writeFile(filepath, compressedBuffer)
     
-    // In Development: Kopiere auch in lokalen public-Ordner (falls unterschiedlich)
-    if (!isProduction || !isPersistentDisk) {
+    // In Development oder wenn kein persistent disk: Speichere auch lokal
+    // In Production mit persistent disk: Erstelle Symlink
+    if (isProduction && isPersistentDisk) {
+      // In Production mit persistent disk: Erstelle/aktualisiere Symlink
+      try {
+        const fs = require('fs')
+        // Prüfe ob Symlink existiert
+        if (existsSync(publicUploadsDir)) {
+          try {
+            const stats = fs.lstatSync(publicUploadsDir)
+            if (!stats.isSymbolicLink()) {
+              // Wenn es ein Verzeichnis ist (nicht Symlink), erstelle Symlink nicht
+              // Die Datei ist bereits über den persistent disk Pfad erreichbar
+            }
+          } catch (e) {
+            // Ignoriere Fehler
+          }
+        } else {
+          // Erstelle Symlink wenn nicht vorhanden
+          await symlink(uploadsDir, publicUploadsDir, 'dir')
+        }
+      } catch (symlinkError: any) {
+        // Symlink existiert bereits oder Fehler - ignoriere
+        if (symlinkError.code !== 'EEXIST') {
+          console.warn('Konnte Symlink nicht erstellen:', symlinkError.message)
+        }
+      }
+    } else {
+      // In Development: Speichere auch im lokalen public-Ordner
       const localFilePath = join(publicUploadsDir, filename)
       await writeFile(localFilePath, compressedBuffer)
     }

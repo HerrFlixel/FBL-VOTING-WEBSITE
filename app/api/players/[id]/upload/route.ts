@@ -4,6 +4,7 @@ import { writeFile, mkdir, symlink } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { getUploadsPath, getUploadsUrlPath } from '../../../../../lib/paths'
+import sharp from 'sharp'
 
 export async function POST(
   req: Request,
@@ -46,11 +47,25 @@ export async function POST(
       }
     }
     
-    const filename = `player-${id}-${Date.now()}.${file.name.split('.').pop()}`
+    // Komprimiere und optimiere das Bild
+    // Maximale Größe: 800x800px, JPEG Qualität: 60 (starke Kompression)
+    const compressedBuffer = await sharp(buffer)
+      .resize(800, 800, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .jpeg({
+        quality: 60,
+        progressive: true,
+        mozjpeg: true
+      })
+      .toBuffer()
+    
+    const filename = `player-${id}-${Date.now()}.jpg`
     const filepath = join(uploadsDir, filename)
 
-    // Speichere Datei
-    await writeFile(filepath, buffer)
+    // Speichere komprimierte Datei
+    await writeFile(filepath, compressedBuffer)
 
     // Aktualisiere Spieler mit Bild-URL
     const imageUrl = `${getUploadsUrlPath()}/${filename}`

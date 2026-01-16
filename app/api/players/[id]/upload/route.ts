@@ -57,41 +57,23 @@ export async function POST(
     const isProduction = process.env.NODE_ENV === 'production'
     const isPersistentDisk = uploadsDir !== publicUploadsDir
     
-    // Speichere immer im persistent disk Verzeichnis (falls vorhanden)
-    const filepath = join(uploadsDir, filename)
-    await writeFile(filepath, compressedBuffer)
+    // WICHTIG: Speichere IMMER im lokalen public-Ordner, damit Next.js die Bilder servieren kann
+    // Next.js kann nur Dateien aus dem public-Ordner servieren
+    const localFilePath = join(publicUploadsDir, filename)
+    await writeFile(localFilePath, compressedBuffer)
+    console.log(`[Upload] Bild gespeichert in: ${localFilePath}`)
     
-    // In Development oder wenn kein persistent disk: Speichere auch lokal
-    // In Production mit persistent disk: Erstelle Symlink
-    if (isProduction && isPersistentDisk) {
-      // In Production mit persistent disk: Erstelle/aktualisiere Symlink
+    // Zusätzlich: Speichere auch im persistent disk Verzeichnis (falls vorhanden und unterschiedlich)
+    // Dies stellt sicher, dass die Bilder auch nach Neustarts erhalten bleiben
+    if (isPersistentDisk) {
+      const persistentFilePath = join(uploadsDir, filename)
       try {
-        const fs = require('fs')
-        // Prüfe ob Symlink existiert
-        if (existsSync(publicUploadsDir)) {
-          try {
-            const stats = fs.lstatSync(publicUploadsDir)
-            if (!stats.isSymbolicLink()) {
-              // Wenn es ein Verzeichnis ist (nicht Symlink), erstelle Symlink nicht
-              // Die Datei ist bereits über den persistent disk Pfad erreichbar
-            }
-          } catch (e) {
-            // Ignoriere Fehler
-          }
-        } else {
-          // Erstelle Symlink wenn nicht vorhanden
-          await symlink(uploadsDir, publicUploadsDir, 'dir')
-        }
-      } catch (symlinkError: any) {
-        // Symlink existiert bereits oder Fehler - ignoriere
-        if (symlinkError.code !== 'EEXIST') {
-          console.warn('Konnte Symlink nicht erstellen:', symlinkError.message)
-        }
+        await writeFile(persistentFilePath, compressedBuffer)
+        console.log(`[Upload] Bild auch im persistent disk gespeichert: ${persistentFilePath}`)
+      } catch (persistentError) {
+        console.warn('[Upload] Konnte Bild nicht im persistent disk speichern:', persistentError)
+        // Nicht kritisch, da wir es bereits lokal haben
       }
-    } else {
-      // In Development: Speichere auch im lokalen public-Ordner
-      const localFilePath = join(publicUploadsDir, filename)
-      await writeFile(localFilePath, compressedBuffer)
     }
 
     // Aktualisiere Spieler mit Bild-URL

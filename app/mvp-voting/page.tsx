@@ -297,16 +297,16 @@ function MVPVotingContent() {
                         </svg>
                       </div>
                     )}
-                    <div className="p-2 text-center space-y-1">
-                      <div className="inline-block px-2 py-1 rounded-full bg-primary-600 text-white font-heading text-xs mb-1">
+                    <div className="p-1.5 sm:p-2 text-center space-y-0.5 sm:space-y-1">
+                      <div className="inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-primary-600 text-white font-heading text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                         Platz {rank}
                       </div>
-                      <div className="font-heading text-xs font-bold text-gray-900 truncate">{sel.player.name}</div>
+                      <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 truncate">{sel.player.name}</div>
                       {sel.player.team && (
-                        <div className="text-[10px] text-gray-600 truncate">{sel.player.team}</div>
+                        <div className="text-[9px] sm:text-[10px] text-gray-600 truncate">{sel.player.team}</div>
                       )}
                       {sel.player.jerseyNumber && (
-                        <div className="text-[10px] text-gray-500">#{sel.player.jerseyNumber}</div>
+                        <div className="text-[9px] sm:text-[10px] text-gray-500">#{sel.player.jerseyNumber}</div>
                       )}
                     </div>
                     <button
@@ -320,15 +320,15 @@ function MVPVotingContent() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[200px]">
-                    <svg className="w-10 h-10 text-gray-400 group-hover:text-primary-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[140px] sm:min-h-[200px]">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-primary-500 mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                     <div className="text-center px-2">
-                      <div className="inline-block px-2 py-1 rounded-full bg-gray-200 text-gray-700 font-heading text-xs mb-2">
+                      <div className="inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-gray-200 text-gray-700 font-heading text-[10px] sm:text-xs mb-1 sm:mb-2">
                         Platz {rank}
                       </div>
-                      <div className="text-xs text-gray-500">Klicken zum Auswählen</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">Klicken zum Auswählen</div>
                     </div>
                   </div>
                 )}

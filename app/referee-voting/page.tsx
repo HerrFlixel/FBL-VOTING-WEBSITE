@@ -11,10 +11,7 @@ type RefereePair = {
 }
 
 function RefereeVotingContent() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const leagueParam = searchParams.get('league')
-  const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
   const [allPairs, setAllPairs] = useState<RefereePair[]>([])
   const [loadingPairs, setLoadingPairs] = useState(false)
@@ -63,8 +60,8 @@ function RefereeVotingContent() {
       }
 
       try {
-        // Lade Vote für diese Liga - wichtig: warte auf Antwort
-        const res = await fetchWithVoterId(`/api/referee-votes?league=${league}`, {
+        // Lade Vote - wichtig: warte auf Antwort
+        const res = await fetchWithVoterId('/api/referee-votes', {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -85,8 +82,7 @@ function RefereeVotingContent() {
       }
     }
     loadVote()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [league])
+  }, [])
 
   const openSelect = () => {
     setSelectedPairId(selectedPair?.id ?? null)
@@ -107,8 +103,7 @@ function RefereeVotingContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          refereePairId: selectedPairId,
-          league
+          refereePairId: selectedPairId
         })
       })
       if (!res.ok) {
@@ -130,10 +125,7 @@ function RefereeVotingContent() {
     try {
       const res = await fetchWithVoterId('/api/referee-votes', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          league
-        })
+        headers: { 'Content-Type': 'application/json' }
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Unbekannter Fehler' }))
@@ -156,29 +148,17 @@ function RefereeVotingContent() {
     )
   }, [allPairs, searchTerm])
 
-  const leagueName =
-    league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
-  
-  const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
-
   return (
     <div className="min-h-screen relative">
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
-        <img
-          src={backgroundImage}
-          alt={`${leagueName} Hintergrund`}
-          className="w-full h-full object-cover blur-sm"
-        />
+        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600"></div>
         <div className="absolute inset-0 bg-black/30"></div>
       </div>
       
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-3 shadow-lg">
-            {leagueName}
-          </div>
           <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg">
             Schiedsrichter-Paar Voting
           </h1>
@@ -245,9 +225,15 @@ function RefereeVotingContent() {
             onClick={async () => {
               if (saving) return
               await new Promise(resolve => setTimeout(resolve, 100))
-              // Zurück zu Cross League oder Fair Play, je nachdem ob man cross league gemacht hat
-              // Für jetzt einfach zu Fair Play zurück
-              router.push(`/fair-play-voting?league=${league}`)
+              // Zurück zur letzten Seite - prüfe ob man von Cross League kommt
+              const fromCrossLeague = sessionStorage.getItem('fromCrossLeague') === 'true'
+              if (fromCrossLeague) {
+                router.push('/cross-league-voting')
+              } else {
+                // Hole die Liga aus sessionStorage oder verwende 'herren' als Fallback
+                const lastLeague = sessionStorage.getItem('lastLeague') || 'herren'
+                router.push(`/fair-play-voting?league=${lastLeague}`)
+              }
             }}
           >
             ← Zurück
@@ -258,7 +244,7 @@ function RefereeVotingContent() {
               if (!canProceed || saving) return
               // Warte bis alle Speicher-Operationen abgeschlossen sind
               await new Promise(resolve => setTimeout(resolve, 100))
-              router.push(`/special-award?league=${league}`)
+              router.push('/special-award')
             }}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
               canProceed && !saving

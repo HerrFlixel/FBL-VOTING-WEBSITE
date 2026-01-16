@@ -3,16 +3,13 @@ import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const league = searchParams.get('league') || 'herren'
   const { voterId } = getVoterInfo()
 
   try {
     const vote = await prisma.refereePairVote.findFirst({
       where: {
         voterId,
-        userId: null,
-        league
+        userId: null
       },
       include: {
         refereePair: true
@@ -28,13 +25,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { refereePairId, league } = body as {
+    const { refereePairId } = body as {
       refereePairId: string
-      league: string
     }
 
-    if (!refereePairId || !league) {
-      return NextResponse.json({ error: 'refereePairId, league sind erforderlich' }, { status: 400 })
+    if (!refereePairId) {
+      return NextResponse.json({ error: 'refereePairId ist erforderlich' }, { status: 400 })
     }
 
     const { voterId, ip } = getVoterInfo()
@@ -43,8 +39,7 @@ export async function POST(req: Request) {
     const existing = await prisma.refereePairVote.findFirst({
       where: {
         voterId,
-        userId: null,
-        league
+        userId: null
       }
     })
 
@@ -65,7 +60,7 @@ export async function POST(req: Request) {
           refereePairId,
           voterId,
           voterIp: ip,
-          league,
+          league: null,
           points: 1
         },
         include: { refereePair: true }
@@ -84,22 +79,12 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const body = await req.json()
-    const { league } = body as {
-      league: string
-    }
-
-    if (!league) {
-      return NextResponse.json({ error: 'league ist erforderlich' }, { status: 400 })
-    }
-
     const { voterId } = getVoterInfo()
 
     const existing = await prisma.refereePairVote.findFirst({
       where: {
         voterId,
-        userId: null,
-        league
+        userId: null
       }
     })
 

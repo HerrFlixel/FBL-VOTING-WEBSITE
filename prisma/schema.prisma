@@ -167,7 +167,7 @@ model RefereePairVote {
   refereePairId String
   voterId       String
   voterIp       String
-  league        String
+  league        String?
   points        Int      @default(1)
   createdAt     DateTime @default(now())
 
@@ -175,7 +175,7 @@ model RefereePairVote {
   user        User?       @relation(fields: [userId], references: [id])
   refereePair RefereePair @relation(fields: [refereePairId], references: [id])
 
-  @@unique([voterId, league, userId])
+  @@unique([voterId, userId])
 }
 
 model SpecialAwardVote {

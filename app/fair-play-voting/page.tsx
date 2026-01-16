@@ -354,7 +354,7 @@ function FairPlayVotingContent() {
               await new Promise(resolve => setTimeout(resolve, 100))
               if (hasVotedBothLeagues) {
                 // Wenn bereits für beide Ligen gevotet wurde, direkt zum Schiedsrichter-Paar-Voting
-                router.push(`/referee-voting?league=${league}`)
+                router.push('/referee-voting')
               } else {
                 // Sonst zur Cross-League-Abfrage
                 router.push(`/cross-league-voting?league=${league}`)

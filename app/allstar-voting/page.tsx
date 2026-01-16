@@ -39,12 +39,14 @@ function AllstarVotingContent() {
   const fromCrossLeague = searchParams.get('fromCrossLeague') === 'true'
   const router = useRouter()
   
-  // Setze Flag in sessionStorage wenn von Cross-League kommend
+  // Setze Flag in sessionStorage wenn von Cross-League kommend und speichere Liga
   useEffect(() => {
     if (fromCrossLeague) {
       sessionStorage.setItem('fromCrossLeague', 'true')
     }
-  }, [fromCrossLeague])
+    // Speichere die aktuelle Liga für Navigation zurück
+    sessionStorage.setItem('lastLeague', league)
+  }, [fromCrossLeague, league])
 
   const [players, setPlayers] = useState<Player[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(false)

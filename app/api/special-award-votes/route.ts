@@ -3,16 +3,13 @@ import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const league = searchParams.get('league') || undefined
   const { voterId } = getVoterInfo()
 
   try {
     const vote = await prisma.specialAwardVote.findFirst({
       where: {
         voterId,
-        userId: null,
-        ...(league ? { league } : {})
+        userId: null
       }
     })
     return NextResponse.json(vote)
@@ -25,9 +22,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { name, league } = body as {
+    const { name } = body as {
       name: string
-      league?: string
     }
 
     if (!name || !name.trim()) {
@@ -51,7 +47,7 @@ export async function POST(req: Request) {
         where: { id: existing.id },
         data: {
           name: name.trim(),
-          league
+          league: null
         }
       })
     } else {
@@ -61,7 +57,7 @@ export async function POST(req: Request) {
           name: name.trim(),
           voterId,
           voterIp: ip,
-          league
+          league: null
         }
       })
     }

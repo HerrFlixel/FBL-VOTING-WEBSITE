@@ -20,7 +20,7 @@ function CrossLeagueVotingContent() {
 
   const handleNo = () => {
     // Navigiere direkt zum Schiedsrichter-Paar-Voting
-    router.push(`/referee-voting?league=${currentLeague}`)
+    router.push('/referee-voting')
   }
 
   return (

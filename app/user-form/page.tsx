@@ -105,7 +105,7 @@ function UserFormContent() {
           <div className="mb-3 sm:mb-4">
             <button
               className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
-              onClick={() => router.push(`/special-award?league=${league}`)}
+              onClick={() => router.push('/special-award')}
             >
               ← Zurück
             </button>

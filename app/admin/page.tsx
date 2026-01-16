@@ -22,7 +22,7 @@ type Tab =
   | 'results-mvp-herren' | 'results-mvp-damen'
   | 'results-coach-herren' | 'results-coach-damen'
   | 'results-fairplay-herren' | 'results-fairplay-damen'
-  | 'results-referee-herren' | 'results-referee-damen'
+  | 'results-referee'
   | 'results-special-award'
   | 'voters'
 
@@ -52,8 +52,7 @@ function AdminContent() {
     { id: 'results-coach-damen' as Tab, label: 'Trainer Damen' },
     { id: 'results-fairplay-herren' as Tab, label: 'Fair Play Herren' },
     { id: 'results-fairplay-damen' as Tab, label: 'Fair Play Damen' },
-    { id: 'results-referee-herren' as Tab, label: 'Schiedsrichter Herren' },
-    { id: 'results-referee-damen' as Tab, label: 'Schiedsrichter Damen' },
+    { id: 'results-referee' as Tab, label: 'Schiedsrichter' },
     { id: 'results-special-award' as Tab, label: 'Sonderpreis' },
     { id: 'voters' as Tab, label: 'Voter-Verwaltung' }
   ]
@@ -103,8 +102,7 @@ function AdminContent() {
           {activeTab === 'results-coach-damen' && <CoachResults league="damen" />}
           {activeTab === 'results-fairplay-herren' && <FairPlayResults league="herren" />}
           {activeTab === 'results-fairplay-damen' && <FairPlayResults league="damen" />}
-          {activeTab === 'results-referee-herren' && <RefereeResults league="herren" />}
-          {activeTab === 'results-referee-damen' && <RefereeResults league="damen" />}
+          {activeTab === 'results-referee' {activeTab === 'results-referee-herren' && <RefereeResults league="herren" />}{activeTab === 'results-referee-herren' && <RefereeResults league="herren" />} <RefereeResults />}
           {activeTab === 'results-special-award' && <SpecialAwardResults />}
           {activeTab === 'voters' && <VoterManagement />}
         </div>

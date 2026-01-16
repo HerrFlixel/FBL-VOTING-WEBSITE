@@ -102,7 +102,7 @@ function AdminContent() {
           {activeTab === 'results-coach-damen' && <CoachResults league="damen" />}
           {activeTab === 'results-fairplay-herren' && <FairPlayResults league="herren" />}
           {activeTab === 'results-fairplay-damen' && <FairPlayResults league="damen" />}
-          {activeTab === 'results-referee' {activeTab === 'results-referee-herren' && <RefereeResults league="herren" />}{activeTab === 'results-referee-herren' && <RefereeResults league="herren" />} <RefereeResults />}
+          {activeTab === 'results-referee' && <RefereeResults />}
           {activeTab === 'results-special-award' && <SpecialAwardResults />}
           {activeTab === 'voters' && <VoterManagement />}
         </div>

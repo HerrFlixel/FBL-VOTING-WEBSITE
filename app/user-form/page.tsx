@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 type Team = {
   id: string
@@ -47,7 +48,7 @@ function UserFormContent() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/users/finalize', {
+      const res = await fetchWithVoterId('/api/users/finalize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

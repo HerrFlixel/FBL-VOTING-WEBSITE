@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 function SpecialAwardContent() {
   const searchParams = useSearchParams()
@@ -33,7 +34,7 @@ function SpecialAwardContent() {
 
       setLoading(true)
       try {
-        const res = await fetch(`/api/special-award-votes?league=${league}`)
+        const res = await fetchWithVoterId(`/api/special-award-votes?league=${league}`)
         if (res.ok) {
           const data = await res.json()
           if (data && data.name) {
@@ -58,7 +59,7 @@ function SpecialAwardContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/special-award-votes', {
+      const res = await fetchWithVoterId('/api/special-award-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -152,7 +153,7 @@ function SpecialAwardContent() {
                   // Speichere vor dem Weiterleiten
                   setSaving(true)
                   try {
-                    const res = await fetch('/api/special-award-votes', {
+                    const res = await fetchWithVoterId('/api/special-award-votes', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({

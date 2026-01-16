@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { fetchWithVoterId } from '../../../lib/client-voter'
+import { fetchWithVoterId } from ../../components/client-voter'
 
 type Player = {
   id: string
@@ -112,7 +112,7 @@ function FairPlayVotingContent() {
         }
         
         // Prüfe alle Voting-Kategorien für die andere Liga
-        const { fetchWithVoterId } = await import('../../../lib/client-voter')
+        const { fetchWithVoterId } = await import('../../components/client-voter')
         const [otherAllstar, otherMVP, otherCoach, otherFairPlay] = await Promise.all([
           fetchWithVoterId(`/api/allstar-votes?league=${otherLeague}`),
           fetchWithVoterId(`/api/mvp-votes?league=${otherLeague}`),

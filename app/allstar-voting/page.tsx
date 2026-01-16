@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { fetchWithVoterId } from '../../../lib/client-voter'
+import { fetchWithVoterId } from ../../components/client-voter'
 
 type Player = {
   id: string

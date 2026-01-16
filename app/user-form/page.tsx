@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { fetchWithVoterId } from '../../../lib/client-voter'
+import { fetchWithVoterId } from ../../components/client-voter'
 
 type Team = {
   id: string

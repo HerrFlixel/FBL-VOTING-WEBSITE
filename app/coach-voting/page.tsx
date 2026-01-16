@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { fetchWithVoterId } from ../../components/client-voter'
+import { fetchWithVoterId } from '../../components/client-voter'
 
 type Coach = {
   id: string

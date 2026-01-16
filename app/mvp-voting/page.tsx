@@ -271,7 +271,7 @@ function MVPVotingContent() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rank) => {
             const sel = selectedPlayers.find((p) => p.rank === rank)
             return (
@@ -283,7 +283,7 @@ function MVPVotingContent() {
                 {sel ? (
                   <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 hover:border-primary-600 transition-all">
                     {sel.player.imageUrl ? (
-                      <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                      <div className="relative w-full h-20 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200">
                         <img
                           src={sel.player.imageUrl}
                           alt={sel.player.name}
@@ -291,8 +291,8 @@ function MVPVotingContent() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-20 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <svg className="w-10 h-10 sm:w-16 sm:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                       </div>

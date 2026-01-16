@@ -98,47 +98,37 @@ function FairPlayVotingContent() {
   }, [league])
 
   useEffect(() => {
-    const checkBothLeagues = async () => {
+    const checkOtherLeague = async () => {
       try {
-        // Prüfe alle Voting-Kategorien, nicht nur Fair Play
-        const [herrenAllstar, damenAllstar, herrenMVP, damenMVP, herrenCoach, damenCoach, herrenFairPlay, damenFairPlay] = await Promise.all([
-          fetch('/api/allstar-votes?league=herren'),
-          fetch('/api/allstar-votes?league=damen'),
-          fetch('/api/mvp-votes?league=herren'),
-          fetch('/api/mvp-votes?league=damen'),
-          fetch('/api/coach-votes?league=herren'),
-          fetch('/api/coach-votes?league=damen'),
-          fetch('/api/fairplay-votes?league=herren'),
-          fetch('/api/fairplay-votes?league=damen')
+        // Prüfe ob für die andere Liga bereits gevotet wurde
+        const otherLeague = league === 'herren' ? 'damen' : 'herren'
+        
+        // Prüfe alle Voting-Kategorien für die andere Liga
+        const [otherAllstar, otherMVP, otherCoach, otherFairPlay] = await Promise.all([
+          fetch(`/api/allstar-votes?league=${otherLeague}`),
+          fetch(`/api/mvp-votes?league=${otherLeague}`),
+          fetch(`/api/coach-votes?league=${otherLeague}`),
+          fetch(`/api/fairplay-votes?league=${otherLeague}`)
         ])
         
-        const herrenAllstarData = herrenAllstar.ok ? await herrenAllstar.json() : []
-        const damenAllstarData = damenAllstar.ok ? await damenAllstar.json() : []
-        const herrenMVPData = herrenMVP.ok ? await herrenMVP.json() : []
-        const damenMVPData = damenMVP.ok ? await damenMVP.json() : []
-        const herrenCoachData = herrenCoach.ok ? await herrenCoach.json() : null
-        const damenCoachData = damenCoach.ok ? await damenCoach.json() : null
-        const herrenFairPlayData = herrenFairPlay.ok ? await herrenFairPlay.json() : null
-        const damenFairPlayData = damenFairPlay.ok ? await damenFairPlay.json() : null
+        const otherAllstarData = otherAllstar.ok ? await otherAllstar.json() : []
+        const otherMVPData = otherMVP.ok ? await otherMVP.json() : []
+        const otherCoachData = otherCoach.ok ? await otherCoach.json() : null
+        const otherFairPlayData = otherFairPlay.ok ? await otherFairPlay.json() : null
         
-        // Prüfe ob für beide Ligen in mindestens einer Kategorie gevotet wurde
-        const hasVotedHerren = (Array.isArray(herrenAllstarData) && herrenAllstarData.length > 0) ||
-                               (Array.isArray(herrenMVPData) && herrenMVPData.length > 0) ||
-                               (herrenCoachData && herrenCoachData.coach) ||
-                               (herrenFairPlayData && herrenFairPlayData.player)
+        // Prüfe ob für die andere Liga in mindestens einer Kategorie gevotet wurde
+        const hasVotedOtherLeague = (Array.isArray(otherAllstarData) && otherAllstarData.length > 0) ||
+                                    (Array.isArray(otherMVPData) && otherMVPData.length > 0) ||
+                                    (otherCoachData && otherCoachData.coach) ||
+                                    (otherFairPlayData && otherFairPlayData.player)
         
-        const hasVotedDamen = (Array.isArray(damenAllstarData) && damenAllstarData.length > 0) ||
-                             (Array.isArray(damenMVPData) && damenMVPData.length > 0) ||
-                             (damenCoachData && damenCoachData.coach) ||
-                             (damenFairPlayData && damenFairPlayData.player)
-        
-        setHasVotedBothLeagues(hasVotedHerren && hasVotedDamen)
+        setHasVotedBothLeagues(hasVotedOtherLeague)
       } catch (e) {
-        console.error('Fehler beim Prüfen beider Ligen', e)
+        console.error('Fehler beim Prüfen der anderen Liga', e)
       }
     }
-    checkBothLeagues()
-  }, [])
+    checkOtherLeague()
+  }, [league])
 
   const openSelect = () => {
     setSelectedPlayerId(selectedPlayer?.id ?? null)

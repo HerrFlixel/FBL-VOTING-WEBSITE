@@ -36,15 +36,19 @@ export async function POST(req: Request) {
     // Alle nicht-finalisierten Votes (userId = null) dieses Voters mit diesem User verknüpfen
     const whereVoter = { voterId, userId: null as string | null }
 
-    await Promise.all([
-      prisma.vote.updateMany({
-        where: whereVoter,
-        data: { userId: user.id }
-      }),
-      prisma.teamVote.updateMany({
-        where: whereVoter,
-        data: { userId: user.id }
-      }),
+    // Zähle die Votes vor dem Update für Debugging
+    const countsBefore = {
+      allstar: await prisma.allstarVote.count({ where: whereVoter }),
+      mvp: await prisma.mVPVote.count({ where: whereVoter }),
+      coach: await prisma.coachVote.count({ where: whereVoter }),
+      fairPlay: await prisma.fairPlayVote.count({ where: whereVoter }),
+      referee: await prisma.refereePairVote.count({ where: whereVoter }),
+      special: await prisma.specialAwardVote.count({ where: whereVoter })
+    }
+    
+    console.log(`Finalizing votes for voterId: ${voterId}, counts:`, countsBefore)
+
+    const results = await Promise.all([
       prisma.allstarVote.updateMany({
         where: whereVoter,
         data: { userId: user.id }
@@ -70,6 +74,11 @@ export async function POST(req: Request) {
         data: { userId: user.id }
       })
     ])
+    
+    console.log(`Finalized votes:`, results.map((r, i) => ({
+      type: ['allstar', 'mvp', 'coach', 'fairPlay', 'referee', 'special'][i],
+      count: r.count
+    })))
 
     return NextResponse.json({ success: true, userId: user.id })
   } catch (error) {

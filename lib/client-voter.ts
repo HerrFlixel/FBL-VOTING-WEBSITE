@@ -1,3 +1,5 @@
+'use client'
+
 // Client-seitige Utility-Funktionen für voterId
 
 /**

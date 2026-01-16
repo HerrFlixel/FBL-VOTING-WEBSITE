@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       data: {
         name,
         imageUrl: imageUrl || null,
-        league: null // Liga-unspezifisch
+        league: undefined // Liga-unspezifisch
       }
     })
     return NextResponse.json(pair, { status: 201 })

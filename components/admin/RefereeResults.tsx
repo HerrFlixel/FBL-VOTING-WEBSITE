@@ -2,10 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-interface RefereeResultsProps {
-  league: 'herren' | 'damen'
-}
-
 interface PairResult {
   pair: {
     id: string
@@ -15,18 +11,18 @@ interface PairResult {
   voteCount: number
 }
 
-export default function RefereeResults({ league }: RefereeResultsProps) {
+export default function RefereeResults() {
   const [results, setResults] = useState<PairResult[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchResults()
-  }, [league])
+  }, [])
 
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/referee-votes/results?league=${league}`)
+      const response = await fetch('/api/referee-votes/results')
       const data = await response.json()
       setResults(data)
     } catch (error) {
@@ -44,7 +40,7 @@ export default function RefereeResults({ league }: RefereeResultsProps) {
     <div className="bg-white rounded-lg shadow">
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-2xl font-heading text-gray-900">
-          Schiedsrichter-Paar - {league === 'herren' ? 'Herren' : 'Damen'}
+          Schiedsrichter-Paar Ergebnisse
         </h2>
       </div>
 

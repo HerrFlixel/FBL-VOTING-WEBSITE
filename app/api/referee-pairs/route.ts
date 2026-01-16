@@ -16,7 +16,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json()
-    const { name, imageUrl, league } = data
+    const { name, imageUrl } = data
     if (!name) {
       return NextResponse.json({ error: 'Name ist erforderlich' }, { status: 400 })
     }
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       data: {
         name,
         imageUrl: imageUrl || null,
-        league: league || 'herren'
+        league: null // Liga-unspezifisch
       }
     })
     return NextResponse.json(pair, { status: 201 })

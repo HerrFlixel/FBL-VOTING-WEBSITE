@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 interface RefereePair {
   id: string
   name: string
-  league: string
+  league: string | null
 }
 
 export default function RefereePairManagement() {
@@ -13,8 +13,7 @@ export default function RefereePairManagement() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
-    name: '',
-    league: 'herren' as 'herren' | 'damen'
+    name: ''
   })
 
   useEffect(() => {
@@ -45,13 +44,12 @@ export default function RefereePairManagement() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.name.trim(),
-          league: formData.league
+          name: formData.name.trim()
         })
       })
       if (response.ok) {
         fetchPairs()
-        setFormData({ name: '', league: 'herren' })
+        setFormData({ name: '' })
         setShowForm(false)
       } else {
         const err = await response.json().catch(() => ({ error: 'Unbekannter Fehler' }))
@@ -113,19 +111,6 @@ export default function RefereePairManagement() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Liga
-              </label>
-              <select
-                value={formData.league}
-                onChange={(e) => setFormData({ ...formData, league: e.target.value as 'herren' | 'damen' })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
-              >
-                <option value="herren">Herren</option>
-                <option value="damen">Damen</option>
-              </select>
-            </div>
             <button
               onClick={handleCreate}
               disabled={!formData.name.trim()}
@@ -149,9 +134,6 @@ export default function RefereePairManagement() {
                 Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Liga
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Aktionen
               </th>
             </tr>
@@ -159,7 +141,7 @@ export default function RefereePairManagement() {
           <tbody className="bg-white divide-y divide-gray-200">
             {pairs.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
+                <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">
                   Keine Schiedsrichter-Paare vorhanden
                 </td>
               </tr>
@@ -168,9 +150,6 @@ export default function RefereePairManagement() {
                 <tr key={pair.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {pair.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {pair.league === 'herren' ? 'Herren' : 'Damen'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button

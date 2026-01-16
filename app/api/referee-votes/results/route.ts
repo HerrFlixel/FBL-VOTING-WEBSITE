@@ -2,17 +2,9 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const league = searchParams.get('league')
-
-  if (!league) {
-    return NextResponse.json({ error: 'league ist erforderlich' }, { status: 400 })
-  }
-
   try {
     const votes = await prisma.refereePairVote.findMany({
       where: {
-        league,
         userId: { not: null } // Nur finalisierte Votes
       },
       include: {

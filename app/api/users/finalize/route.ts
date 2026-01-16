@@ -20,6 +20,7 @@ export async function POST(req: Request) {
     }
 
     const { ip, voterId } = getVoterInfo()
+    console.log('[Finalize] voterId:', voterId)
 
     // Neuen User-Eintrag für diese Formular-Abgabe anlegen
     const user = await prisma.user.create({
@@ -75,10 +76,21 @@ export async function POST(req: Request) {
       })
     ])
     
-    console.log(`Finalized votes:`, results.map((r, i) => ({
+    const finalizedCounts = results.map((r, i) => ({
       type: ['allstar', 'mvp', 'coach', 'fairPlay', 'referee', 'special'][i],
       count: r.count
-    })))
+    }))
+    console.log(`[Finalize] Finalized votes:`, finalizedCounts)
+    
+    // Debug: Prüfe ob Referee-Votes finalisiert wurden
+    if (finalizedCounts.find(r => r.type === 'referee')?.count === 0 && countsBefore.referee > 0) {
+      console.error(`[Finalize] WARNING: Referee votes not finalized! Before: ${countsBefore.referee}, After: 0`)
+      // Prüfe ob es Votes mit dieser voterId gibt
+      const allRefereeVotes = await prisma.refereePairVote.findMany({
+        where: { voterId }
+      })
+      console.log(`[Finalize] All referee votes for voterId ${voterId}:`, allRefereeVotes.map(v => ({ id: v.id, voterId: v.voterId, userId: v.userId })))
+    }
 
     return NextResponse.json({ success: true, userId: user.id })
   } catch (error) {

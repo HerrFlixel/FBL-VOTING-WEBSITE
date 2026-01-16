@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     }
 
     const { voterId, ip } = getVoterInfo()
+    console.log('[RefereeVotes POST] voterId:', voterId)
 
     // Prüfe, ob bereits ein Vote existiert
     const existing = await prisma.refereePairVote.findFirst({

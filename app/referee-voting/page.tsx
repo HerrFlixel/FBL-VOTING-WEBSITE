@@ -63,7 +63,7 @@ function RefereeVotingContent() {
 
       try {
         // Lade Vote für diese Liga - wichtig: warte auf Antwort
-        const res = await fetch(`/api/referee-votes?league=${league}`, {
+        const res = await fetchWithVoterId(`/api/referee-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -102,7 +102,7 @@ function RefereeVotingContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/referee-votes', {
+      const res = await fetchWithVoterId('/api/referee-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ function RefereeVotingContent() {
 
   const handleRemove = async () => {
     try {
-      const res = await fetch('/api/referee-votes', {
+      const res = await fetchWithVoterId('/api/referee-votes', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

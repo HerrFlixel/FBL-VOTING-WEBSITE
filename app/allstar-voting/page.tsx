@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import clsx from 'clsx'
 import Image from 'next/image'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 type Player = {
   id: string
@@ -37,6 +38,13 @@ function AllstarVotingContent() {
   const league: 'herren' | 'damen' = leagueParam === 'damen' ? 'damen' : 'herren'
   const fromCrossLeague = searchParams.get('fromCrossLeague') === 'true'
   const router = useRouter()
+  
+  // Setze Flag in sessionStorage wenn von Cross-League kommend
+  useEffect(() => {
+    if (fromCrossLeague) {
+      sessionStorage.setItem('fromCrossLeague', 'true')
+    }
+  }, [fromCrossLeague])
 
   const [players, setPlayers] = useState<Player[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(false)
@@ -94,7 +102,7 @@ function AllstarVotingContent() {
 
       try {
         // Lade alle Votes für diese Liga - wichtig: warte auf Antwort
-        const res = await fetch(`/api/allstar-votes?league=${league}`, {
+        const res = await fetchWithVoterId(`/api/allstar-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -215,7 +223,7 @@ function AllstarVotingContent() {
     }
     setSaving(true)
     try {
-      const res = await fetch('/api/allstar-votes', {
+      const res = await fetchWithVoterId('/api/allstar-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -252,7 +260,7 @@ function AllstarVotingContent() {
   const clearPosition = async (pos: PositionKey) => {
     // Entferne auch aus der Datenbank
     try {
-      const res = await fetch('/api/allstar-votes', {
+      const res = await fetchWithVoterId('/api/allstar-votes', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 type Player = {
   id: string
@@ -73,7 +74,7 @@ function FairPlayVotingContent() {
 
       try {
         // Lade Vote für diese Liga - wichtig: warte auf Antwort
-        const res = await fetch(`/api/fairplay-votes?league=${league}`, {
+        const res = await fetchWithVoterId(`/api/fairplay-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -103,12 +104,20 @@ function FairPlayVotingContent() {
         // Prüfe ob für die andere Liga bereits gevotet wurde
         const otherLeague = league === 'herren' ? 'damen' : 'herren'
         
+        // Prüfe ob man von Cross-League kommt (dann wurde bereits für die andere Liga gevotet)
+        const fromCrossLeague = sessionStorage.getItem('fromCrossLeague') === 'true'
+        if (fromCrossLeague) {
+          setHasVotedBothLeagues(true)
+          return
+        }
+        
         // Prüfe alle Voting-Kategorien für die andere Liga
+        const { fetchWithVoterId } = await import('../../../lib/client-voter')
         const [otherAllstar, otherMVP, otherCoach, otherFairPlay] = await Promise.all([
-          fetch(`/api/allstar-votes?league=${otherLeague}`),
-          fetch(`/api/mvp-votes?league=${otherLeague}`),
-          fetch(`/api/coach-votes?league=${otherLeague}`),
-          fetch(`/api/fairplay-votes?league=${otherLeague}`)
+          fetchWithVoterId(`/api/allstar-votes?league=${otherLeague}`),
+          fetchWithVoterId(`/api/mvp-votes?league=${otherLeague}`),
+          fetchWithVoterId(`/api/coach-votes?league=${otherLeague}`),
+          fetchWithVoterId(`/api/fairplay-votes?league=${otherLeague}`)
         ])
         
         const otherAllstarData = otherAllstar.ok ? await otherAllstar.json() : []
@@ -145,7 +154,7 @@ function FairPlayVotingContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/fairplay-votes', {
+      const res = await fetchWithVoterId('/api/fairplay-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -170,7 +179,7 @@ function FairPlayVotingContent() {
 
   const handleRemove = async () => {
     try {
-      const res = await fetch('/api/fairplay-votes', {
+      const res = await fetchWithVoterId('/api/fairplay-votes', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

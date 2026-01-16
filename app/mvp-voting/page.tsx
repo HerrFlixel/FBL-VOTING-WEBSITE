@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 type Player = {
   id: string
@@ -77,7 +78,7 @@ function MVPVotingContent() {
 
       try {
         // Lade alle Votes für diese Liga - wichtig: warte auf Antwort
-        const res = await fetch(`/api/mvp-votes?league=${league}`, {
+        const res = await fetchWithVoterId(`/api/mvp-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -136,7 +137,7 @@ function MVPVotingContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/mvp-votes', {
+      const res = await fetchWithVoterId('/api/mvp-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -168,7 +169,7 @@ function MVPVotingContent() {
 
   const handleRemoveRank = async (rank: number) => {
     try {
-      const res = await fetch('/api/mvp-votes', {
+      const res = await fetchWithVoterId('/api/mvp-votes', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

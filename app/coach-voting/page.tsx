@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { fetchWithVoterId } from '../../../lib/client-voter'
 
 type Coach = {
   id: string
@@ -65,7 +66,7 @@ function CoachVotingContent() {
 
       try {
         // Lade Vote für diese Liga - wichtig: warte auf Antwort
-        const res = await fetch(`/api/coach-votes?league=${league}`, {
+        const res = await fetchWithVoterId(`/api/coach-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen
         })
@@ -104,7 +105,7 @@ function CoachVotingContent() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/coach-votes', {
+      const res = await fetchWithVoterId('/api/coach-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -129,7 +130,7 @@ function CoachVotingContent() {
 
   const handleRemove = async () => {
     try {
-      const res = await fetch('/api/coach-votes', {
+      const res = await fetchWithVoterId('/api/coach-votes', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

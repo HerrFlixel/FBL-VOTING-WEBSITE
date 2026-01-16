@@ -2,16 +2,25 @@ import { headers } from 'next/headers'
 
 export function getVoterInfo() {
   const h = headers()
-  const ip =
+  let ip =
     h.get('x-forwarded-for') ||
     h.get('x-real-ip') ||
     // Fallback – in Dev meist 127.0.0.1
     'unknown'
+  
+  // x-forwarded-for kann mehrere IPs enthalten (z.B. "90.187.246.37, 162.158.87.37")
+  // Nimm immer die erste IP für Konsistenz
+  if (ip.includes(',')) {
+    ip = ip.split(',')[0].trim()
+  }
+  
   const userAgent = h.get('user-agent') || 'unknown'
 
-  // Gleiche Logik wie vorher: voterId aus IP + User-Agent
-  // Wichtig: Diese voterId muss während der gesamten Session stabil bleiben
-  const voterId = `${ip}-${userAgent.substring(0, 50)}`
+  // Prüfe ob client-seitige voterId im Request-Header mitgesendet wurde
+  const clientVoterId = h.get('x-voter-id')
+  
+  // Verwende client-seitige voterId wenn vorhanden, sonst generiere serverseitig
+  const voterId = clientVoterId || `${ip}-${userAgent.substring(0, 50)}`
 
   return {
     ip,

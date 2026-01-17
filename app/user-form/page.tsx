@@ -70,22 +70,30 @@ function UserFormContent() {
     }
   }
 
-          />
-          <div className="absolute inset-0 bg-black/50"></div>
+
+  return (
+    <div className="min-h-screen relative">
+      {/* Splitscreen Hintergrund */}
+      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
+        {/* Weißer Trennstreifen - nur auf Desktop */}
+        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
+        
+        {/* Damen Seite (links) */}
         <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
           <img
-            src="/Hintergrund Herren.png"
-            alt="1. Herren Bundesliga"
+            src="/Hintergrund Damen.png"
+            alt="1. Damen Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
             className="absolute inset-0 w-full h-full object-cover blur-sm"
           />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
       </div>
-      <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
-        <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-2 sm:mb-3 shadow-lg">
-              {leagueName}
+      
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
               Bitte füllen Sie alle Felder aus, um Ihre Stimmen abzugeben

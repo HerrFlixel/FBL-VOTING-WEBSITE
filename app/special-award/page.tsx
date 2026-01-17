@@ -83,22 +83,6 @@ function SpecialAwardContent() {
 
   const canProceed = name.trim().length > 0
 
-
-  return (
-    <div className="min-h-screen relative">
-      {/* Hintergrundbild */}
-      <div className="fixed inset-0 z-0">
-        <img
-          src={backgroundImage}
-      {/* Splitscreen Hintergrund */}
-      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
-        {/* Weißer Trennstreifen - nur auf Desktop */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
-        
-        {/* Damen Seite (links) */}
-        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
-          <img
-            src="/Hintergrund Damen.png"
             alt="1. Damen Bundesliga"
             className="absolute inset-0 w-full h-full object-cover blur-sm"
           />
@@ -118,9 +102,6 @@ function SpecialAwardContent() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900">
               Sonderpreis
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
-              Geben Sie den vollständigen Namen für den Sonderpreis ein
             </p>
           </div>
 

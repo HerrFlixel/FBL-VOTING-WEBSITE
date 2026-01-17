@@ -74,8 +74,6 @@ function UserFormContent() {
     <div className="min-h-screen relative">
       {/* Splitscreen Hintergrund */}
       <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
-        {/* Weißer Trennstreifen - nur auf Desktop */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
         
         {/* Damen Seite (links) */}
         <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">

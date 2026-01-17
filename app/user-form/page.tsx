@@ -70,24 +70,33 @@ function UserFormContent() {
     }
   }
 
-  const leagueName =
-    league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
-  
-  const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
   return (
     <div className="min-h-screen relative">
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
-        <img
-          src={backgroundImage}
-          alt={`${leagueName} Hintergrund`}
-          className="w-full h-full object-cover blur-sm"
-        />
-        <div className="absolute inset-0 bg-black/30"></div>
+      {/* Splitscreen Hintergrund */}
+      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
+        {/* Weißer Trennstreifen - nur auf Desktop */}
+        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
+        
+        {/* Damen Seite (links) */}
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Damen.png"
+            alt="1. Damen Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Herren.png"
+            alt="1. Herren Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
       </div>
-      
-      {/* Content */}
       <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
         <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
           <div className="text-center mb-6 sm:mb-8">

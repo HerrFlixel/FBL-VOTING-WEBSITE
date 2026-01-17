@@ -488,7 +488,7 @@ function AllstarVotingContent() {
               <button
                 disabled={!canGoNext}
                 className={clsx(
-                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase text-xs sm:text-sm',
+                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading text-xs sm:text-sm',
                   canGoNext
                     ? 'bg-primary-600 hover:bg-primary-700 text-white'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -508,7 +508,7 @@ function AllstarVotingContent() {
               <button
                 disabled={saving}
                 className={clsx(
-                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading uppercase text-xs sm:text-sm',
+                  'px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-heading text-xs sm:text-sm',
                   saving
                     ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
                     : 'bg-primary-600 hover:bg-primary-700 text-white'
@@ -793,7 +793,7 @@ function AllstarVotingContent() {
                   onClick={saveSelection}
                   disabled={!selectedPlayerId || saving}
                   className={clsx(
-                    'px-4 sm:px-5 py-2 rounded-lg font-heading uppercase text-xs sm:text-sm',
+                    'px-4 sm:px-5 py-2 rounded-lg font-heading text-xs sm:text-sm',
                     selectedPlayerId && !saving
                       ? 'bg-primary-600 hover:bg-primary-700 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'

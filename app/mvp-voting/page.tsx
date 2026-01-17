@@ -629,7 +629,7 @@ function MVPVotingContent() {
                 <button
                   onClick={handleSaveRank}
                   disabled={!selectedPlayerId || saving}
-                  className={`px-4 sm:px-5 py-2 rounded-lg font-heading uppercase text-xs sm:text-sm ${
+                  className={`px-4 sm:px-5 py-2 rounded-lg font-heading text-xs sm:text-sm ${
                     selectedPlayerId && !saving
                       ? 'bg-primary-600 hover:bg-primary-700 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'

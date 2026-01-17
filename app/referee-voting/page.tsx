@@ -150,10 +150,30 @@ function RefereeVotingContent() {
 
   return (
     <div className="min-h-screen relative">
-      {/* Hintergrundbild */}
-      <div className="fixed inset-0 z-0">
-        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600"></div>
-        <div className="absolute inset-0 bg-black/30"></div>
+      {/* Splitscreen Hintergrund */}
+      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
+        {/* Weißer Trennstreifen - nur auf Desktop */}
+        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
+        
+        {/* Damen Seite (links) */}
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Damen.png"
+            alt="1. Damen Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Herren Seite (rechts) */}
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Herren.png"
+            alt="1. Herren Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
       </div>
       
       {/* Content */}

@@ -70,7 +70,6 @@ function UserFormContent() {
     }
   }
 
-
   return (
     <div className="min-h-screen relative">
       {/* Splitscreen Hintergrund */}
@@ -88,14 +87,33 @@ function UserFormContent() {
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
+        {/* Herren Seite (rechts) */}
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Herren.png"
+            alt="1. Herren Bundesliga"
             className="absolute inset-0 w-full h-full object-cover blur-sm"
           />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
       </div>
       
+      {/* Content */}
+      <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900 px-2">
+              Abschluss
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
+              Bitte füllen Sie alle Felder aus, um Ihre Stimmen abzugeben
+            </p>
+          </div>
+
+          <div className="mb-3 sm:mb-4">
+            <button
               className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
-              onClick={() => router.push('/special-award')}
+              onClick={() => router.push(`/special-award?league=${league}`)}
             >
               ← Zurück
             </button>

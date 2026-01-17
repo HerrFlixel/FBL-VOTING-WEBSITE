@@ -408,10 +408,31 @@ export default function VoterManagement() {
                     )}
                     {/* Damen */}
                     {selectedUser.refereePairVotes.filter(v => v.league === 'damen').length > 0 && (
-                      <div>
+                      <div className="mb-3">
                         <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
                         <div className="space-y-1">
                           {selectedUser.refereePairVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">
+                                {vote.refereePair.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteVote('referee', vote.id)}
+                                className="text-red-600 hover:text-red-800 text-xs"
+                              >
+                                Löschen
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Unabhängig (league === null) */}
+                    {selectedUser.refereePairVotes.filter(v => v.league === null || v.league === undefined).length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Unabhängig</h6>
+                        <div className="space-y-1">
+                          {selectedUser.refereePairVotes.filter(v => v.league === null || v.league === undefined).map((vote) => (
                             <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                               <span className="text-sm text-gray-900">
                                 {vote.refereePair.name}

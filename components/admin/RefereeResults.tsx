@@ -22,11 +22,20 @@ export default function RefereeResults() {
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/referee-votes/results')
+      const response = await fetch('/api/referee-votes/results', {
+        cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Daten bekommen
+      })
+      if (!response.ok) {
+        console.error('Fehler beim Laden der Ergebnisse:', response.status, response.statusText)
+        setResults([])
+        return
+      }
       const data = await response.json()
-      setResults(data)
+      console.log('[RefereeResults] Geladene Ergebnisse:', data)
+      setResults(data || [])
     } catch (error) {
       console.error('Fehler beim Laden der Ergebnisse', error)
+      setResults([])
     } finally {
       setLoading(false)
     }

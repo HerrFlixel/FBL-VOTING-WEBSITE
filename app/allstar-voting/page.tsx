@@ -468,8 +468,8 @@ function AllstarVotingContent() {
                 const otherLeague = league === 'damen' ? 'herren' : 'damen'
                 router.push(`/cross-league-voting?league=${otherLeague}`)
               } else {
-                // Sonst zurück zur Startseite
-                router.push('/')
+                // Sonst zurück zur Liga-Auswahl (Splitscreen)
+                router.push('/wahl')
               }
             }}
           >

@@ -47,6 +47,7 @@ export default function AllstarResults({ league }: AllstarResultsProps) {
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="p-6 border-b border-gray-200">
+        <p className="text-sm text-gray-500 mb-2">Nur verbindlich abgegebene Stimmen werden gezählt.</p>
         <h2 className="text-2xl font-heading text-gray-900">
           Allstar-Ergebnisse - {league === 'herren' ? 'Herren' : 'Damen'}
         </h2>

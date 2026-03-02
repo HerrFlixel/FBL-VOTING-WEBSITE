@@ -7,7 +7,10 @@ export async function GET(req: Request) {
 
   try {
     const votes = await prisma.specialAwardVote.findMany({
-      where: league ? { league } : undefined,
+      where: {
+        ...(league ? { league } : {}),
+        userId: { not: null } // Nur finalisierte Stimmen (wie bei MVP, Trainer, etc.)
+      },
       orderBy: { createdAt: 'desc' }
     })
     return NextResponse.json(votes)

@@ -66,6 +66,7 @@ export default function SpecialAwardResults({ league }: SpecialAwardResultsProps
   return (
     <div className="space-y-6">
       <div>
+        <p className="text-sm text-gray-500 mb-2">Nur verbindlich abgegebene Stimmen werden gezählt.</p>
         <h2 className="text-2xl font-heading text-gray-900 mb-4">
           Sonderpreis Ergebnisse {league ? `(${league === 'herren' ? 'Herren' : 'Damen'})` : '(Alle)'}
         </h2>
@@ -88,10 +89,7 @@ export default function SpecialAwardResults({ league }: SpecialAwardResultsProps
                   Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stimmen
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Details
+                  Stimmen (finalisiert)
                 </th>
               </tr>
             </thead>
@@ -106,9 +104,6 @@ export default function SpecialAwardResults({ league }: SpecialAwardResultsProps
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {item.count}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.votes.filter(v => v.userId).length} finalisiert
                   </td>
                 </tr>
               ))}

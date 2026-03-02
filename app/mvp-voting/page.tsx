@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type Player = {
   id: string
@@ -247,6 +248,7 @@ function MVPVotingContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
         <img
@@ -258,20 +260,20 @@ function MVPVotingContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-3 shadow-lg">
+      <div className="relative z-10 max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="text-center mb-4 sm:mb-8">
+          <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-2 sm:mb-3 shadow-lg">
             {leagueName}
           </div>
-          <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg px-2">
             MVP Voting
           </h1>
-          <p className="text-sm text-white drop-shadow-md mt-2">
+          <p className="text-xs sm:text-sm text-white drop-shadow-md mt-2 px-2">
             Wähle deine Top 10 MVP-Kandidaten (mindestens 5 erforderlich)
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rank) => {
             const sel = selectedPlayers.find((p) => p.rank === rank)
             return (
@@ -281,9 +283,9 @@ function MVPVotingContent() {
                 onClick={() => openRank(rank)}
               >
                 {sel ? (
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 hover:border-primary-600 transition-all">
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 hover:border-primary-600 transition-all min-h-0 flex flex-col">
                     {sel.player.imageUrl ? (
-                      <div className="relative w-full h-20 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                      <div className="relative w-full h-16 sm:h-24 md:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                         <img
                           src={sel.player.imageUrl}
                           alt={sel.player.name}
@@ -291,19 +293,19 @@ function MVPVotingContent() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-20 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <svg className="w-10 h-10 sm:w-16 sm:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-16 sm:h-24 md:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <svg className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                       </div>
                     )}
-                    <div className="p-1.5 sm:p-2 text-center space-y-0.5 sm:space-y-1">
+                    <div className="p-1.5 sm:p-2 text-center space-y-0.5 sm:space-y-1 min-w-0">
                       <div className="inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-primary-600 text-white font-heading text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                         Platz {rank}
                       </div>
-                      <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 truncate">{sel.player.name}</div>
+                      <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 break-words line-clamp-2" title={sel.player.name}>{sel.player.name}</div>
                       {sel.player.team && (
-                        <div className="text-[9px] sm:text-[10px] text-gray-600 truncate">{sel.player.team}</div>
+                        <div className="text-[9px] sm:text-[10px] text-gray-600 break-words line-clamp-2" title={sel.player.team}>{sel.player.team}</div>
                       )}
                       {sel.player.jerseyNumber && (
                         <div className="text-[9px] sm:text-[10px] text-gray-500">#{sel.player.jerseyNumber}</div>
@@ -320,7 +322,7 @@ function MVPVotingContent() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[140px] sm:min-h-[200px]">
+                  <div className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[120px] sm:min-h-[180px]">
                     <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-primary-500 mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -475,10 +477,10 @@ function MVPVotingContent() {
                                         </svg>
                                       </div>
                                     )}
-                                    <div className="p-2 text-center space-y-1">
-                                      <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                                    <div className="p-2 text-center space-y-1 min-w-0">
+                                      <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={p.name}>{p.name}</div>
                                       {p.team && (
-                                        <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                                        <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={p.team}>{p.team}</div>
                                       )}
                                       {p.jerseyNumber && (
                                         <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
@@ -561,10 +563,10 @@ function MVPVotingContent() {
                               </svg>
                             </div>
                           )}
-                          <div className="p-2 text-center space-y-1">
-                            <div className="font-heading text-xs font-bold text-gray-900 truncate">{p.name}</div>
+                          <div className="p-2 text-center space-y-1 min-w-0">
+                            <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={p.name}>{p.name}</div>
                             {p.team && (
-                              <div className="text-[10px] text-gray-600 truncate">{p.team}</div>
+                              <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={p.team}>{p.team}</div>
                             )}
                             {p.jerseyNumber && (
                               <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>

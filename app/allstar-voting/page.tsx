@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type Player = {
   id: string
@@ -377,6 +378,7 @@ function AllstarVotingContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
         <img

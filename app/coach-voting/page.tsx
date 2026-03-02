@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type Coach = {
   id: string
@@ -167,6 +168,7 @@ function CoachVotingContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
         <img
@@ -178,7 +180,7 @@ function CoachVotingContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="text-center mb-8">
           <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-3 shadow-lg">
             {leagueName}
@@ -211,9 +213,9 @@ function CoachVotingContent() {
                 </div>
               )}
               <div className="p-4 text-center space-y-2">
-                <div className="font-heading text-lg font-bold text-gray-900">{selectedCoach.name}</div>
+                <div className="font-heading text-base sm:text-lg font-bold text-gray-900 break-words">{selectedCoach.name}</div>
                 {selectedCoach.team && (
-                  <div className="text-sm text-gray-600">{selectedCoach.team}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 break-words">{selectedCoach.team}</div>
                 )}
               </div>
               <button
@@ -323,7 +325,7 @@ function CoachVotingContent() {
                       }`}
                     >
                       {coach.imageUrl ? (
-                        <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="relative w-full h-20 sm:h-28 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
                           <img
                             src={coach.imageUrl}
                             alt={coach.name}
@@ -331,16 +333,16 @@ function CoachVotingContent() {
                           />
                         </div>
                       ) : (
-                        <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-full h-20 sm:h-28 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-10 h-10 sm:w-16 sm:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
                       )}
-                      <div className="p-2 text-center space-y-1">
-                        <div className="font-heading text-xs font-bold text-gray-900 truncate">{coach.name}</div>
+                      <div className="p-2 text-center space-y-1 min-w-0">
+                        <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={coach.name}>{coach.name}</div>
                         {coach.team && (
-                          <div className="text-[10px] text-gray-600 truncate">{coach.team}</div>
+                          <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={coach.team}>{coach.team}</div>
                         )}
                       </div>
                       {selectedCoachId === coach.id && (

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 function SpecialAwardContent() {
   const searchParams = useSearchParams()
@@ -90,6 +91,7 @@ function SpecialAwardContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
         <img

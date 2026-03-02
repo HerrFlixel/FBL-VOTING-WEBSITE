@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type RefereePair = {
   id: string
@@ -150,6 +151,7 @@ function RefereeVotingContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Splitscreen Hintergrund */}
       <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
         {/* Damen Seite (links) */}

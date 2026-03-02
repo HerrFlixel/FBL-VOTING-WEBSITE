@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type Player = {
   id: string
@@ -253,6 +254,7 @@ function FairPlayVotingContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Hintergrundbild */}
       <div className="fixed inset-0 z-0">
         <img
@@ -264,25 +266,25 @@ function FairPlayVotingContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <div className="inline-block px-3 py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-sm mb-3 shadow-lg">
+      <div className="relative z-10 max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="text-center mb-4 sm:mb-8">
+          <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-2 sm:mb-3 shadow-lg">
             {leagueName}
           </div>
-          <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg px-2">
             Fair Play Award
           </h1>
-          <p className="text-sm text-white drop-shadow-md mt-2">
+          <p className="text-xs sm:text-sm text-white drop-shadow-md mt-2 px-2">
             Wähle deinen Fair Play Award Gewinner
           </p>
         </div>
 
         {/* Selected Player Card */}
-        <div className="max-w-md mx-auto mb-8">
+        <div className="max-w-md mx-auto mb-4 sm:mb-8">
           {selectedPlayer ? (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative group">
               {selectedPlayer.imageUrl ? (
-                <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200">
+                <div className="relative w-full aspect-[3/4] max-h-40 sm:max-h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
                   <img
                     src={selectedPlayer.imageUrl}
                     alt={selectedPlayer.name}
@@ -290,19 +292,19 @@ function FairPlayVotingContent() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <svg className="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-full aspect-[3/4] max-h-40 sm:max-h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-16 h-16 sm:w-24 sm:h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
               )}
-              <div className="p-4 text-center space-y-2">
-                <div className="font-heading text-lg font-bold text-gray-900">{selectedPlayer.name}</div>
+              <div className="p-3 sm:p-4 text-center space-y-1 sm:space-y-2 min-w-0">
+                <div className="font-heading text-base sm:text-lg font-bold text-gray-900 break-words">{selectedPlayer.name}</div>
                 {selectedPlayer.team && (
-                  <div className="text-sm text-gray-600">{selectedPlayer.team}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 break-words">{selectedPlayer.team}</div>
                 )}
                 {selectedPlayer.jerseyNumber && (
-                  <div className="text-sm text-gray-500">#{selectedPlayer.jerseyNumber}</div>
+                  <div className="text-xs sm:text-sm text-gray-500">#{selectedPlayer.jerseyNumber}</div>
                 )}
               </div>
               <button
@@ -469,10 +471,10 @@ function FairPlayVotingContent() {
                                 </svg>
                               </div>
                             )}
-                            <div className="p-2 text-center space-y-1">
-                              <div className="font-heading text-xs font-bold text-gray-900 truncate">{player.name}</div>
+                            <div className="p-2 text-center space-y-1 min-w-0">
+                              <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={player.name}>{player.name}</div>
                               {player.team && (
-                                <div className="text-[10px] text-gray-600 truncate">{player.team}</div>
+                                <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={player.team}>{player.team}</div>
                               )}
                               {player.jerseyNumber && (
                                 <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>
@@ -538,10 +540,10 @@ function FairPlayVotingContent() {
                           </svg>
                         </div>
                       )}
-                      <div className="p-2 text-center space-y-1">
-                        <div className="font-heading text-xs font-bold text-gray-900 truncate">{player.name}</div>
+                      <div className="p-2 text-center space-y-1 min-w-0">
+                        <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={player.name}>{player.name}</div>
                         {player.team && (
-                          <div className="text-[10px] text-gray-600 truncate">{player.team}</div>
+                          <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={player.team}>{player.team}</div>
                         )}
                         {player.jerseyNumber && (
                           <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>

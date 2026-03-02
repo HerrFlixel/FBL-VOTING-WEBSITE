@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
+import VotingProgress from '../../components/VotingProgress'
 
 type Team = {
   id: string
@@ -72,6 +73,7 @@ function UserFormContent() {
 
   return (
     <div className="min-h-screen relative">
+      <VotingProgress />
       {/* Splitscreen Hintergrund */}
       <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
         

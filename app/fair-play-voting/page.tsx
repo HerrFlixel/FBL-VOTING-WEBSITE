@@ -472,9 +472,9 @@ function FairPlayVotingContent() {
                               </div>
                             )}
                             <div className="p-2 text-center space-y-1 min-w-0">
-                              <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={player.name}>{player.name}</div>
+                              <div className="font-heading text-xs font-bold text-gray-900 break-words">{player.name}</div>
                               {player.team && (
-                                <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={player.team}>{player.team}</div>
+                                <div className="text-[10px] text-gray-600 break-words">{player.team}</div>
                               )}
                               {player.jerseyNumber && (
                                 <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>
@@ -541,9 +541,9 @@ function FairPlayVotingContent() {
                         </div>
                       )}
                       <div className="p-2 text-center space-y-1 min-w-0">
-                        <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={player.name}>{player.name}</div>
+                        <div className="font-heading text-xs font-bold text-gray-900 break-words">{player.name}</div>
                         {player.team && (
-                          <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={player.team}>{player.team}</div>
+                          <div className="text-[10px] text-gray-600 break-words">{player.team}</div>
                         )}
                         {player.jerseyNumber && (
                           <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>

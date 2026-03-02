@@ -303,9 +303,9 @@ function MVPVotingContent() {
                       <div className="inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-primary-600 text-white font-heading text-[10px] sm:text-xs mb-0.5 sm:mb-1">
                         Platz {rank}
                       </div>
-                      <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 break-words line-clamp-2" title={sel.player.name}>{sel.player.name}</div>
+                      <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 break-words">{sel.player.name}</div>
                       {sel.player.team && (
-                        <div className="text-[9px] sm:text-[10px] text-gray-600 break-words line-clamp-2" title={sel.player.team}>{sel.player.team}</div>
+                        <div className="text-[9px] sm:text-[10px] text-gray-600 break-words">{sel.player.team}</div>
                       )}
                       {sel.player.jerseyNumber && (
                         <div className="text-[9px] sm:text-[10px] text-gray-500">#{sel.player.jerseyNumber}</div>
@@ -478,10 +478,10 @@ function MVPVotingContent() {
                                       </div>
                                     )}
                                     <div className="p-2 text-center space-y-1 min-w-0">
-                                      <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={p.name}>{p.name}</div>
-                                      {p.team && (
-                                        <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={p.team}>{p.team}</div>
-                                      )}
+                                      <div className="font-heading text-xs font-bold text-gray-900 break-words">{p.name}</div>
+                                    {p.team && (
+                                        <div className="text-[10px] text-gray-600 break-words">{p.team}</div>
+                                    )}
                                       {p.jerseyNumber && (
                                         <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
                                       )}
@@ -564,9 +564,9 @@ function MVPVotingContent() {
                             </div>
                           )}
                           <div className="p-2 text-center space-y-1 min-w-0">
-                            <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={p.name}>{p.name}</div>
+                            <div className="font-heading text-xs font-bold text-gray-900 break-words">{p.name}</div>
                             {p.team && (
-                              <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={p.team}>{p.team}</div>
+                              <div className="text-[10px] text-gray-600 break-words">{p.team}</div>
                             )}
                             {p.jerseyNumber && (
                               <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>

@@ -340,9 +340,9 @@ function CoachVotingContent() {
                         </div>
                       )}
                       <div className="p-2 text-center space-y-1 min-w-0">
-                        <div className="font-heading text-xs font-bold text-gray-900 break-words line-clamp-2" title={coach.name}>{coach.name}</div>
+                        <div className="font-heading text-xs font-bold text-gray-900 break-words">{coach.name}</div>
                         {coach.team && (
-                          <div className="text-[10px] text-gray-600 break-words line-clamp-2" title={coach.team}>{coach.team}</div>
+                          <div className="text-[10px] text-gray-600 break-words">{coach.team}</div>
                         )}
                       </div>
                       {selectedCoachId === coach.id && (

@@ -21,6 +21,9 @@ export async function DELETE(
       case 'fairplay':
         await prisma.fairPlayVote.delete({ where: { id } })
         break
+      case 'rookie':
+        await prisma.rookieVote.delete({ where: { id } })
+        break
       case 'referee':
         await prisma.refereePairVote.delete({ where: { id } })
         break

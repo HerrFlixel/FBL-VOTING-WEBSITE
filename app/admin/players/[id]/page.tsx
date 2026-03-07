@@ -20,6 +20,8 @@ interface Player {
   pim2x2: number
   pim10: number
   pimMatch: number
+  rookieCandidateDamen?: boolean
+  rookieCandidateHerren?: boolean
 }
 
 export default function EditPlayerPage() {
@@ -46,7 +48,9 @@ export default function EditPlayerPage() {
     pim2: 0,
     pim2x2: 0,
     pim10: 0,
-    pimMatch: 0
+    pimMatch: 0,
+    rookieCandidateDamen: false,
+    rookieCandidateHerren: false
   })
 
   useEffect(() => {
@@ -73,7 +77,9 @@ export default function EditPlayerPage() {
           pim2: data.pim2 ?? 0,
           pim2x2: data.pim2x2 ?? 0,
           pim10: data.pim10 ?? 0,
-          pimMatch: data.pimMatch ?? 0
+          pimMatch: data.pimMatch ?? 0,
+          rookieCandidateDamen: data.rookieCandidateDamen ?? false,
+          rookieCandidateHerren: data.rookieCandidateHerren ?? false
         })
       } else {
         alert('Spieler konnte nicht geladen werden')
@@ -108,7 +114,9 @@ export default function EditPlayerPage() {
           pim2: formData.pim2,
           pim2x2: formData.pim2x2,
           pim10: formData.pim10,
-          pimMatch: formData.pimMatch
+          pimMatch: formData.pimMatch,
+          rookieCandidateDamen: formData.rookieCandidateDamen,
+          rookieCandidateHerren: formData.rookieCandidateHerren
         })
       })
 
@@ -403,6 +411,30 @@ export default function EditPlayerPage() {
                 onChange={(e) => setFormData({ ...formData, pimMatch: parseInt(e.target.value) || 0 })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
+            </div>
+
+            <div className="col-span-full border-t border-gray-200 pt-4 mt-2">
+              <p className="text-sm font-medium text-gray-700 mb-2">Rookie of the Season Kandidat</p>
+              <div className="flex flex-wrap gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.rookieCandidateDamen}
+                    onChange={(e) => setFormData({ ...formData, rookieCandidateDamen: e.target.checked })}
+                    className="rounded border-gray-300 text-primary-600"
+                  />
+                  <span className="text-sm text-gray-700">Damen</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.rookieCandidateHerren}
+                    onChange={(e) => setFormData({ ...formData, rookieCandidateHerren: e.target.checked })}
+                    className="rounded border-gray-300 text-primary-600"
+                  />
+                  <span className="text-sm text-gray-700">Herren</span>
+                </label>
+              </div>
             </div>
           </div>
 

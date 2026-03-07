@@ -352,15 +352,8 @@ function FairPlayVotingContent() {
             disabled={!canProceed || saving}
             onClick={async () => {
               if (!canProceed || saving) return
-              // Warte bis alle Speicher-Operationen abgeschlossen sind
               await new Promise(resolve => setTimeout(resolve, 100))
-              if (hasVotedBothLeagues) {
-                // Wenn bereits für beide Ligen gevotet wurde, direkt zum Schiedsrichter-Paar-Voting
-                router.push('/referee-voting')
-              } else {
-                // Sonst zur Cross-League-Abfrage
-                router.push(`/cross-league-voting?league=${league}`)
-              }
+              router.push(`/rookie-voting?league=${league}`)
             }}
             className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
               canProceed && !saving

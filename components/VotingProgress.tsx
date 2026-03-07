@@ -7,9 +7,10 @@ const STEPS = [
   { id: 2, label: 'MVP', short: 'MVP' },
   { id: 3, label: 'Trainer', short: 'Trainer' },
   { id: 4, label: 'Fair Play', short: 'Fair Play' },
-  { id: 5, label: 'Schiri', short: 'Schiri' },
-  { id: 6, label: 'Sonderpreis', short: 'Sonder' },
-  { id: 7, label: 'Abschluss', short: 'Fertig' }
+  { id: 5, label: 'Rookie', short: 'Rookie' },
+  { id: 6, label: 'Schiri', short: 'Schiri' },
+  { id: 7, label: 'Sonderpreis', short: 'Sonder' },
+  { id: 8, label: 'Abschluss', short: 'Fertig' }
 ] as const
 
 function getProgressStep(pathname: string): number {
@@ -17,16 +18,17 @@ function getProgressStep(pathname: string): number {
   if (pathname.startsWith('/mvp-voting')) return 2
   if (pathname.startsWith('/coach-voting')) return 3
   if (pathname.startsWith('/fair-play-voting')) return 4
-  if (pathname.startsWith('/referee-voting')) return 5
-  if (pathname.startsWith('/special-award')) return 6
-  if (pathname.startsWith('/user-form')) return 7
+  if (pathname.startsWith('/rookie-voting')) return 5
+  if (pathname.startsWith('/referee-voting')) return 6
+  if (pathname.startsWith('/special-award')) return 7
+  if (pathname.startsWith('/user-form')) return 8
   return 1
 }
 
 export default function VotingProgress() {
   const pathname = usePathname()
   const currentStep = getProgressStep(pathname ?? '')
-  const stepIndex = Math.max(1, Math.min(7, currentStep))
+  const stepIndex = Math.max(1, Math.min(STEPS.length, currentStep))
   const progressPercent = (stepIndex / STEPS.length) * 100
 
   return (
@@ -41,7 +43,7 @@ export default function VotingProgress() {
             />
           </div>
           <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
-            Schritt {stepIndex} von 7
+            Schritt {stepIndex} von {STEPS.length}
           </span>
         </div>
         {/* Schritt-Labels: auf Desktop alle, auf Mobile nur kompakt oder scrollbar */}

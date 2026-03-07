@@ -42,7 +42,9 @@ export async function PUT(
       pim2,
       pim2x2,
       pim10,
-      pimMatch
+      pimMatch,
+      rookieCandidateDamen,
+      rookieCandidateHerren
     } = data
 
     const player = await prisma.player.update({
@@ -62,7 +64,9 @@ export async function PUT(
         pim2,
         pim2x2,
         pim10,
-        pimMatch
+        pimMatch,
+        ...(typeof rookieCandidateDamen === 'boolean' && { rookieCandidateDamen }),
+        ...(typeof rookieCandidateHerren === 'boolean' && { rookieCandidateHerren })
       }
     })
 

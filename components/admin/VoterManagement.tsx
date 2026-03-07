@@ -15,6 +15,7 @@ interface UserDetail extends User {
   mvpVotes: Array<{ id: string; player: { name: string }; league: string; rank: number }>
   coachVotes: Array<{ id: string; coach: { name: string }; league: string }>
   fairPlayVotes: Array<{ id: string; player: { name: string }; league: string }>
+  rookieVotes: Array<{ id: string; player: { name: string }; league: string }>
   refereePairVotes: Array<{ id: string; refereePair: { name: string }; league: string }>
   specialAwardVotes: Array<{ id: string; name: string; league: string | null }>
 }
@@ -381,6 +382,39 @@ export default function VoterManagement() {
                   </div>
                 )}
 
+                {/* Rookie of the Season Votes */}
+                {selectedUser.rookieVotes && selectedUser.rookieVotes.length > 0 && (
+                  <div>
+                    <h5 className="font-heading text-gray-900 mb-2">Rookie of the Season Votes</h5>
+                    {selectedUser.rookieVotes.filter(v => v.league === 'herren').length > 0 && (
+                      <div className="mb-3">
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Herren</h6>
+                        <div className="space-y-1">
+                          {selectedUser.rookieVotes.filter(v => v.league === 'herren').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">{vote.player.name}</span>
+                              <button onClick={() => handleDeleteVote('rookie', vote.id)} className="text-red-600 hover:text-red-800 text-xs">Löschen</button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {selectedUser.rookieVotes.filter(v => v.league === 'damen').length > 0 && (
+                      <div>
+                        <h6 className="font-semibold text-gray-700 mb-1 text-sm">Damen</h6>
+                        <div className="space-y-1">
+                          {selectedUser.rookieVotes.filter(v => v.league === 'damen').map((vote) => (
+                            <div key={vote.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <span className="text-sm text-gray-900">{vote.player.name}</span>
+                              <button onClick={() => handleDeleteVote('rookie', vote.id)} className="text-red-600 hover:text-red-800 text-xs">Löschen</button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Referee Votes */}
                 {selectedUser.refereePairVotes.length > 0 && (
                   <div>
@@ -477,6 +511,7 @@ export default function VoterManagement() {
                   selectedUser.mvpVotes.length === 0 &&
                   selectedUser.coachVotes.length === 0 &&
                   selectedUser.fairPlayVotes.length === 0 &&
+                  (selectedUser.rookieVotes?.length ?? 0) === 0 &&
                   selectedUser.refereePairVotes.length === 0 &&
                   selectedUser.specialAwardVotes.length === 0 && (
                     <div className="text-gray-600">Keine Votes vorhanden</div>

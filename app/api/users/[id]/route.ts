@@ -23,6 +23,9 @@ export async function GET(
         fairPlayVotes: {
           include: { player: true }
         },
+        rookieVotes: {
+          include: { player: true }
+        },
         refereePairVotes: {
           include: { refereePair: true }
         },

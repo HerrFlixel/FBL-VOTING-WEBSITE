@@ -131,6 +131,7 @@ export async function POST(req: Request) {
           mvp: await tx.mVPVote.count({ where: whereVoter }),
           coach: await tx.coachVote.count({ where: whereVoter }),
           fairPlay: await tx.fairPlayVote.count({ where: whereVoter }),
+          rookie: await tx.rookieVote.count({ where: whereVoter }),
           referee: await tx.refereePairVote.count({ where: whereVoter }),
           special: await tx.specialAwardVote.count({ where: whereVoter })
         }
@@ -155,6 +156,10 @@ export async function POST(req: Request) {
             where: whereVoter,
             data: { userId: user.id }
           }),
+          tx.rookieVote.updateMany({
+            where: whereVoter,
+            data: { userId: user.id }
+          }),
           tx.refereePairVote.updateMany({
             where: whereVoter,
             data: { userId: user.id }
@@ -166,7 +171,7 @@ export async function POST(req: Request) {
         ])
         
         const finalizedCounts = results.map((r, i) => ({
-          type: ['allstar', 'mvp', 'coach', 'fairPlay', 'referee', 'special'][i],
+          type: ['allstar', 'mvp', 'coach', 'fairPlay', 'rookie', 'referee', 'special'][i],
           count: r.count
         }))
         console.log(`[Finalize] Finalized votes:`, finalizedCounts)

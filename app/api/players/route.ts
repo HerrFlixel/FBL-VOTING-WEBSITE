@@ -4,10 +4,16 @@ import { prisma } from '../../../lib/prisma'
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const league = searchParams.get('league') || undefined
+  const rookieCandidates = searchParams.get('rookieCandidates') || undefined // 'damen' | 'herren'
 
   try {
+    const where: { league?: string; rookieCandidateDamen?: boolean; rookieCandidateHerren?: boolean } = {}
+    if (league) where.league = league
+    if (rookieCandidates === 'damen') where.rookieCandidateDamen = true
+    if (rookieCandidates === 'herren') where.rookieCandidateHerren = true
+
     const players = await prisma.player.findMany({
-      where: league ? { league } : undefined,
+      where: Object.keys(where).length ? where : undefined,
       orderBy: [
         { scorerRank: 'asc' },
         { name: 'asc' }

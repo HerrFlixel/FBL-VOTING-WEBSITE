@@ -24,11 +24,14 @@ model Player {
   pim2x2       Int      @default(0)
   pim10        Int      @default(0)
   pimMatch     Int      @default(0)
+  rookieCandidateDamen  Boolean  @default(false)
+  rookieCandidateHerren Boolean  @default(false)
 
   votes        Vote[]
   mvpVotes     MVPVote[]
   fairPlay     FairPlayVote[]
   allstarVotes AllstarVote[]
+  rookieVotes  RookieVote[]
 }
 
 model Coach {
@@ -84,6 +87,7 @@ model User {
   refereePairVotes  RefereePairVote[]
   specialAwardVotes SpecialAwardVote[]
   allstarVotes      AllstarVote[]
+  rookieVotes       RookieVote[]
 }
 
 model Vote {
@@ -147,6 +151,22 @@ model CoachVote {
 }
 
 model FairPlayVote {
+  id        String   @id @default(cuid())
+  playerId  String
+  voterId   String
+  voterIp   String
+  league    String
+  points    Int      @default(1)
+  createdAt DateTime @default(now())
+
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@unique([voterId, league, userId])
+}
+
+model RookieVote {
   id        String   @id @default(cuid())
   playerId  String
   voterId   String

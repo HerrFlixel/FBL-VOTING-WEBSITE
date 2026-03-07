@@ -26,6 +26,9 @@ export async function POST(req: Request) {
       prisma.fairPlayVote.deleteMany({
         where: deleteConditions
       }),
+      prisma.rookieVote.deleteMany({
+        where: deleteConditions
+      }),
       prisma.refereePairVote.deleteMany({
         where: deleteConditions
       }),

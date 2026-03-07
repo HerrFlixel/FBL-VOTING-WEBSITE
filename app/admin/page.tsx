@@ -11,6 +11,7 @@ import AllstarResults from '../../components/admin/AllstarResults'
 import MVPResults from '../../components/admin/MVPResults'
 import CoachResults from '../../components/admin/CoachResults'
 import FairPlayResults from '../../components/admin/FairPlayResults'
+import RookieResults from '../../components/admin/RookieResults'
 import RefereeResults from '../../components/admin/RefereeResults'
 import SpecialAwardResults from '../../components/admin/SpecialAwardResults'
 import VoterManagement from '../../components/admin/VoterManagement'
@@ -22,6 +23,7 @@ type Tab =
   | 'results-mvp-herren' | 'results-mvp-damen'
   | 'results-coach-herren' | 'results-coach-damen'
   | 'results-fairplay-herren' | 'results-fairplay-damen'
+  | 'results-rookie-herren' | 'results-rookie-damen'
   | 'results-referee'
   | 'results-special-award'
   | 'voters'
@@ -52,6 +54,8 @@ function AdminContent() {
     { id: 'results-coach-damen' as Tab, label: 'Trainer Damen' },
     { id: 'results-fairplay-herren' as Tab, label: 'Fair Play Herren' },
     { id: 'results-fairplay-damen' as Tab, label: 'Fair Play Damen' },
+    { id: 'results-rookie-herren' as Tab, label: 'Rookie Herren' },
+    { id: 'results-rookie-damen' as Tab, label: 'Rookie Damen' },
     { id: 'results-referee' as Tab, label: 'Schiedsrichter' },
     { id: 'results-special-award' as Tab, label: 'Sonderpreis' },
     { id: 'voters' as Tab, label: 'Voter-Verwaltung' }
@@ -102,6 +106,8 @@ function AdminContent() {
           {activeTab === 'results-coach-damen' && <CoachResults league="damen" />}
           {activeTab === 'results-fairplay-herren' && <FairPlayResults league="herren" />}
           {activeTab === 'results-fairplay-damen' && <FairPlayResults league="damen" />}
+          {activeTab === 'results-rookie-herren' && <RookieResults league="herren" />}
+          {activeTab === 'results-rookie-damen' && <RookieResults league="damen" />}
           {activeTab === 'results-referee' && <RefereeResults />}
           {activeTab === 'results-special-award' && <SpecialAwardResults />}
           {activeTab === 'voters' && <VoterManagement />}

@@ -30,6 +30,7 @@ export async function DELETE(req: Request) {
       prisma.mVPVote.deleteMany({ where: { userId: id } }),
       prisma.coachVote.deleteMany({ where: { userId: id } }),
       prisma.fairPlayVote.deleteMany({ where: { userId: id } }),
+      prisma.rookieVote.deleteMany({ where: { userId: id } }),
       prisma.refereePairVote.deleteMany({ where: { userId: id } }),
       prisma.specialAwardVote.deleteMany({ where: { userId: id } })
     ])

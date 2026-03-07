@@ -2,12 +2,14 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { useLanguage } from '../components/LanguageProvider'
+import LanguageToggle from '../components/LanguageToggle'
 
 export default function HomePage() {
   const router = useRouter()
+  const { t } = useLanguage()
 
   useEffect(() => {
-    // Session beim ersten Laden der Website leeren
     const clearSession = async () => {
       if (typeof window !== 'undefined') {
         sessionStorage.clear()
@@ -22,29 +24,47 @@ export default function HomePage() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-800 flex flex-col items-center justify-center px-4 py-8 sm:py-12">
-      <div className="max-w-2xl w-full text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading uppercase text-white mb-6 sm:mb-8 drop-shadow-lg">
-          FBL Allstar Voting
+    <main className="min-h-screen relative flex flex-col items-center justify-center">
+      {/* Splitscreen-Hintergrund wie Schiri/User-Form (ohne weißen Trennstrich) */}
+      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Damen.png"
+            alt="1. Damen Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Herren.png"
+            alt="1. Herren Bundesliga"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-2xl px-4 py-8 sm:py-12 flex flex-col items-center">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+          <LanguageToggle />
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading uppercase text-white mb-6 sm:mb-8 drop-shadow-lg text-center">
+          {t('intro.title')}
         </h1>
 
-        <div className="bg-white/95 rounded-xl shadow-xl p-6 sm:p-8 md:p-10 text-left space-y-4 text-gray-800 mb-8 sm:mb-10">
-          <p className="text-base sm:text-lg leading-relaxed">
-            Hier können Sie Ihre Stimmen für das Allstar-Voting der 1. Damen- und Herren-Bundesliga abgeben.
-          </p>
-          <p className="text-base sm:text-lg leading-relaxed">
-            Nach dem Start wählen Sie zuerst Ihre Liga (Damen oder Herren). Anschließend durchlaufen Sie die einzelnen Kategorien: Allstar-Auswahl, MVP, Trainer, Fair-Play, Schiedsrichter-Paar und Sonderpreis. Am Ende füllen Sie noch ein kurzes Abschlussformular aus und geben Ihre Stimmen verbindlich ab.
-          </p>
-          <p className="text-base sm:text-lg leading-relaxed">
-            Sie können jederzeit zwischen den Schritten zurückgehen und Ihre Angaben anpassen, bis Sie die Abstimmung final abschließen.
-          </p>
+        <div className="bg-white/95 rounded-xl shadow-xl p-6 sm:p-8 md:p-10 text-left space-y-4 text-gray-800 mb-8 sm:mb-10 w-full">
+          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p1')}</p>
+          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p2')}</p>
+          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p3')}</p>
         </div>
 
         <button
           onClick={() => router.push('/wahl')}
           className="px-8 sm:px-10 py-3 sm:py-4 rounded-xl bg-white hover:bg-gray-100 text-primary-700 font-heading text-lg sm:text-xl uppercase shadow-xl transition-colors"
         >
-          Start
+          {t('intro.start')}
         </button>
       </div>
     </main>

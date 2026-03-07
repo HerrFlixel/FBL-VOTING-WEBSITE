@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import PageReloadHandler from '../components/PageReloadHandler'
+import { LanguageProvider } from '../components/LanguageProvider'
 
 export const metadata: Metadata = {
   title: 'FBL Allstar Voting',
   description: 'Allstar Voting 1. Floorball Bundesliga'
 }
-
-import PageReloadHandler from '../components/PageReloadHandler'
 
 export default function RootLayout({
   children
@@ -14,10 +14,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
       <body className="min-h-screen bg-gray-900 text-white">
-        <PageReloadHandler />
-        {children}
+        <LanguageProvider>
+          <PageReloadHandler />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )

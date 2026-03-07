@@ -1,17 +1,11 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { useLanguage } from './LanguageProvider'
+import LanguageToggle from './LanguageToggle'
+import { translations } from '../lib/translations'
 
-const STEPS = [
-  { id: 1, label: 'Allstar', short: 'Allstar' },
-  { id: 2, label: 'MVP', short: 'MVP' },
-  { id: 3, label: 'Trainer', short: 'Trainer' },
-  { id: 4, label: 'Fair Play', short: 'Fair Play' },
-  { id: 5, label: 'Rookie', short: 'Rookie' },
-  { id: 6, label: 'Schiri', short: 'Schiri' },
-  { id: 7, label: 'Sonderpreis', short: 'Sonder' },
-  { id: 8, label: 'Abschluss', short: 'Fertig' }
-] as const
+const STEP_IDS = [1, 2, 3, 4, 5, 6, 7, 8] as const
 
 function getProgressStep(pathname: string): number {
   if (pathname.startsWith('/allstar-voting')) return 1
@@ -27,14 +21,15 @@ function getProgressStep(pathname: string): number {
 
 export default function VotingProgress() {
   const pathname = usePathname()
+  const { lang, t } = useLanguage()
   const currentStep = getProgressStep(pathname ?? '')
-  const stepIndex = Math.max(1, Math.min(STEPS.length, currentStep))
-  const progressPercent = (stepIndex / STEPS.length) * 100
+  const stepIndex = Math.max(1, Math.min(STEP_IDS.length, currentStep))
+  const progressPercent = (stepIndex / STEP_IDS.length) * 100
+  const stepLabels = translations[lang].progress.steps
 
   return (
     <div className="w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm sticky top-0 z-30">
       <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
-        {/* Fortschrittsbalken */}
         <div className="flex items-center gap-2 mb-2">
           <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
@@ -43,17 +38,19 @@ export default function VotingProgress() {
             />
           </div>
           <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
-            Schritt {stepIndex} von {STEPS.length}
+            {t('progress.stepOf')} {stepIndex} {t('progress.of')} {STEP_IDS.length}
           </span>
+          <LanguageToggle className="flex-shrink-0" />
         </div>
-        {/* Schritt-Labels: auf Desktop alle, auf Mobile nur kompakt oder scrollbar */}
         <div className="flex gap-1 overflow-x-auto pb-0.5">
-          {STEPS.map((step) => {
-            const isDone = step.id < stepIndex
-            const isCurrent = step.id === stepIndex
+          {STEP_IDS.map((_, i) => {
+            const stepNum = i + 1
+            const isDone = stepNum < stepIndex
+            const isCurrent = stepNum === stepIndex
+            const short = stepLabels[i] ?? ''
             return (
               <div
-                key={step.id}
+                key={stepNum}
                 className={`
                   flex-shrink-0 px-2 py-1 rounded-md text-center transition-colors
                   text-[10px] sm:text-xs font-medium
@@ -61,9 +58,9 @@ export default function VotingProgress() {
                   ${isDone && !isCurrent ? 'bg-primary-100 text-primary-800' : ''}
                   ${!isDone && !isCurrent ? 'bg-gray-100 text-gray-500' : ''}
                 `}
-                title={step.label}
+                title={short}
               >
-                {step.short}
+                {short}
               </div>
             )
           })}

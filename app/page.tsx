@@ -46,7 +46,7 @@ export default function HomePage() {
       </div>
 
       <div className="relative z-10 w-full max-w-2xl px-4 py-8 sm:py-12 flex flex-col items-center">
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+        <div className="w-full flex justify-end mb-4 sm:mb-6">
           <LanguageToggle />
         </div>
 

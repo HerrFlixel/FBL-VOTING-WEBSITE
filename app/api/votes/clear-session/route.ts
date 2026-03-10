@@ -6,12 +6,14 @@ export async function POST(req: Request) {
   try {
     const { voterId } = getVoterInfo()
 
-    // Lösche alle nicht-finalisierten Votes (userId = null) dieses Voters
-    // Verwende deleteMany mit where-Klausel, die auch ohne voterId funktioniert
-    // (für den Fall, dass voterId nicht verfügbar ist beim Reload)
-    const deleteConditions = voterId 
-      ? { voterId, userId: null }
-      : { userId: null }
+    // Nur löschen, wenn eine eindeutige voterId vorhanden ist.
+    // Ohne voterId (z. B. nur ip+userAgent-Fallback) nie alle unfinalisierten Votes löschen –
+    // verhindert versehentliches Massenlöschen bei fehlendem Header.
+    if (!voterId || typeof voterId !== 'string' || voterId.trim() === '') {
+      return NextResponse.json({ success: true })
+    }
+
+    const deleteConditions = { voterId, userId: null }
 
     await Promise.all([
       prisma.allstarVote.deleteMany({

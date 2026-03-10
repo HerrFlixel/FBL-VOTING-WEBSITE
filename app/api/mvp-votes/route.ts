@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
+import { withDbRetry } from '../../../lib/db-retry'
 
 function pointsForRank(rank: number) {
   return 11 - rank // Platz 1 = 10 Punkte, Platz 10 = 1 Punkt
@@ -74,20 +75,18 @@ export async function POST(req: Request) {
       }
     })
 
-    let vote
-    if (existing) {
-      // Update existing vote
-      vote = await prisma.mVPVote.update({
-        where: { id: existing.id },
-        data: {
-          playerId,
-          points: pointsForRank(rank)
-        },
-        include: { player: true }
-      })
-    } else {
-      // Create new vote
-      vote = await prisma.mVPVote.create({
+    const vote = await withDbRetry(async () => {
+      if (existing) {
+        return prisma.mVPVote.update({
+          where: { id: existing.id },
+          data: {
+            playerId,
+            points: pointsForRank(rank)
+          },
+          include: { player: true }
+        })
+      }
+      return prisma.mVPVote.create({
         data: {
           playerId,
           voterId,
@@ -98,7 +97,7 @@ export async function POST(req: Request) {
         },
         include: { player: true }
       })
-    }
+    })
 
     return NextResponse.json(vote)
   } catch (error: any) {

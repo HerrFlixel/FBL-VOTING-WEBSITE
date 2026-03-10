@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
+import { withDbRetry } from '../../../lib/db-retry'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -48,19 +49,15 @@ export async function POST(req: Request) {
       }
     })
 
-    let vote
-    if (existing) {
-      // Update existing vote
-      vote = await prisma.fairPlayVote.update({
-        where: { id: existing.id },
-        data: {
-          playerId
-        },
-        include: { player: true }
-      })
-    } else {
-      // Create new vote
-      vote = await prisma.fairPlayVote.create({
+    const vote = await withDbRetry(async () => {
+      if (existing) {
+        return prisma.fairPlayVote.update({
+          where: { id: existing.id },
+          data: { playerId },
+          include: { player: true }
+        })
+      }
+      return prisma.fairPlayVote.create({
         data: {
           playerId,
           voterId,
@@ -70,7 +67,7 @@ export async function POST(req: Request) {
         },
         include: { player: true }
       })
-    }
+    })
 
     return NextResponse.json(vote)
   } catch (error: any) {

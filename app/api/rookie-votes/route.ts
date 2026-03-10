@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
+import { withDbRetry } from '../../../lib/db-retry'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -47,15 +48,15 @@ export async function POST(req: Request) {
       }
     })
 
-    let vote
-    if (existing) {
-      vote = await prisma.rookieVote.update({
-        where: { id: existing.id },
-        data: { playerId },
-        include: { player: true }
-      })
-    } else {
-      vote = await prisma.rookieVote.create({
+    const vote = await withDbRetry(async () => {
+      if (existing) {
+        return prisma.rookieVote.update({
+          where: { id: existing.id },
+          data: { playerId },
+          include: { player: true }
+        })
+      }
+      return prisma.rookieVote.create({
         data: {
           playerId,
           voterId,
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
         },
         include: { player: true }
       })
-    }
+    })
 
     return NextResponse.json(vote)
   } catch (error: any) {

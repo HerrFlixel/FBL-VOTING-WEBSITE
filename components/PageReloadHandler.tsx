@@ -1,11 +1,33 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+
+/** Pfade, auf denen nicht-finalisierte Votes verloren gehen können */
+const VOTING_PATHS = [
+  '/wahl',
+  '/allstar-voting',
+  '/mvp-voting',
+  '/coach-voting',
+  '/fair-play-voting',
+  '/rookie-voting',
+  '/referee-voting',
+  '/special-award',
+  '/user-form'
+]
+
+function isVotingPath(pathname: string | null): boolean {
+  if (!pathname) return false
+  return VOTING_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'))
+}
 
 /**
  * Komponente, die beim Reload alle nicht-finalisierten Votes löscht
+ * und auf Voting-Seiten eine Warnung anzeigt, bevor die Seite verlassen wird.
  */
 export default function PageReloadHandler() {
+  const pathname = usePathname()
+
   useEffect(() => {
     // Prüfe ob es ein Reload war
     const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[]
@@ -22,15 +44,17 @@ export default function PageReloadHandler() {
       sessionStorage.removeItem('wasReload')
     }
 
-    // Handler für beforeunload - markiert dass ein Reload kommt
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Auf Voting-Seiten: Browser-Warnung anzeigen (nicht gespeicherte Votes gehen verloren)
+      if (isVotingPath(pathname)) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
       // Setze Flag für bevorstehenden Reload
       sessionStorage.setItem('pendingReload', 'true')
-      // Versuche Votes zu löschen (kann fehlschlagen, aber wir versuchen es)
       try {
-        const data = JSON.stringify({})
-        navigator.sendBeacon('/api/votes/clear-session', data)
-      } catch (e) {
+        navigator.sendBeacon('/api/votes/clear-session', JSON.stringify({}))
+      } catch (err) {
         // Ignoriere Fehler
       }
     }
@@ -40,7 +64,7 @@ export default function PageReloadHandler() {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
     }
-  }, [])
+  }, [pathname])
 
   return null
 }

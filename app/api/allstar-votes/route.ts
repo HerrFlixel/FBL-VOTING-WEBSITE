@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
+import { withDbRetry } from '../../../lib/db-retry'
 
 const allowedPositions = ['gk', 'ld', 'rd', 'c', 'lw', 'rw']
 
@@ -83,20 +84,18 @@ export async function POST(req: Request) {
       }
     })
 
-    let vote
-    if (existing) {
-      // Update existing vote
-      vote = await prisma.allstarVote.update({
-        where: { id: existing.id },
-        data: {
-          playerId,
-          points: pointsForLine(line)
-        },
-        include: { player: true }
-      })
-    } else {
-      // Create new vote
-      vote = await prisma.allstarVote.create({
+    const vote = await withDbRetry(async () => {
+      if (existing) {
+        return prisma.allstarVote.update({
+          where: { id: existing.id },
+          data: {
+            playerId,
+            points: pointsForLine(line)
+          },
+          include: { player: true }
+        })
+      }
+      return prisma.allstarVote.create({
         data: {
           playerId,
           voterId,
@@ -108,7 +107,7 @@ export async function POST(req: Request) {
         },
         include: { player: true }
       })
-    }
+    })
 
     return NextResponse.json(vote)
   } catch (error: any) {

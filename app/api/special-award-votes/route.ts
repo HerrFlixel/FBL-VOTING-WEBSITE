@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
+import { withDbRetry } from '../../../lib/db-retry'
 
 export async function GET(req: Request) {
   const { voterId } = getVoterInfo()
@@ -40,19 +41,14 @@ export async function POST(req: Request) {
       }
     })
 
-    let vote
-    if (existing) {
-      // Update existing vote
-      vote = await prisma.specialAwardVote.update({
-        where: { id: existing.id },
-        data: {
-          name: name.trim(),
-          league: null
-        }
-      })
-    } else {
-      // Create new vote
-      vote = await prisma.specialAwardVote.create({
+    const vote = await withDbRetry(async () => {
+      if (existing) {
+        return prisma.specialAwardVote.update({
+          where: { id: existing.id },
+          data: { name: name.trim(), league: null }
+        })
+      }
+      return prisma.specialAwardVote.create({
         data: {
           name: name.trim(),
           voterId,
@@ -60,7 +56,7 @@ export async function POST(req: Request) {
           league: null
         }
       })
-    }
+    })
 
     return NextResponse.json(vote)
   } catch (error: any) {

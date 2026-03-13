@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 const VOTING_PATHS = [
   '/wahl',
@@ -22,14 +22,13 @@ function isVotingPath(pathname: string | null): boolean {
 
 export default function PageReloadHandler() {
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[]
     const isReload = navigationEntries.length > 0 && navigationEntries[0].type === 'reload'
 
     if (isReload && isVotingPath(pathname)) {
-      router.replace('/')
+      window.location.replace('/')
       return
     }
 
@@ -42,7 +41,7 @@ export default function PageReloadHandler() {
 
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [pathname, router])
+  }, [pathname])
 
   return null
 }

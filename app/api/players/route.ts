@@ -12,14 +12,25 @@ export async function GET(req: Request) {
     if (rookieCandidates === 'damen') where.rookieCandidateDamen = true
     if (rookieCandidates === 'herren') where.rookieCandidateHerren = true
 
-    const players = await prisma.player.findMany({
-      where: Object.keys(where).length ? where : undefined,
-      orderBy: [
-        { scorerRank: 'asc' },
-        { name: 'asc' }
-      ]
-    })
-    return NextResponse.json(players)
+    const [players, teams] = await Promise.all([
+      prisma.player.findMany({
+        where: Object.keys(where).length ? where : undefined,
+        orderBy: [
+          { scorerRank: 'asc' },
+          { name: 'asc' }
+        ]
+      }),
+      prisma.team.findMany({ select: { name: true, logoUrl: true } })
+    ])
+
+    const teamLogoByName = Object.fromEntries(
+      teams.filter((t) => t.logoUrl).map((t) => [t.name, t.logoUrl!])
+    )
+    const playersWithTeamLogo = players.map((p) => ({
+      ...p,
+      teamLogoUrl: (p.team && teamLogoByName[p.team]) || null
+    }))
+    return NextResponse.json(playersWithTeamLogo)
   } catch (error) {
     console.error('Fehler beim Laden der Spieler', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Spieler' }, { status: 500 })

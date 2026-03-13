@@ -12,6 +12,7 @@ interface PlayerResult {
     name: string
     team: string | null
     imageUrl: string | null
+    teamLogoUrl?: string | null
   }
   totalPoints: number
   line1Count: number
@@ -90,12 +91,12 @@ export default function AllstarResults({ league }: AllstarResultsProps) {
                   {index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {result.player.imageUrl ? (
+                  {(result.player.imageUrl || result.player.teamLogoUrl) ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
                       <img
-                        src={result.player.imageUrl}
+                        src={result.player.imageUrl || result.player.teamLogoUrl || ''}
                         alt={result.player.name}
-                        className="w-full h-full object-cover"
+                        className={result.player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                       />
                     </div>
                   ) : (

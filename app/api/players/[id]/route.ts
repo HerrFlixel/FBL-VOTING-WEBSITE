@@ -13,7 +13,15 @@ export async function GET(
     if (!player) {
       return NextResponse.json({ error: 'Spieler nicht gefunden' }, { status: 404 })
     }
-    return NextResponse.json(player)
+    let teamLogoUrl: string | null = null
+    if (player.team) {
+      const team = await prisma.team.findUnique({
+        where: { name: player.team },
+        select: { logoUrl: true }
+      })
+      teamLogoUrl = team?.logoUrl ?? null
+    }
+    return NextResponse.json({ ...player, teamLogoUrl })
   } catch (error) {
     console.error('Fehler beim Laden des Spielers', error)
     return NextResponse.json({ error: 'Fehler beim Laden des Spielers' }, { status: 500 })

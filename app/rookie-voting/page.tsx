@@ -11,6 +11,7 @@ type Player = {
   team?: string | null
   position?: string | null
   imageUrl?: string | null
+  teamLogoUrl?: string | null
   jerseyNumber?: number | null
   points?: number
   goals?: number
@@ -211,9 +212,9 @@ function RookieVotingContent() {
         <div className="max-w-md mx-auto mb-4 sm:mb-8">
           {selectedPlayer ? (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative group">
-              {selectedPlayer.imageUrl ? (
+              {(selectedPlayer.imageUrl || selectedPlayer.teamLogoUrl) ? (
                 <div className="relative w-full aspect-[3/4] max-h-40 sm:max-h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
-                  <img src={selectedPlayer.imageUrl} alt={selectedPlayer.name} className="w-full h-full object-cover" />
+                  <img src={selectedPlayer.imageUrl || selectedPlayer.teamLogoUrl || ''} alt={selectedPlayer.name} className={selectedPlayer.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'} />
                 </div>
               ) : (
                 <div className="w-full aspect-[3/4] max-h-40 sm:max-h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
@@ -306,9 +307,9 @@ function RookieVotingContent() {
                       onClick={() => setSelectedPlayerId(player.id)}
                       className={`bg-white rounded-lg shadow-md overflow-hidden border-2 cursor-pointer transition-all hover:shadow-lg ${selectedPlayerId === player.id ? 'border-primary-500 ring-2 ring-primary-200' : 'border-gray-200 hover:border-primary-300'}`}
                     >
-                      {player.imageUrl ? (
+                      {(player.imageUrl || player.teamLogoUrl) ? (
                         <div className="relative w-full h-24 sm:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
-                          <img src={player.imageUrl} alt={player.name} className="w-full h-full object-cover" />
+                          <img src={player.imageUrl || player.teamLogoUrl || ''} alt={player.name} className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'} />
                         </div>
                       ) : (
                         <div className="w-full h-24 sm:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">

@@ -9,6 +9,7 @@ interface Player {
   team: string | null
   position: string | null
   imageUrl: string | null
+  teamLogoUrl?: string | null
   jerseyNumber: number | null
   goals: number
   assists: number
@@ -98,15 +99,15 @@ export default function PlayerManagement() {
   }
 
   const PlayerAvatar = ({ player }: { player: Player }) => {
-    if (player.imageUrl) {
+    const avatarUrl = player.imageUrl || player.teamLogoUrl
+    if (avatarUrl) {
       return (
         <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200">
           <img
-            src={player.imageUrl}
+            src={avatarUrl}
             alt={player.name}
-            className="w-full h-full object-cover"
+            className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
             onError={(e) => {
-              // Wenn Bild nicht geladen werden kann, zeige Platzhalter
               const target = e.target as HTMLImageElement
               target.style.display = 'none'
               const parent = target.parentElement

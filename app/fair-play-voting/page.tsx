@@ -11,6 +11,7 @@ type Player = {
   team?: string | null
   position?: string | null
   imageUrl?: string | null
+  teamLogoUrl?: string | null
   jerseyNumber?: number | null
   points?: number
   goals?: number
@@ -267,12 +268,12 @@ function FairPlayVotingContent() {
         <div className="max-w-md mx-auto mb-4 sm:mb-8">
           {selectedPlayer ? (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative group">
-              {selectedPlayer.imageUrl ? (
+              {(selectedPlayer.imageUrl || selectedPlayer.teamLogoUrl) ? (
                 <div className="relative w-full aspect-[3/4] max-h-40 sm:max-h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
                   <img
-                    src={selectedPlayer.imageUrl}
+                    src={selectedPlayer.imageUrl || selectedPlayer.teamLogoUrl || ''}
                     alt={selectedPlayer.name}
-                    className="w-full h-full object-cover"
+                    className={selectedPlayer.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                   />
                 </div>
               ) : (
@@ -433,12 +434,12 @@ function FairPlayVotingContent() {
                                 : 'border-gray-200 hover:border-primary-300'
                             }`}
                           >
-                            {player.imageUrl ? (
+                            {(player.imageUrl || player.teamLogoUrl) ? (
                               <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
                                 <img
-                                  src={player.imageUrl}
+                                  src={player.imageUrl || player.teamLogoUrl || ''}
                                   alt={player.name}
-                                  className="w-full h-full object-cover"
+                                  className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                                 />
                               </div>
                             ) : (
@@ -502,12 +503,12 @@ function FairPlayVotingContent() {
                           : 'border-gray-200 hover:border-primary-300'
                       }`}
                     >
-                      {player.imageUrl ? (
+                      {(player.imageUrl || player.teamLogoUrl) ? (
                         <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
                           <img
-                            src={player.imageUrl}
+                            src={player.imageUrl || player.teamLogoUrl || ''}
                             alt={player.name}
-                            className="w-full h-full object-cover"
+                            className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                           />
                         </div>
                       ) : (

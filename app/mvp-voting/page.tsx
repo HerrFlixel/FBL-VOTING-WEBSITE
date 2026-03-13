@@ -11,6 +11,7 @@ type Player = {
   team?: string | null
   position?: string | null
   imageUrl?: string | null
+  teamLogoUrl?: string | null
   jerseyNumber?: number | null
   goals?: number
   assists?: number
@@ -269,13 +270,13 @@ function MVPVotingContent() {
                 onClick={() => openRank(rank)}
               >
                 {sel ? (
-                  <div className={`rounded-lg shadow-lg overflow-hidden border-2 transition-all min-h-0 flex flex-col ${isMinRequired ? 'bg-primary-50/80 border-primary-500 hover:border-primary-600' : 'bg-white border-primary-500 hover:border-primary-600'}`}>
-                    {sel.player.imageUrl ? (
+                  <div className={`rounded-lg shadow-lg overflow-hidden border-2 transition-all min-h-0 flex flex-col ${isMinRequired ? 'bg-primary-50 border-primary-500 hover:border-primary-600' : 'bg-white border-primary-500 hover:border-primary-600'}`}>
+                    {(sel.player.imageUrl || sel.player.teamLogoUrl) ? (
                       <div className="relative w-full h-16 sm:h-24 md:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                         <img
-                          src={sel.player.imageUrl}
+                          src={sel.player.imageUrl || sel.player.teamLogoUrl || ''}
                           alt={sel.player.name}
-                          className="w-full h-full object-cover"
+                          className={sel.player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                         />
                       </div>
                     ) : (
@@ -308,7 +309,7 @@ function MVPVotingContent() {
                     </button>
                   </div>
                 ) : (
-                  <div className={`border-2 border-dashed rounded-lg shadow-lg flex flex-col items-center justify-center transition-all min-h-[120px] sm:min-h-[180px] ${isMinRequired ? 'bg-primary-50/70 border-primary-400/70 hover:border-primary-500 hover:bg-primary-50/80' : 'bg-white/90 border-gray-400 hover:border-primary-500 hover:bg-white'}`}>
+                  <div className={`border-2 border-dashed rounded-lg shadow-lg flex flex-col items-center justify-center transition-all min-h-[120px] sm:min-h-[180px] ${isMinRequired ? 'bg-primary-50 border-primary-400/80 hover:border-primary-500 hover:bg-primary-100/50' : 'bg-gray-50/80 border-gray-400 hover:border-primary-500 hover:bg-white'}`}>
                     <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-primary-500 mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -448,12 +449,12 @@ function MVPVotingContent() {
                                   }`}
                                 >
                                   <div className="bg-white">
-                                    {p.imageUrl ? (
+                                    {(p.imageUrl || p.teamLogoUrl) ? (
                                       <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
                                         <img
-                                          src={p.imageUrl}
+                                          src={p.imageUrl || p.teamLogoUrl || ''}
                                           alt={p.name}
-                                          className="w-full h-full object-cover"
+                                          className={p.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                                         />
                                       </div>
                                     ) : (
@@ -534,12 +535,12 @@ function MVPVotingContent() {
                             }`}
                           >
                         <div className="bg-white">
-                          {p.imageUrl ? (
+                          {(p.imageUrl || p.teamLogoUrl) ? (
                             <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
                               <img
-                                src={p.imageUrl}
+                                src={p.imageUrl || p.teamLogoUrl || ''}
                                 alt={p.name}
-                                className="w-full h-full object-cover"
+                                className={p.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                               />
                             </div>
                           ) : (

@@ -44,3 +44,12 @@ export function getUploadsUrlPath(): string {
   return '/uploads/players'
 }
 
+export function getTeamUploadsPath(): string {
+  const dataPath = getDataPath()
+  return join(dataPath, 'public', 'uploads', 'teams')
+}
+
+export function getTeamUploadsUrlPath(): string {
+  return '/uploads/teams'
+}
+

@@ -60,6 +60,7 @@ model RefereePair {
 model Team {
   id        String   @id @default(cuid())
   name      String   @unique
+  logoUrl   String?
   isForForm Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

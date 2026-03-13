@@ -10,6 +10,7 @@ interface Player {
   league: string
   position: string | null
   imageUrl: string | null
+  teamLogoUrl?: string | null
   jerseyNumber: number | null
   goals: number
   assists: number
@@ -188,12 +189,12 @@ export default function EditPlayerPage() {
               Spielerbild
             </label>
             <div className="flex items-center gap-4">
-              {player.imageUrl ? (
+              {(player.imageUrl || player.teamLogoUrl) ? (
                 <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200">
                   <img
-                    src={player.imageUrl}
+                    src={player.imageUrl || player.teamLogoUrl || ''}
                     alt={player.name}
-                    className="w-full h-full object-cover"
+                    className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                   />
                 </div>
               ) : (

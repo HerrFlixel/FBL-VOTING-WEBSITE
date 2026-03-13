@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface Team {
   id: string
   name: string
   isForForm: boolean
+  logoUrl?: string | null
 }
 
 export default function TeamManagement() {
@@ -14,6 +15,8 @@ export default function TeamManagement() {
   const [newTeamName, setNewTeamName] = useState('')
   const [isForForm, setIsForForm] = useState(true)
   const [creating, setCreating] = useState(false)
+  const [uploadingId, setUploadingId] = useState<string | null>(null)
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     loadTeams()
@@ -74,6 +77,42 @@ export default function TeamManagement() {
       loadTeams()
     } catch (error: any) {
       alert(error.message || 'Fehler beim Löschen des Teams')
+    }
+  }
+
+  const handleLogoUpload = async (teamId: string, file: File) => {
+    setUploadingId(teamId)
+    try {
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await fetch(`/api/teams/${teamId}/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Upload fehlgeschlagen' }))
+        throw new Error(err.error || 'Upload fehlgeschlagen')
+      }
+      loadTeams()
+    } catch (error: any) {
+      alert(error.message || 'Fehler beim Hochladen des Logos')
+    } finally {
+      setUploadingId(null)
+    }
+  }
+
+  const handleRemoveLogo = async (teamId: string) => {
+    if (!confirm('Logo wirklich entfernen?')) return
+    try {
+      const res = await fetch(`/api/teams/${teamId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logoUrl: null })
+      })
+      if (!res.ok) throw new Error('Logo konnte nicht entfernt werden')
+      loadTeams()
+    } catch (error: any) {
+      alert(error.message || 'Fehler beim Entfernen des Logos')
     }
   }
 
@@ -139,6 +178,7 @@ export default function TeamManagement() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Logo</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aktionen</th>
                 </tr>
@@ -146,6 +186,45 @@ export default function TeamManagement() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {formTeams.map((team) => (
                   <tr key={team.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+                        {team.logoUrl ? (
+                          <img src={team.logoUrl} alt="" className="w-full h-full object-contain" />
+                        ) : (
+                          <span className="text-gray-400 text-xs">Kein Logo</span>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        <input
+                          ref={(el) => { fileInputRefs.current[team.id] = el }}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0]
+                            if (f) handleLogoUpload(team.id, f)
+                            e.target.value = ''
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRefs.current[team.id]?.click()}
+                          disabled={uploadingId === team.id}
+                          className="text-xs text-primary-600 hover:text-primary-800 font-heading disabled:opacity-50"
+                        >
+                          {uploadingId === team.id ? 'Lädt…' : 'Logo hochladen'}
+                        </button>
+                        {team.logoUrl && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveLogo(team.id)}
+                            className="text-xs text-red-600 hover:text-red-800 font-heading"
+                          >
+                            Entfernen
+                          </button>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{team.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button

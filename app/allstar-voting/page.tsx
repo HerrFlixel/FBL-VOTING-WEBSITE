@@ -13,6 +13,7 @@ type Player = {
   team?: string | null
   position?: string | null
   imageUrl?: string | null
+  teamLogoUrl?: string | null
   jerseyNumber?: number | null
   points?: number
   goals?: number
@@ -301,14 +302,13 @@ function AllstarVotingContent() {
         style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
       >
         <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
-          {player.imageUrl ? (
+          {(player.imageUrl || player.teamLogoUrl) ? (
             <div className="relative w-full h-8 sm:h-10 md:h-12 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
               <img
-                src={player.imageUrl}
+                src={player.imageUrl || player.teamLogoUrl || ''}
                 alt={player.name}
-                className="w-full h-full object-cover"
+                className={player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                 onError={(e) => {
-                  // Wenn Bild nicht geladen werden kann, zeige Platzhalter
                   const target = e.target as HTMLImageElement
                   target.style.display = 'none'
                   const parent = target.parentElement
@@ -604,12 +604,12 @@ function AllstarVotingContent() {
                                   )}
                                 >
                                   <div className="bg-white flex flex-col min-h-0">
-                                    {p.imageUrl ? (
+                                    {(p.imageUrl || p.teamLogoUrl) ? (
                                       <div className="relative w-full h-24 sm:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                                         <img
-                                          src={p.imageUrl}
+                                          src={p.imageUrl || p.teamLogoUrl || ''}
                                           alt={p.name}
-                                          className="w-full h-full object-cover"
+                                          className={p.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                                         />
                                       </div>
                                     ) : (
@@ -691,12 +691,12 @@ function AllstarVotingContent() {
                             )}
                           >
                             <div className="bg-white flex flex-col min-h-0">
-                              {p.imageUrl ? (
+                              {(p.imageUrl || p.teamLogoUrl) ? (
                                 <div className="relative w-full h-24 sm:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                                   <img
-                                    src={p.imageUrl}
+                                    src={p.imageUrl || p.teamLogoUrl || ''}
                                     alt={p.name}
-                                    className="w-full h-full object-cover"
+                                    className={p.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                                   />
                                 </div>
                               ) : (

@@ -65,6 +65,7 @@ export default function HomePage() {
         </div>
 
         <button
+          type="button"
           onClick={() => router.push('/wahl')}
           className="px-8 sm:px-10 py-3 sm:py-4 rounded-xl bg-white hover:bg-gray-100 text-primary-700 font-heading text-lg sm:text-xl uppercase shadow-xl transition-colors"
         >

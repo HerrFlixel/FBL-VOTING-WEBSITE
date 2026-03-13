@@ -28,7 +28,11 @@ export default function WahlPage() {
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading mb-2 sm:mb-3 md:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full" style={{ fontFamily: 'Futura Extra Bold Oblique, Futura, system-ui, sans-serif' }}>
             1. Damen Bundesliga
           </h1>
-          <button className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase">
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleStart('damen') }}
+            className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase"
+          >
             Voting starten
           </button>
         </div>
@@ -48,7 +52,11 @@ export default function WahlPage() {
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading mb-2 sm:mb-3 md:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full" style={{ fontFamily: 'Futura Extra Bold Oblique, Futura, system-ui, sans-serif' }}>
             1. Herren Bundesliga
           </h1>
-          <button className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase">
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleStart('herren') }}
+            className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase"
+          >
             Voting starten
           </button>
         </div>

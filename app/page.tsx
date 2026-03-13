@@ -57,7 +57,9 @@ export default function HomePage() {
         <div className="bg-white/95 rounded-xl shadow-xl p-6 sm:p-8 md:p-10 text-left space-y-4 text-gray-800 mb-8 sm:mb-10 w-full">
           <p className="text-base sm:text-lg leading-relaxed">{t('intro.p1')}</p>
           <p className="text-base sm:text-lg leading-relaxed">{t('intro.p2')}</p>
-          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p3')}</p>
+          <p className="text-base sm:text-lg leading-relaxed font-semibold">{t('intro.p3')}</p>
+          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p4')}</p>
+          <p className="text-base sm:text-lg leading-relaxed">{t('intro.p5')}</p>
         </div>
 
         <button

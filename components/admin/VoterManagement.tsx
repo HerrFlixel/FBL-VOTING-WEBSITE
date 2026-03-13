@@ -20,12 +20,20 @@ interface UserDetail extends User {
   specialAwardVotes: Array<{ id: string; name: string; league: string | null }>
 }
 
+type SortMode = 'createdAtDesc' | 'nameAsc' | 'nameDesc' | 'teamAsc'
+
+function normalizeName(u: Pick<User, 'firstName' | 'lastName'>) {
+  return `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim().toLowerCase()
+}
+
 export default function VoterManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadingDetail, setLoadingDetail] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [teamFilter, setTeamFilter] = useState<string>('__all__')
+  const [sortMode, setSortMode] = useState<SortMode>('createdAtDesc')
 
   useEffect(() => {
     loadUsers()
@@ -102,6 +110,40 @@ export default function VoterManagement() {
     return <div className="text-gray-600">Lade Voter...</div>
   }
 
+  const teamOptions = Array.from(
+    new Set(users.map((u) => u.team?.name).filter((n): n is string => Boolean(n && n.trim())))
+  ).sort((a, b) => a.localeCompare(b, 'de', { sensitivity: 'base' }))
+
+  const duplicateNameCounts = users.reduce<Record<string, number>>((acc, u) => {
+    const key = normalizeName(u)
+    if (!key) return acc
+    acc[key] = (acc[key] ?? 0) + 1
+    return acc
+  }, {})
+
+  const filteredAndSortedUsers = users
+    .filter((u) => {
+      if (teamFilter === '__all__') return true
+      const teamName = u.team?.name ?? ''
+      return teamName === teamFilter
+    })
+    .slice()
+    .sort((a, b) => {
+      if (sortMode === 'createdAtDesc') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+      if (sortMode === 'teamAsc') {
+        const at = (a.team?.name ?? '').toLowerCase()
+        const bt = (b.team?.name ?? '').toLowerCase()
+        const c = at.localeCompare(bt, 'de', { sensitivity: 'base' })
+        if (c !== 0) return c
+      }
+      const an = `${a.lastName ?? ''} ${a.firstName ?? ''}`.trim().toLowerCase()
+      const bn = `${b.lastName ?? ''} ${b.firstName ?? ''}`.trim().toLowerCase()
+      const cmp = an.localeCompare(bn, 'de', { sensitivity: 'base' })
+      return sortMode === 'nameDesc' ? -cmp : cmp
+    })
+
   return (
     <div className="space-y-6">
       <div>
@@ -113,10 +155,49 @@ export default function VoterManagement() {
         {/* Voter-Liste */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-heading text-gray-900">Alle Voter</h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-lg font-heading text-gray-900">Alle Voter</h3>
+                <span className="text-sm text-gray-600 whitespace-nowrap">
+                  Anzeige: {filteredAndSortedUsers.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="text-sm text-gray-700">
+                  <span className="block text-xs font-medium text-gray-500 uppercase mb-1">Team</span>
+                  <select
+                    value={teamFilter}
+                    onChange={(e) => setTeamFilter(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="__all__">Alle Teams</option>
+                    {teamOptions.map((team) => (
+                      <option key={team} value={team}>
+                        {team}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-sm text-gray-700">
+                  <span className="block text-xs font-medium text-gray-500 uppercase mb-1">Sortierung</span>
+                  <select
+                    value={sortMode}
+                    onChange={(e) => setSortMode(e.target.value as SortMode)}
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="createdAtDesc">Neueste zuerst</option>
+                    <option value="nameAsc">Name A–Z</option>
+                    <option value="nameDesc">Name Z–A</option>
+                    <option value="teamAsc">Team A–Z (dann Name)</option>
+                  </select>
+                </label>
+              </div>
+            </div>
           </div>
           <div className="overflow-y-auto max-h-[600px]">
-            {users.length === 0 ? (
+            {filteredAndSortedUsers.length === 0 ? (
               <div className="p-4 text-gray-600">Keine Voter vorhanden</div>
             ) : (
               <table className="min-w-full divide-y divide-gray-200">
@@ -128,16 +209,26 @@ export default function VoterManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
+                  {filteredAndSortedUsers.map((user) => {
+                    const duplicateCount = duplicateNameCounts[normalizeName(user)] ?? 0
+                    const isDuplicate = duplicateCount > 1
+                    return (
                     <tr
                       key={user.id}
                       className={`cursor-pointer hover:bg-gray-50 ${
                         selectedUser?.id === user.id ? 'bg-primary-50' : ''
-                      }`}
+                      } ${isDuplicate ? 'bg-amber-50 hover:bg-amber-100' : ''}`}
                       onClick={() => loadUserDetail(user.id)}
                     >
                       <td className="px-4 py-3 text-sm text-gray-900">
-                        {user.firstName} {user.lastName}
+                        <div className="flex items-center gap-2">
+                          <span>{user.firstName} {user.lastName}</span>
+                          {isDuplicate && (
+                            <span className="inline-flex items-center rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-900">
+                              DUPLIKAT
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {user.team?.name || '-'}
@@ -155,7 +246,8 @@ export default function VoterManagement() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    )
+                  })}
                 </tbody>
               </table>
             )}

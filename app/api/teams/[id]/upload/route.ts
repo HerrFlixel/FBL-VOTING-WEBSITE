@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '../../../../../../lib/prisma'
+import { prisma } from '../../../../../lib/prisma'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { getTeamUploadsPath, getTeamUploadsUrlPath } from '../../../../../../lib/paths'
+import { getTeamUploadsPath, getTeamUploadsUrlPath } from '../../../../../lib/paths'
 import sharp from 'sharp'
 
 export async function POST(

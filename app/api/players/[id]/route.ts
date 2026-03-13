@@ -15,11 +15,10 @@ export async function GET(
     }
     let teamLogoUrl: string | null = null
     if (player.team) {
-      const team = await prisma.team.findUnique({
-        where: { name: player.team },
-        select: { logoUrl: true }
-      })
-      teamLogoUrl = team?.logoUrl ?? null
+      const teams = await prisma.team.findMany({ where: { logoUrl: { not: null } }, select: { name: true, logoUrl: true } })
+      const teamKey = player.team.trim().toLowerCase()
+      const found = teams.find((t) => t.name.trim().toLowerCase() === teamKey)
+      teamLogoUrl = found?.logoUrl ?? null
     }
     return NextResponse.json({ ...player, teamLogoUrl })
   } catch (error) {

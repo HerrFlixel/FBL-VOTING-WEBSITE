@@ -24,12 +24,13 @@ export async function GET(req: Request) {
     ])
 
     const teamLogoByName = Object.fromEntries(
-      teams.filter((t) => t.logoUrl).map((t) => [t.name, t.logoUrl!])
+      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), t.logoUrl!])
     )
-    const playersWithTeamLogo = players.map((p) => ({
-      ...p,
-      teamLogoUrl: (p.team && teamLogoByName[p.team]) || null
-    }))
+    const playersWithTeamLogo = players.map((p) => {
+      const teamKey = (p.team || '').trim().toLowerCase()
+      const logoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
+      return { ...p, teamLogoUrl: logoUrl }
+    })
     return NextResponse.json(playersWithTeamLogo)
   } catch (error) {
     console.error('Fehler beim Laden der Spieler', error)

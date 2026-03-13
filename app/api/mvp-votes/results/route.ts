@@ -42,21 +42,25 @@ export async function GET(req: Request) {
     }
 
     const teams = await prisma.team.findMany({ select: { name: true, logoUrl: true } })
-    const teamLogoByName = Object.fromEntries(
-      teams.filter((t) => t.logoUrl).map((t) => [t.name, t.logoUrl!])
+    const teamLogoByNorm = Object.fromEntries(
+      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), t.logoUrl!])
     )
     const results = Array.from(playerMap.values())
-      .map((r) => ({
-        player: {
-          id: r.player.id,
-          name: r.player.name,
-          team: r.player.team,
-          imageUrl: r.player.imageUrl,
-          teamLogoUrl: (r.player.team && teamLogoByName[r.player.team]) || null
-        },
-        totalPoints: r.totalPoints,
-        voteCount: r.voteCount
-      }))
+      .map((r) => {
+        const teamKey = (r.player.team || '').trim().toLowerCase()
+        const teamLogoUrl = teamKey ? (teamLogoByNorm[teamKey] ?? null) : null
+        return {
+          player: {
+            id: r.player.id,
+            name: r.player.name,
+            team: r.player.team,
+            imageUrl: r.player.imageUrl,
+            teamLogoUrl
+          },
+          totalPoints: r.totalPoints,
+          voteCount: r.voteCount
+        }
+      })
       .sort((a, b) => b.totalPoints - a.totalPoints)
 
     return NextResponse.json(results)

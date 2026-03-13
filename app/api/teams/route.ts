@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -10,7 +11,11 @@ export async function GET(req: Request) {
       where: forForm ? { isForForm: true } : undefined,
       orderBy: [{ name: 'asc' }]
     })
-    return NextResponse.json(teams)
+    const teamsWithNormalizedLogo = teams.map((t) => ({
+      ...t,
+      logoUrl: normalizeTeamLogoUrl(t.logoUrl) ?? t.logoUrl
+    }))
+    return NextResponse.json(teamsWithNormalizedLogo)
   } catch (error) {
     console.error('Fehler beim Laden der Teams', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Teams' }, { status: 500 })

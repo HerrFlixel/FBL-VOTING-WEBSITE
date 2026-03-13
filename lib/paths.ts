@@ -49,6 +49,11 @@ export function getTeamUploadsPath(): string {
   return join(dataPath, 'public', 'uploads', 'teams')
 }
 
+/** Pfad im Projekt-public-Ordner (für Auslieferung durch Next.js / API) */
+export function getTeamUploadsPublicPath(): string {
+  return join(process.cwd(), 'public', 'uploads', 'teams')
+}
+
 export function getTeamUploadsUrlPath(): string {
   return '/uploads/teams'
 }

@@ -3,7 +3,7 @@ import { prisma } from '../../../../../lib/prisma'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { getTeamUploadsPath, getTeamUploadsUrlPath } from '../../../../../lib/paths'
+import { getTeamUploadsPath, getTeamUploadsPublicPath } from '../../../../../lib/paths'
 import sharp from 'sharp'
 
 export async function POST(
@@ -32,9 +32,8 @@ export async function POST(
       await mkdir(uploadsDir, { recursive: true })
     }
 
-    const publicUploadsDir = join(process.cwd(), 'public', 'uploads', 'teams')
+    const publicUploadsDir = getTeamUploadsPublicPath()
     if (!existsSync(publicUploadsDir)) {
-      await mkdir(join(process.cwd(), 'public', 'uploads'), { recursive: true })
       await mkdir(publicUploadsDir, { recursive: true })
     }
 
@@ -57,7 +56,8 @@ export async function POST(
       }
     }
 
-    const logoUrl = `${getTeamUploadsUrlPath()}/${filename}`
+    // URL über API-Route, damit Logos auch vom persistenten Speicher (z.B. Render) geliefert werden
+    const logoUrl = `/api/upload/teams/${filename}`
     await prisma.team.update({
       where: { id },
       data: { logoUrl }

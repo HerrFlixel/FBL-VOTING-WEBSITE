@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { normalizeTeamLogoUrl } from '../../../../lib/upload-urls'
 
 export async function GET(
   req: Request,
@@ -18,7 +19,7 @@ export async function GET(
       const teams = await prisma.team.findMany({ where: { logoUrl: { not: null } }, select: { name: true, logoUrl: true } })
       const teamKey = player.team.trim().toLowerCase()
       const found = teams.find((t) => t.name.trim().toLowerCase() === teamKey)
-      teamLogoUrl = found?.logoUrl ?? null
+      teamLogoUrl = normalizeTeamLogoUrl(found?.logoUrl ?? null)
     }
     return NextResponse.json({ ...player, teamLogoUrl })
   } catch (error) {

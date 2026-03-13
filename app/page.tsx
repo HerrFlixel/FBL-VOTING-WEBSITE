@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useLanguage } from '../components/LanguageProvider'
 import LanguageToggle from '../components/LanguageToggle'
+import { fetchWithVoterId, clearClientVoterId } from '../components/client-voter'
 
 export default function HomePage() {
   const router = useRouter()
@@ -12,12 +13,13 @@ export default function HomePage() {
   useEffect(() => {
     const clearSession = async () => {
       if (typeof window !== 'undefined') {
-        sessionStorage.clear()
         try {
-          await fetch('/api/votes/clear-session', { method: 'POST' })
+          await fetchWithVoterId('/api/votes/clear-session', { method: 'POST' })
         } catch (e) {
           console.error('Fehler beim Zurücksetzen der Session', e)
         }
+        clearClientVoterId()
+        sessionStorage.clear()
       }
     }
     clearSession()

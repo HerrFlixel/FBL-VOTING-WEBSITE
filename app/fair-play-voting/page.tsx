@@ -58,23 +58,7 @@ function FairPlayVotingContent() {
 
   useEffect(() => {
     const loadVote = async () => {
-      // Prüfe ob es ein Reload war - wenn ja, lösche zuerst alle Votes
-      const wasReload = sessionStorage.getItem('wasReload')
-      if (wasReload === 'true') {
-        // Lösche alle Votes vom Server
-        try {
-          await fetch('/api/votes/clear-session', { method: 'POST' })
-        } catch (e) {
-          console.error('Fehler beim Löschen der Votes nach Reload', e)
-        }
-        sessionStorage.removeItem('wasReload')
-        // Setze selectedPlayer zurück
-        setSelectedPlayer(null)
-        return
-      }
-
       try {
-        // Lade Vote für diese Liga - wichtig: warte auf Antwort
         const res = await fetchWithVoterId(`/api/fairplay-votes?league=${league}`, {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen

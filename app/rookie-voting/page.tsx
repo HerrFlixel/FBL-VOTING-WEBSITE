@@ -57,18 +57,6 @@ function RookieVotingContent() {
   }, [league])
 
   useEffect(() => {
-    const wasReload = sessionStorage.getItem('wasReload')
-    if (wasReload === 'true') {
-      try {
-        fetch('/api/votes/clear-session', { method: 'POST' })
-      } catch (e) {
-        console.error('Fehler beim Löschen der Votes nach Reload', e)
-      }
-      sessionStorage.removeItem('wasReload')
-      setSelectedPlayer(null)
-      return
-    }
-
     const loadVote = async () => {
       try {
         const res = await fetchWithVoterId(`/api/rookie-votes?league=${league}`, {

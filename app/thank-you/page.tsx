@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import { fetchWithVoterId, clearClientVoterId } from '../../components/client-voter'
 
 function ThankYouContent() {
   const searchParams = useSearchParams()
@@ -9,12 +10,12 @@ function ThankYouContent() {
   const userId = searchParams.get('userId')
 
   const handleGoHome = async () => {
-    // Session zurücksetzen - warte auf Abschluss bevor Navigation
     try {
-      await fetch('/api/votes/clear-session', { method: 'POST' })
+      await fetchWithVoterId('/api/votes/clear-session', { method: 'POST' })
     } catch (e) {
       console.error('Fehler beim Zurücksetzen der Session', e)
     }
+    clearClientVoterId()
     sessionStorage.clear()
     // Kurze Verzögerung, um sicherzustellen, dass die Löschung abgeschlossen ist
     await new Promise(resolve => setTimeout(resolve, 100))

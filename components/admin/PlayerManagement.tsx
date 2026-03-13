@@ -17,11 +17,15 @@ interface Player {
   league: string
 }
 
+type SortOption = 'name' | 'team' | 'league' | 'goals' | 'points'
+
 export default function PlayerManagement() {
   const router = useRouter()
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedLeague, setSelectedLeague] = useState<'herren' | 'damen' | 'all'>('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState<SortOption>('name')
 
   useEffect(() => {
     fetchPlayers()
@@ -137,6 +141,21 @@ export default function PlayerManagement() {
     )
   }
 
+  const filteredAndSortedPlayers = [...players]
+    .filter((p) => {
+      if (!searchTerm.trim()) return true
+      const term = searchTerm.toLowerCase().trim()
+      return [p.name, p.team, p.position].filter(Boolean).some((v) => String(v).toLowerCase().includes(term))
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '', 'de')
+      if (sortBy === 'team') return (a.team || '').localeCompare(b.team || '', 'de')
+      if (sortBy === 'league') return (a.league || '').localeCompare(b.league || '', 'de')
+      if (sortBy === 'goals') return (b.goals ?? 0) - (a.goals ?? 0)
+      if (sortBy === 'points') return (b.points ?? 0) - (a.points ?? 0)
+      return 0
+    })
+
   if (loading) {
     return <div className="text-center py-8 text-gray-900">Lade Spieler...</div>
   }
@@ -165,8 +184,8 @@ export default function PlayerManagement() {
             )}
           </div>
         </div>
-        
-        <div className="flex gap-4">
+
+        <div className="flex flex-wrap gap-4 items-center mb-4">
           <button
             onClick={() => setSelectedLeague('all')}
             className={`px-4 py-2 rounded-lg font-heading ${
@@ -197,7 +216,30 @@ export default function PlayerManagement() {
           >
             Damen
           </button>
+
+          <input
+            type="text"
+            placeholder="Suchen (Name, Team, Position…)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 min-w-[200px] max-w-xs rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          />
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <span>Sortierung:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            >
+              <option value="name">Name</option>
+              <option value="team">Team</option>
+              <option value="league">Liga</option>
+              <option value="goals">Tore (absteigend)</option>
+              <option value="points">Punkte (absteigend)</option>
+            </select>
+          </label>
         </div>
+        <p className="text-sm text-gray-600">Anzeige: {filteredAndSortedPlayers.length} von {players.length} Spielern</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -234,7 +276,7 @@ export default function PlayerManagement() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {players.map((player) => (
+            {filteredAndSortedPlayers.map((player) => (
               <tr key={player.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <PlayerAvatar player={player} />

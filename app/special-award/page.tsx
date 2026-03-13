@@ -17,22 +17,6 @@ function SpecialAwardContent() {
 
   useEffect(() => {
     const loadVote = async () => {
-      // Prüfe ob es ein Reload war - wenn ja, lösche zuerst alle Votes
-      const wasReload = sessionStorage.getItem('wasReload')
-      if (wasReload === 'true') {
-        // Lösche alle Votes vom Server
-        try {
-          await fetch('/api/votes/clear-session', { method: 'POST' })
-        } catch (e) {
-          console.error('Fehler beim Löschen der Votes nach Reload', e)
-        }
-        sessionStorage.removeItem('wasReload')
-        // Setze name zurück
-        setName('')
-        setLoading(false)
-        return
-      }
-
       setLoading(true)
       try {
         const res = await fetchWithVoterId(`/api/special-award-votes?league=${league}`)

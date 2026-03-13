@@ -45,23 +45,7 @@ function RefereeVotingContent() {
 
   useEffect(() => {
     const loadVote = async () => {
-      // Prüfe ob es ein Reload war - wenn ja, lösche zuerst alle Votes
-      const wasReload = sessionStorage.getItem('wasReload')
-      if (wasReload === 'true') {
-        // Lösche alle Votes vom Server
-        try {
-          await fetch('/api/votes/clear-session', { method: 'POST' })
-        } catch (e) {
-          console.error('Fehler beim Löschen der Votes nach Reload', e)
-        }
-        sessionStorage.removeItem('wasReload')
-        // Setze selectedPair zurück
-        setSelectedPair(null)
-        return
-      }
-
       try {
-        // Lade Vote - wichtig: warte auf Antwort
         const res = await fetchWithVoterId('/api/referee-votes', {
           method: 'GET',
           cache: 'no-store' // Stelle sicher, dass wir immer die neuesten Votes bekommen

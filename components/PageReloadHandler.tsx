@@ -29,7 +29,7 @@ export default function PageReloadHandler() {
     const isReload = navigationEntries.length > 0 && navigationEntries[0].type === 'reload'
 
     if (isReload && isVotingPath(pathname)) {
-      router.replace('/wahl')
+      router.replace('/')
       return
     }
 

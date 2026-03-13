@@ -120,20 +120,21 @@ function RookieVotingContent() {
     const player = allPlayers.find((p) => p.id === selectedPlayerId)
     if (!player) return
 
+    const playerIdToSave = selectedPlayerId
     setSaving(true)
+    setModalOpen(false)
+    setSelectedPlayerId(null)
     try {
       const res = await fetchWithVoterId('/api/rookie-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playerId: selectedPlayerId, league })
+        body: JSON.stringify({ playerId: playerIdToSave, league })
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Unbekannter Fehler' }))
         throw new Error(err.error || `Fehler beim Speichern (Status: ${res.status})`)
       }
       setSelectedPlayer(player)
-      setModalOpen(false)
-      setSelectedPlayerId(null)
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
       alert(error.message || 'Fehler beim Speichern des Votes')
@@ -329,9 +330,9 @@ function RookieVotingContent() {
                 </div>
               )}
             </div>
-            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2">
-              <button onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm">Abbrechen</button>
-              <button onClick={handleSave} disabled={!selectedPlayerId || saving} className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm ${selectedPlayerId && !saving ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-gray-400 text-gray-200 cursor-not-allowed'}`}>
+            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2 [touch-action:manipulation]">
+              <button type="button" onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="min-h-[44px] px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm [touch-action:manipulation]">Abbrechen</button>
+              <button type="button" onClick={handleSave} disabled={!selectedPlayerId || saving} className={`min-h-[44px] px-4 py-2 rounded-lg font-heading text-xs sm:text-sm [touch-action:manipulation] ${selectedPlayerId && !saving ? 'bg-primary-600 hover:bg-primary-700 text-white active:opacity-90' : 'bg-gray-400 text-gray-200 cursor-not-allowed'}`}>
                 {saving ? 'Speichern...' : 'Auswählen'}
               </button>
             </div>

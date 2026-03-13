@@ -82,13 +82,16 @@ function RefereeVotingContent() {
     const pair = allPairs.find((p) => p.id === selectedPairId)
     if (!pair) return
 
+    const pairIdToSave = selectedPairId
     setSaving(true)
+    setModalOpen(false)
+    setSelectedPairId(null)
     try {
       const res = await fetchWithVoterId('/api/referee-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          refereePairId: selectedPairId
+          refereePairId: pairIdToSave
         })
       })
       if (!res.ok) {
@@ -96,8 +99,6 @@ function RefereeVotingContent() {
         throw new Error(err.error || `Fehler beim Speichern (Status: ${res.status})`)
       }
       setSelectedPair(pair)
-      setModalOpen(false)
-      setSelectedPairId(null)
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
       alert(error.message || 'Fehler beim Speichern des Votes')
@@ -337,22 +338,24 @@ function RefereeVotingContent() {
               )}
             </div>
 
-            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2">
+            <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2 [touch-action:manipulation]">
               <button
+                type="button"
                 onClick={() => {
                   setModalOpen(false)
                   setSelectedPairId(null)
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm"
+                className="min-h-[44px] px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm [touch-action:manipulation]"
               >
                 Abbrechen
               </button>
               <button
+                type="button"
                 onClick={handleSave}
                 disabled={!selectedPairId || saving}
-                className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm ${
+                className={`min-h-[44px] px-4 py-2 rounded-lg font-heading text-xs sm:text-sm [touch-action:manipulation] ${
                   selectedPairId && !saving
-                    ? 'bg-primary-600 hover:bg-primary-700 text-white'
+                    ? 'bg-primary-600 hover:bg-primary-700 text-white active:opacity-90'
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                 }`}
               >

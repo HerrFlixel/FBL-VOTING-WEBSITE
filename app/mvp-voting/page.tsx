@@ -265,11 +265,11 @@ function MVPVotingContent() {
             return (
               <div
                 key={rank}
-                className={`relative cursor-pointer group ${isMinRequired ? 'ring-2 ring-primary-400 ring-offset-2 ring-offset-transparent rounded-lg' : ''}`}
+                className="relative cursor-pointer group"
                 onClick={() => openRank(rank)}
               >
                 {sel ? (
-                  <div className={`rounded-lg shadow-lg overflow-hidden border-2 transition-all min-h-0 flex flex-col ${isMinRequired ? 'bg-primary-50 border-primary-500 hover:border-primary-600' : 'bg-white border-primary-500 hover:border-primary-600'}`}>
+                  <div className={`rounded-lg shadow-lg overflow-hidden border-2 transition-all min-h-0 flex flex-col ${isMinRequired ? 'bg-primary-50/80 border-primary-500 hover:border-primary-600' : 'bg-white border-primary-500 hover:border-primary-600'}`}>
                     {sel.player.imageUrl ? (
                       <div className="relative w-full h-16 sm:h-24 md:h-28 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                         <img
@@ -308,12 +308,12 @@ function MVPVotingContent() {
                     </button>
                   </div>
                 ) : (
-                  <div className={`border-2 border-dashed rounded-lg shadow-lg flex flex-col items-center justify-center transition-all min-h-[120px] sm:min-h-[180px] ${isMinRequired ? 'bg-primary-50/90 border-primary-300 hover:border-primary-500 hover:bg-primary-50' : 'bg-white/90 border-gray-400 hover:border-primary-500 hover:bg-white'}`}>
+                  <div className={`border-2 border-dashed rounded-lg shadow-lg flex flex-col items-center justify-center transition-all min-h-[120px] sm:min-h-[180px] ${isMinRequired ? 'bg-primary-50/70 border-primary-400/70 hover:border-primary-500 hover:bg-primary-50/80' : 'bg-white/90 border-gray-400 hover:border-primary-500 hover:bg-white'}`}>
                     <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-primary-500 mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                     <div className="text-center px-2">
-                      <div className={`inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-heading text-[10px] sm:text-xs mb-1 sm:mb-2 ${isMinRequired ? 'bg-primary-200 text-primary-800' : 'bg-gray-200 text-gray-700'}`}>
+                      <div className={`inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-heading text-[10px] sm:text-xs mb-1 sm:mb-2 ${isMinRequired ? 'bg-primary-100 text-primary-800' : 'bg-gray-200 text-gray-700'}`}>
                         Platz {rank}
                       </div>
                       <div className="text-[10px] sm:text-xs text-gray-500">Klicken zum Auswählen</div>

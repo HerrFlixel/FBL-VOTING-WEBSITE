@@ -4,10 +4,12 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 function SpecialAwardContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
@@ -38,7 +40,7 @@ function SpecialAwardContent() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      alert('Bitte geben Sie einen Namen ein')
+      alert(t('special.enterName'))
       return
     }
 
@@ -58,7 +60,7 @@ function SpecialAwardContent() {
       }
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
-      alert(error.message || 'Fehler beim Speichern des Votes')
+      alert(error.message || t('common.errorSave'))
       setSaving(false)
       return
     } finally {
@@ -69,7 +71,7 @@ function SpecialAwardContent() {
   const canProceed = name.trim().length > 0
 
   const leagueName =
-    league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+    league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
   
   const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
@@ -94,24 +96,24 @@ function SpecialAwardContent() {
               {leagueName}
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900">
-              Sonderpreis
+              {t('special.title')}
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
-              Geben Sie den vollständigen Namen für den Sonderpreis ein
+              {t('special.subtitle')}
             </p>
           </div>
 
           <div className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                Vollständiger Name
+                {t('special.fullName')}
               </label>
               <input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="z.B. Max Mustermann"
+                placeholder={t('special.placeholder')}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 disabled={loading || saving}
               />
@@ -127,12 +129,12 @@ function SpecialAwardContent() {
                 }}
                 disabled={saving}
               >
-                ← Zurück
+                {t('common.back')}
               </button>
               <button
                 onClick={async () => {
                   if (!name.trim()) {
-                    alert('Bitte geben Sie einen Namen ein')
+                    alert(t('special.enterName'))
                     return
                   }
                   if (saving) return
@@ -156,7 +158,7 @@ function SpecialAwardContent() {
                     router.push(`/user-form?league=${league}`)
                   } catch (error: any) {
                     console.error('Fehler beim Speichern', error)
-                    alert(error.message || 'Fehler beim Speichern des Votes')
+                    alert(error.message || t('common.errorSave'))
                     setSaving(false)
                   }
                 }}
@@ -167,7 +169,7 @@ function SpecialAwardContent() {
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                 } shadow-lg transition-colors`}
               >
-                {saving ? 'Speichern...' : 'Weiter'}
+                {saving ? t('common.savingShort') : t('common.next')}
               </button>
             </div>
           </div>

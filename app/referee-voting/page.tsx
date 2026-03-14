@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type RefereePair = {
   id: string
@@ -13,6 +14,7 @@ type RefereePair = {
 
 function RefereeVotingContent() {
   const router = useRouter()
+  const { t } = useLanguage()
 
   const [allPairs, setAllPairs] = useState<RefereePair[]>([])
   const [loadingPairs, setLoadingPairs] = useState(false)
@@ -101,7 +103,7 @@ function RefereeVotingContent() {
       setSelectedPair(pair)
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
-      alert(error.message || 'Fehler beim Speichern des Votes')
+      alert(error.message || t('common.errorSave'))
     } finally {
       setSaving(false)
     }
@@ -164,10 +166,10 @@ function RefereeVotingContent() {
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg">
-            Schiedsrichter-Paar Voting
+            {t('referee.title')}
           </h1>
           <p className="text-sm text-white drop-shadow-md mt-2">
-            Wähle dein Schiedsrichter-Paar des Jahres
+            {t('referee.subtitle')}
           </p>
         </div>
 
@@ -215,8 +217,8 @@ function RefereeVotingContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <div className="text-center px-4">
-                <div className="text-lg font-heading text-gray-700 mb-2">Schiedsrichter-Paar auswählen</div>
-                <div className="text-sm text-gray-500">Klicken zum Auswählen</div>
+                <div className="text-lg font-heading text-gray-700 mb-2">{t('common.selectReferee')}</div>
+                <div className="text-sm text-gray-500">{t('common.clickToSelect')}</div>
               </div>
             </div>
           )}
@@ -240,7 +242,7 @@ function RefereeVotingContent() {
               }
             }}
           >
-            ← Zurück
+            {t('common.back')}
           </button>
           <button
             disabled={!canProceed || saving}
@@ -256,7 +258,7 @@ function RefereeVotingContent() {
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             } shadow-lg transition-colors`}
           >
-            {saving ? 'Speichere...' : 'Weiter zum Sonderpreis'}
+            {saving ? t('common.saving') : t('common.nextToSpecial')}
           </button>
         </div>
       </div>
@@ -266,7 +268,7 @@ function RefereeVotingContent() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4 bg-black/50">
           <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-              <h2 className="text-base sm:text-xl font-heading text-gray-900">Schiedsrichter-Paar auswählen</h2>
+              <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('common.selectReferee')}</h2>
               <button
                 onClick={() => {
                   setModalOpen(false)
@@ -283,7 +285,7 @@ function RefereeVotingContent() {
             <div className="p-3 sm:p-4 border-b border-gray-200">
               <input
                 type="text"
-                placeholder="Schiedsrichter-Paar suchen..."
+                placeholder={t('common.searchReferee')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -292,9 +294,9 @@ function RefereeVotingContent() {
 
             <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               {loadingPairs ? (
-                <div className="text-center py-8 text-gray-500">Lade Schiedsrichter-Paare...</div>
+                <div className="text-center py-8 text-gray-500">{t('common.loadReferees')}</div>
               ) : filteredPairs.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Keine Schiedsrichter-Paare gefunden</div>
+                <div className="text-center py-8 text-gray-500">{t('common.noReferees')}</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {filteredPairs.map((pair) => (
@@ -347,7 +349,7 @@ function RefereeVotingContent() {
                 }}
                 className="min-h-[44px] px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm [touch-action:manipulation]"
               >
-                Abbrechen
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
@@ -359,7 +361,7 @@ function RefereeVotingContent() {
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                 }`}
               >
-                {saving ? 'Speichern...' : 'Auswählen'}
+                {saving ? t('common.savingShort') : t('common.select')}
               </button>
             </div>
           </div>
@@ -373,7 +375,7 @@ export default function RefereeVotingPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Lade...</div>
+        <div className="text-white">{t('common.loading')}</div>
       </div>
     }>
       <RefereeVotingContent />

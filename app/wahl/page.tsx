@@ -1,9 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '../components/LanguageProvider'
 
 export default function WahlPage() {
   const router = useRouter()
+  const { t } = useLanguage()
 
   const handleStart = (league: 'herren' | 'damen') => {
     router.push(`/allstar-voting?league=${league}`)
@@ -11,7 +13,6 @@ export default function WahlPage() {
 
   return (
     <main className="h-screen flex flex-col md:flex-row items-stretch relative overflow-hidden">
-      {/* Weißer Trennstreifen - nur auf Desktop */}
       <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white z-20 transform -translate-x-1/2"></div>
 
       <div
@@ -20,20 +21,20 @@ export default function WahlPage() {
       >
         <img
           src="/Hintergrund Damen.png"
-          alt="1. Damen Bundesliga"
+          alt={t('wahl.leagueWomen')}
           className="absolute inset-0 w-full h-full object-cover blur-sm transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center p-2 sm:p-4 md:p-8">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading mb-2 sm:mb-3 md:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full" style={{ fontFamily: 'Futura Extra Bold Oblique, Futura, system-ui, sans-serif' }}>
-            1. Damen Bundesliga
+            {t('wahl.leagueWomen')}
           </h1>
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleStart('damen') }}
             className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase"
           >
-            Voting starten
+            {t('wahl.startVoting')}
           </button>
         </div>
       </div>
@@ -44,20 +45,20 @@ export default function WahlPage() {
       >
         <img
           src="/Hintergrund Herren.png"
-          alt="1. Herren Bundesliga"
+          alt={t('wahl.leagueMen')}
           className="absolute inset-0 w-full h-full object-cover blur-sm transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center p-2 sm:p-4 md:p-8">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading mb-2 sm:mb-3 md:mb-4 text-white drop-shadow-lg text-center uppercase px-2 w-full" style={{ fontFamily: 'Futura Extra Bold Oblique, Futura, system-ui, sans-serif' }}>
-            1. Herren Bundesliga
+            {t('wahl.leagueMen')}
           </h1>
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleStart('herren') }}
             className="mt-2 sm:mt-3 md:mt-4 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg bg-white hover:bg-gray-100 text-black font-heading text-sm sm:text-base md:text-lg shadow-lg uppercase"
           >
-            Voting starten
+            {t('wahl.startVoting')}
           </button>
         </div>
       </div>

@@ -3,10 +3,12 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { fetchWithVoterId, clearClientVoterId } from '../../components/client-voter'
+import { useLanguage } from '../../components/LanguageProvider'
 
 function ThankYouContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const userId = searchParams.get('userId')
 
   const handleGoHome = async () => {
@@ -42,22 +44,22 @@ function ThankYouContent() {
             </svg>
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-3 sm:mb-4 text-gray-900 px-2">
-            Vielen Dank!
+            {t('thankYou.title')}
           </h1>
           <p className="text-base sm:text-lg text-gray-700 mb-2 px-2">
-            Sie haben Ihre Stimmen erfolgreich abgegeben.
+            {t('thankYou.p1')}
           </p>
           <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 px-2">
-            Ihre Stimmen sind eingegangen und werden nun ausgewertet.
+            {t('thankYou.p2')}
           </p>
           <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8 px-2">
-            Sie können diese Seite jetzt schließen.
+            {t('thankYou.p3')}
           </p>
           <button
             onClick={handleGoHome}
             className="px-6 sm:px-8 py-2 sm:py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-sm sm:text-lg uppercase shadow-lg transition-colors"
           >
-            Zur Startseite
+            {t('thankYou.toHome')}
           </button>
         </div>
       </div>
@@ -69,7 +71,7 @@ export default function ThankYouPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Lade...</div>
+        <div className="text-white">Loading...</div>
       </div>
     }>
       <ThankYouContent />

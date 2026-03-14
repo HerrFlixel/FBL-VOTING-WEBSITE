@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type Coach = {
   id: string
@@ -16,6 +17,7 @@ type Coach = {
 function CoachVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
@@ -146,7 +148,7 @@ function CoachVotingContent() {
   }, [allCoaches, searchTerm])
 
   const leagueName =
-    league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+    league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
   
   const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
@@ -170,10 +172,10 @@ function CoachVotingContent() {
             {leagueName}
           </div>
           <h1 className="text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg">
-            Trainer des Jahres
+            {t('coach.title')}
           </h1>
           <p className="text-sm text-white drop-shadow-md mt-2">
-            Wähle deinen Trainer des Jahres
+            {t('coach.subtitle')}
           </p>
         </div>
 
@@ -206,7 +208,7 @@ function CoachVotingContent() {
                 onClick={openSelect}
                 className="absolute top-2 right-2 px-3 py-1 bg-primary-600 text-white rounded-lg text-xs hover:bg-primary-700 opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                Ändern
+                {t('common.change')}
               </button>
               <button
                 onClick={handleRemove}
@@ -224,8 +226,8 @@ function CoachVotingContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <div className="text-center px-4">
-                <div className="text-lg font-heading text-gray-700 mb-2">Trainer auswählen</div>
-                <div className="text-sm text-gray-500">Klicken zum Auswählen</div>
+                <div className="text-lg font-heading text-gray-700 mb-2">{t('common.selectCoach')}</div>
+                <div className="text-sm text-gray-500">{t('common.clickToSelect')}</div>
               </div>
             </div>
           )}
@@ -241,13 +243,12 @@ function CoachVotingContent() {
               router.push(`/mvp-voting?league=${league}`)
             }}
           >
-            ← Zurück
+            {t('common.back')}
           </button>
           <button
             disabled={!canProceed || saving}
             onClick={async () => {
               if (!canProceed || saving) return
-              // Warte bis alle Speicher-Operationen abgeschlossen sind
               await new Promise(resolve => setTimeout(resolve, 100))
               router.push(`/fair-play-voting?league=${league}`)
             }}
@@ -257,7 +258,7 @@ function CoachVotingContent() {
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             } shadow-lg transition-colors`}
           >
-            {saving ? 'Speichere...' : 'Weiter zum Fair Play Award'}
+            {saving ? t('common.saving') : t('common.nextToFairPlay')}
           </button>
         </div>
       </div>
@@ -267,7 +268,7 @@ function CoachVotingContent() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-2 sm:p-4 bg-black/50">
           <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-              <h2 className="text-base sm:text-xl font-heading text-gray-900">Trainer auswählen</h2>
+              <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('common.selectCoach')}</h2>
               <button
                 onClick={() => {
                   setModalOpen(false)
@@ -284,7 +285,7 @@ function CoachVotingContent() {
             <div className="p-3 sm:p-4 border-b border-gray-200">
               <input
                 type="text"
-                placeholder="Trainer suchen..."
+                placeholder={t('common.searchCoach')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -293,9 +294,9 @@ function CoachVotingContent() {
 
             <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               {loadingCoaches ? (
-                <div className="text-center py-8 text-gray-500">Lade Trainer...</div>
+                <div className="text-center py-8 text-gray-500">{t('common.loadCoaches')}</div>
               ) : filteredCoaches.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Keine Trainer gefunden</div>
+                <div className="text-center py-8 text-gray-500">{t('common.noCoaches')}</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {filteredCoaches.map((coach) => (
@@ -350,7 +351,7 @@ function CoachVotingContent() {
                 }}
                 className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm"
               >
-                Abbrechen
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleSave}
@@ -361,7 +362,7 @@ function CoachVotingContent() {
                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                 }`}
               >
-                {saving ? 'Speichern...' : 'Auswählen'}
+                {saving ? t('common.savingShort') : t('common.select')}
               </button>
             </div>
           </div>

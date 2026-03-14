@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type Player = {
   id: string
@@ -26,6 +27,7 @@ type Selected = {
 function MVPVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
@@ -118,7 +120,7 @@ function MVPVotingContent() {
       (p) => p.player.id === player.id && p.rank !== selectedRank
     )
     if (already) {
-      alert(`Dieser Spieler ist bereits auf Platz ${already.rank} gewählt.`)
+      alert(`${t('mvp.playerAlreadyOnRank')} ${already.rank} ${t('mvp.chosen')}`)
       return
     }
 
@@ -148,7 +150,7 @@ function MVPVotingContent() {
       setSelectedPlayerId(null)
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
-      alert(error.message || 'Fehler beim Speichern des Votes')
+      alert(error.message || t('common.errorSave'))
     } finally {
       setSaving(false)
     }
@@ -171,7 +173,7 @@ function MVPVotingContent() {
       setSelectedPlayers((prev) => prev.filter((p) => p.rank !== rank))
     } catch (error: any) {
       console.error('Fehler beim Löschen', error)
-      alert(error.message || 'Fehler beim Löschen des Votes')
+      alert(error.message || t('common.errorDelete'))
     }
   }
 
@@ -228,7 +230,7 @@ function MVPVotingContent() {
     selectedPlayers.some((p) => p.player.id === playerId)
 
   const leagueName =
-    league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+    league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
   
   const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
@@ -252,10 +254,10 @@ function MVPVotingContent() {
             {leagueName}
           </div>
           <h1 className="text-xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg px-2">
-            MVP Voting
+            {t('mvp.title')}
           </h1>
           <p className="text-xs sm:text-sm text-white drop-shadow-md mt-2 px-2">
-            Wähle deine Top 10 MVP-Kandidaten (mindestens 5 erforderlich)
+            {t('mvp.subtitle')}
           </p>
         </div>
 
@@ -288,7 +290,7 @@ function MVPVotingContent() {
                     )}
                     <div className="p-1.5 sm:p-2 text-center space-y-0.5 sm:space-y-1 min-w-0">
                       <div className="inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-primary-600 text-white font-heading text-[10px] sm:text-xs mb-0.5 sm:mb-1">
-                        Platz {rank}
+                        {t('common.rank')} {rank}
                       </div>
                       <div className="font-heading text-[10px] sm:text-xs font-bold text-gray-900 break-words">{sel.player.name}</div>
                       {sel.player.team && (
@@ -315,9 +317,9 @@ function MVPVotingContent() {
                     </svg>
                     <div className="text-center px-2">
                       <div className={`inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-heading text-[10px] sm:text-xs mb-1 sm:mb-2 ${isMinRequired ? 'bg-primary-100 text-primary-800' : 'bg-gray-200 text-gray-700'}`}>
-                        Platz {rank}
+                        {t('common.rank')} {rank}
                       </div>
-                      <div className="text-[10px] sm:text-xs text-gray-500">Klicken zum Auswählen</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">{t('common.clickToSelect')}</div>
                     </div>
                   </div>
                 )}
@@ -336,7 +338,7 @@ function MVPVotingContent() {
               router.push(`/allstar-voting?league=${league}`)
             }}
           >
-            ← Zurück
+            {t('common.back')}
           </button>
           <button
             disabled={!canProceed || saving}
@@ -352,7 +354,7 @@ function MVPVotingContent() {
                 : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             }`}
           >
-            {saving ? 'Speichere...' : 'Weiter zum Trainer →'}
+            {saving ? t('common.saving') : t('common.nextToCoach')}
           </button>
         </div>
       </div>
@@ -362,8 +364,8 @@ function MVPVotingContent() {
           <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex-1 min-w-0">
-                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">Platz {selectedRank} ({11 - selectedRank} Punkte)</div>
-                <div className="text-xs sm:text-sm text-gray-600">Spieler auswählen</div>
+                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">{t('common.rank')} {selectedRank} ({11 - selectedRank} {t('common.points')})</div>
+                <div className="text-xs sm:text-sm text-gray-600">{t('common.selectPlayer')}</div>
               </div>
               <button
                 className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl ml-2 flex-shrink-0"
@@ -382,7 +384,7 @@ function MVPVotingContent() {
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Spieler suchen..."
+                  placeholder={t('common.searchPlayer')}
                   className="w-full sm:flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <select
@@ -407,7 +409,7 @@ function MVPVotingContent() {
                   <option value="name">Nach Name</option>
                 </select>
                 {loadingPlayers && (
-                  <span className="text-xs text-gray-500">Lade Spieler...</span>
+                  <span className="text-xs text-gray-500">{t('common.loadPlayers')}</span>
                 )}
               </div>
 
@@ -494,7 +496,7 @@ function MVPVotingContent() {
                                     </div>
                                     {taken && (
                                       <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
-                                        <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                                        <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">{t('common.alreadyChosen')}</span>
                                       </div>
                                     )}
                                     {isSelected && !taken && (
@@ -580,7 +582,7 @@ function MVPVotingContent() {
                           </div>
                           {taken && (
                             <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
-                              <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                              <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">{t('common.alreadyChosen')}</span>
                             </div>
                           )}
                           {isSelected && !taken && (
@@ -596,7 +598,7 @@ function MVPVotingContent() {
                       })}
                       {filteredPlayers.length === 0 && (
                         <div className="col-span-full text-center py-12 text-gray-500">
-                          Keine Spieler gefunden.
+                          {t('common.noPlayers')}
                         </div>
                       )}
                     </div>
@@ -613,7 +615,7 @@ function MVPVotingContent() {
                     setSelectedPlayerId(null)
                   }}
                 >
-                  Abbrechen
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleSaveRank}
@@ -624,7 +626,7 @@ function MVPVotingContent() {
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >
-                  Bestätigen
+                  {t('common.confirm')}
                 </button>
               </div>
             </div>
@@ -639,7 +641,7 @@ export default function MVPVotingPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Lade...</div>
+        <div className="text-white">Loading...</div>
       </div>
     }>
       <MVPVotingContent />

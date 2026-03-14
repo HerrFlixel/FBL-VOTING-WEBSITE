@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type Player = {
   id: string
@@ -22,6 +23,7 @@ type Player = {
 function RookieVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
@@ -138,7 +140,7 @@ function RookieVotingContent() {
       setSelectedPlayer(player)
     } catch (error: any) {
       console.error('Fehler beim Speichern', error)
-      alert(error.message || 'Fehler beim Speichern des Votes')
+      alert(error.message || t('common.errorSave'))
     } finally {
       setSaving(false)
     }
@@ -158,7 +160,7 @@ function RookieVotingContent() {
       setSelectedPlayer(null)
     } catch (error: any) {
       console.error('Fehler beim Löschen', error)
-      alert(error.message || 'Fehler beim Löschen des Votes')
+      alert(error.message || t('common.errorDelete'))
     }
   }
 
@@ -185,7 +187,7 @@ function RookieVotingContent() {
     return unique
   }, [allPlayers, searchTerm, selectedTeam, sortBy])
 
-  const leagueName = league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+  const leagueName = league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
   const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
   return (
@@ -202,10 +204,10 @@ function RookieVotingContent() {
             {leagueName}
           </div>
           <h1 className="text-xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-white drop-shadow-lg px-2">
-            Rookie of the Season
+            {t('rookie.title')}
           </h1>
           <p className="text-xs sm:text-sm text-white drop-shadow-md mt-2 px-2">
-            Wähle deinen Rookie of the Season
+            {t('rookie.subtitle')}
           </p>
         </div>
 
@@ -237,8 +239,8 @@ function RookieVotingContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <div className="text-center px-4">
-                <div className="text-lg font-heading text-gray-700 mb-2">Spieler auswählen</div>
-                <div className="text-sm text-gray-500">Klicken zum Auswählen</div>
+                <div className="text-lg font-heading text-gray-700 mb-2">{t('common.selectPlayer')}</div>
+                <div className="text-sm text-gray-500">{t('common.clickToSelect')}</div>
               </div>
             </div>
           )}
@@ -253,7 +255,7 @@ function RookieVotingContent() {
               router.push(`/fair-play-voting?league=${league}`)
             }}
           >
-            ← Zurück
+            {t('common.back')}
           </button>
           <button
             disabled={!canProceed || saving}
@@ -270,7 +272,7 @@ function RookieVotingContent() {
               canProceed && !saving ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'bg-gray-600 text-gray-300 cursor-not-allowed'
             } shadow-lg transition-colors`}
           >
-            {saving ? 'Speichere...' : 'Weiter'}
+            {saving ? t('common.saving') : t('common.next')}
           </button>
         </div>
       </div>
@@ -279,14 +281,14 @@ function RookieVotingContent() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4 bg-black/50">
           <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-              <h2 className="text-base sm:text-xl font-heading text-gray-900">Rookie-Kandidat auswählen</h2>
+              <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('rookie.selectCandidate')}</h2>
               <button onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="text-gray-500 hover:text-gray-700">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-3 sm:p-4 border-b border-gray-200 space-y-2 sm:space-y-3">
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <input type="text" placeholder="Spieler suchen..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full sm:flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                <input type="text" placeholder={t('common.searchPlayer')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full sm:flex-1 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500" />
                 <select value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)} className="w-full sm:w-48 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white">
                   <option value="">Alle Teams</option>
                   {availableTeams.map((team) => <option key={team} value={team}>{team}</option>)}
@@ -299,7 +301,7 @@ function RookieVotingContent() {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto p-2 sm:p-4">
-              {loadingPlayers ? <div className="text-center py-8 text-gray-500">Lade Kandidaten...</div> : filteredPlayers.length === 0 ? <div className="text-center py-8 text-gray-500">Keine Rookie-Kandidaten für diese Liga. Bitte im Admin unter Spieler welche markieren.</div> : (
+              {loadingPlayers ? <div className="text-center py-8 text-gray-500">{t('common.loadCandidates')}</div> : filteredPlayers.length === 0 ? <div className="text-center py-8 text-gray-500">{t('rookie.noCandidates')}</div> : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {filteredPlayers.map((player) => (
                     <div
@@ -332,9 +334,9 @@ function RookieVotingContent() {
               )}
             </div>
             <div className="p-3 sm:p-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2 [touch-action:manipulation]">
-              <button type="button" onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="min-h-[44px] px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm [touch-action:manipulation]">Abbrechen</button>
+              <button type="button" onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="min-h-[44px] px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 font-heading text-xs sm:text-sm [touch-action:manipulation]">{t('common.cancel')}</button>
               <button type="button" onClick={handleSave} disabled={!selectedPlayerId || saving} className={`min-h-[44px] px-4 py-2 rounded-lg font-heading text-xs sm:text-sm [touch-action:manipulation] ${selectedPlayerId && !saving ? 'bg-primary-600 hover:bg-primary-700 text-white active:opacity-90' : 'bg-gray-400 text-gray-200 cursor-not-allowed'}`}>
-                {saving ? 'Speichern...' : 'Auswählen'}
+                {saving ? t('common.savingShort') : t('common.select')}
               </button>
             </div>
           </div>

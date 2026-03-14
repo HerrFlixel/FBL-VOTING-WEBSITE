@@ -2,15 +2,17 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
+import { useLanguage } from '../../components/LanguageProvider'
 
 function CrossLeagueVotingContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const currentLeague = leagueParam === 'damen' ? 'damen' : 'herren'
   const otherLeague = currentLeague === 'damen' ? 'herren' : 'damen'
 
-  const otherLeagueName = otherLeague === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+  const otherLeagueName = otherLeague === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
   const backgroundImage = currentLeague === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
   const handleYes = () => {
@@ -43,14 +45,14 @@ function CrossLeagueVotingContent() {
               className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
               onClick={() => router.push(`/fair-play-voting?league=${currentLeague}`)}
             >
-              ← Zurück
+              {t('common.back')}
             </button>
           </div>
           <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-3 sm:mb-4 shadow-lg">
-            {currentLeague === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'}
+            {currentLeague === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')}
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-heading uppercase text-gray-900 mb-6 sm:mb-8 px-2">
-            Möchten Sie auch für die <span className="font-heading">{otherLeagueName}</span> abstimmen?
+            {t('crossLeague.title')} <span className="font-heading">{otherLeagueName}</span> {t('crossLeague.titleSuffix')}
           </h1>
           
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
@@ -58,13 +60,13 @@ function CrossLeagueVotingContent() {
               onClick={handleYes}
               className="px-6 sm:px-8 py-3 sm:py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-heading text-base sm:text-lg uppercase shadow-lg transition-colors"
             >
-              Ja
+              {t('crossLeague.yes')}
             </button>
             <button
               onClick={handleNo}
               className="px-6 sm:px-8 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-heading text-base sm:text-lg uppercase shadow-lg transition-colors"
             >
-              Nein
+              {t('crossLeague.no')}
             </button>
           </div>
         </div>

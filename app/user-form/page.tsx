@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type Team = {
   id: string
@@ -13,6 +14,7 @@ type Team = {
 function UserFormContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league = leagueParam === 'damen' ? 'damen' : 'herren'
 
@@ -103,10 +105,10 @@ function UserFormContent() {
         <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900 px-2">
-              Abschluss
+              {t('userForm.title')}
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
-              Bitte füllen Sie alle Felder aus, um Ihre Stimmen abzugeben
+              {t('userForm.subtitle')}
             </p>
           </div>
 
@@ -115,14 +117,14 @@ function UserFormContent() {
               className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 font-heading flex items-center gap-1"
               onClick={() => router.push(`/special-award?league=${league}`)}
             >
-              ← Zurück
+              {t('common.back')}
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                Vorname *
+                {t('userForm.firstName')}
               </label>
               <input
                 id="firstName"
@@ -136,7 +138,7 @@ function UserFormContent() {
 
             <div>
               <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                Nachname *
+                {t('userForm.lastName')}
               </label>
               <input
                 id="lastName"
@@ -150,7 +152,7 @@ function UserFormContent() {
 
             <div>
               <label htmlFor="team" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                Team *
+                {t('userForm.team')}
               </label>
               <select
                 id="team"
@@ -160,7 +162,7 @@ function UserFormContent() {
                 disabled={loading}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
               >
-                <option value="">Bitte wählen...</option>
+                <option value="">{t('common.pleaseChoose')}</option>
                 {teams.map((team) => (
                   <option key={team.id} value={team.id}>
                     {team.name}
@@ -168,7 +170,7 @@ function UserFormContent() {
                 ))}
               </select>
               {loading && (
-                <p className="mt-2 text-xs sm:text-sm text-gray-500">Lade Teams...</p>
+                <p className="mt-2 text-xs sm:text-sm text-gray-500">{t('common.loadTeams')}</p>
               )}
             </div>
 
@@ -181,7 +183,7 @@ function UserFormContent() {
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'
               } shadow-lg transition-colors`}
             >
-              {submitting ? 'Wird abgesendet...' : 'Stimmen abgeben'}
+              {submitting ? t('userForm.submitting') : t('userForm.submit')}
             </button>
           </form>
         </div>

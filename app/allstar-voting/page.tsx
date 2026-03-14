@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import { fetchWithVoterId } from '../../components/client-voter'
 import VotingProgress from '../../components/VotingProgress'
+import { useLanguage } from '../../components/LanguageProvider'
 
 type Player = {
   id: string
@@ -25,21 +26,28 @@ type PositionKey = 'gk' | 'ld' | 'rd' | 'c' | 'lw' | 'rw'
 
 type Selection = Record<PositionKey, Player | null>
 
-const positions: { key: PositionKey; label: string; x: number; y: number }[] = [
-  { key: 'gk', label: 'Torwart', x: 50, y: 80 }, // Unten Mitte (Tor) - nach oben verschoben
-  { key: 'ld', label: 'Verteidiger', x: 25, y: 60 }, // Links hinten - nach oben verschoben
-  { key: 'rd', label: 'Verteidiger', x: 75, y: 60 }, // Rechts hinten - nach oben verschoben
-  { key: 'c', label: 'Angreifer', x: 50, y: 40 }, // Mitte - nach oben verschoben
-  { key: 'lw', label: 'Angreifer', x: 25, y: 20 }, // Links vorne - nach oben verschoben
-  { key: 'rw', label: 'Angreifer', x: 75, y: 20 } // Rechts vorne - nach oben verschoben
+const positions: { key: PositionKey; x: number; y: number }[] = [
+  { key: 'gk', x: 50, y: 80 },
+  { key: 'ld', x: 25, y: 60 },
+  { key: 'rd', x: 75, y: 60 },
+  { key: 'c', x: 50, y: 40 },
+  { key: 'lw', x: 25, y: 20 },
+  { key: 'rw', x: 75, y: 20 }
 ]
 
 function AllstarVotingContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { t } = useLanguage()
   const leagueParam = searchParams.get('league')
   const league: 'herren' | 'damen' = leagueParam === 'damen' ? 'damen' : 'herren'
   const fromCrossLeague = searchParams.get('fromCrossLeague') === 'true'
-  const router = useRouter()
+
+  const getPositionLabel = (key: PositionKey) => {
+    if (key === 'gk') return t('positions.gk')
+    if (key === 'ld' || key === 'rd') return t('positions.defender')
+    return t('positions.forward')
+  }
   
   // Setze Flag in sessionStorage wenn von Cross-League kommend und speichere Liga
   useEffect(() => {
@@ -202,7 +210,7 @@ function AllstarVotingContent() {
     }
     // Doppel vermeiden
     if (usedPlayerIds.has(selectedPlayerId) && selections[currentLine][activePosition]?.id !== selectedPlayerId) {
-      alert('Dieser Spieler ist bereits gewählt.')
+      alert(t('allstar.playerAlreadyChosen'))
       return
     }
     setSaving(true)
@@ -274,7 +282,7 @@ function AllstarVotingContent() {
 
   const canGoNext = currentLine === 1 ? lineComplete(1) : true
 
-  const leagueTitle = league === 'damen' ? '1. Damen Bundesliga' : '1. Herren Bundesliga'
+  const leagueTitle = league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
 
   const PlayerCard = ({ player, position, onClick }: { player: Player | null; position: PositionKey; onClick: () => void }) => {
     const pos = positions.find((p) => p.key === position)
@@ -289,7 +297,7 @@ function AllstarVotingContent() {
             <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-[8px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{pos?.label}</span>
+            <span className="text-[8px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{getPositionLabel(position)}</span>
           </div>
         </div>
       )
@@ -376,10 +384,10 @@ function AllstarVotingContent() {
             {leagueTitle}
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-heading uppercase text-white drop-shadow-lg px-2">
-            Allstar Team Voting
+            {t('allstar.title')}
           </h1>
           <p className="text-xs sm:text-sm text-white drop-shadow-md px-2">
-            Reihe 1 muss vollständig sein, bevor du zu Reihe 2 oder 3 wechseln kannst. Reihen 2 & 3 sind optional.
+            {t('allstar.lineOptional')}
           </p>
         </div>
 
@@ -405,7 +413,7 @@ function AllstarVotingContent() {
                     : 'border-gray-300 text-gray-700 hover:border-primary-400 bg-white hover:bg-gray-50'
                 )}
               >
-                Reihe {ln}
+                {t('allstar.line')} {ln}
               </button>
             )
           })}
@@ -455,7 +463,7 @@ function AllstarVotingContent() {
               }
             }}
           >
-            ← Zurück
+            {t('common.back')}
           </button>
           <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3 sm:space-y-0">
             {currentLine > 1 && (
@@ -463,7 +471,7 @@ function AllstarVotingContent() {
                 className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-primary-400 bg-white font-heading text-xs sm:text-sm"
                 onClick={() => setCurrentLine((prev) => (prev - 1) as 1 | 2 | 3)}
               >
-                Zurück
+                {t('common.backShort')}
               </button>
             )}
             {currentLine < 3 ? (
@@ -482,8 +490,8 @@ function AllstarVotingContent() {
                 }}
               >
                 {currentLine === 1 && !canGoNext
-                  ? 'Reihe 1 vollständig'
-                  : `Weiter zu Reihe ${currentLine + 1}`
+                  ? t('allstar.lineFull')
+                  : `${t('allstar.nextToLine')} ${currentLine + 1}`
                 }
               </button>
             ) : (
@@ -496,14 +504,12 @@ function AllstarVotingContent() {
                     : 'bg-primary-600 hover:bg-primary-700 text-white'
                 )}
                 onClick={async () => {
-                  // Warte bis alle Speicher-Operationen abgeschlossen sind
                   if (saving) return
-                  // Warte kurz, um sicherzustellen, dass alle API-Calls abgeschlossen sind
                   await new Promise(resolve => setTimeout(resolve, 100))
                   router.push(`/mvp-voting?league=${league}`)
                 }}
               >
-                {saving ? 'Speichere...' : 'Weiter →'}
+                {saving ? t('common.saving') : t('common.next') + ' →'}
               </button>
             )}
           </div>
@@ -516,8 +522,8 @@ function AllstarVotingContent() {
           <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex-1 min-w-0">
-                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">Position: {positions.find((p) => p.key === activePosition)?.label}</div>
-                <div className="text-xs sm:text-sm text-gray-600">Reihe {currentLine}</div>
+                <div className="font-heading text-base sm:text-xl text-gray-900 truncate">{getPositionLabel(activePosition)}</div>
+                <div className="text-xs sm:text-sm text-gray-600">{t('allstar.line')} {currentLine}</div>
               </div>
               <button
                 className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl ml-2 flex-shrink-0"
@@ -536,7 +542,7 @@ function AllstarVotingContent() {
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Spieler suchen..."
+                  placeholder={t('common.searchPlayer')}
                   className="w-full sm:flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <select
@@ -561,7 +567,7 @@ function AllstarVotingContent() {
                   <option value="name">Nach Name</option>
                 </select>
                 {loadingPlayers && (
-                  <span className="text-xs text-gray-500">Lade Spieler...</span>
+                  <span className="text-xs text-gray-500">{t('common.loadPlayers')}</span>
                 )}
               </div>
 
@@ -649,7 +655,7 @@ function AllstarVotingContent() {
                                     </div>
                                     {taken && (
                                       <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
-                                        <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                                        <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">{t('common.alreadyChosen')}</span>
                                       </div>
                                     )}
                                     {isSelected && !taken && (
@@ -736,7 +742,7 @@ function AllstarVotingContent() {
                               </div>
                               {taken && (
                                 <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
-                                  <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">Bereits gewählt</span>
+                                  <span className="text-xs text-white font-heading bg-red-500 px-2 py-1 rounded">{t('common.alreadyChosen')}</span>
                                 </div>
                               )}
                               {isSelected && !taken && (
@@ -752,7 +758,7 @@ function AllstarVotingContent() {
                       })}
                       {filteredPlayers.length === 0 && (
                         <div className="col-span-full text-center py-12 text-gray-500">
-                          Keine Spieler gefunden.
+                          {t('common.noPlayers')}
                         </div>
                       )}
                     </div>
@@ -769,7 +775,7 @@ function AllstarVotingContent() {
                     setSelectedPlayerId(null)
                   }}
                 >
-                  Abbrechen
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={saveSelection}
@@ -781,7 +787,7 @@ function AllstarVotingContent() {
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   )}
                 >
-                  {saving ? 'Speichere...' : 'Bestätigen'}
+                  {saving ? t('common.saving') : t('common.confirm')}
                 </button>
               </div>
             </div>
@@ -796,7 +802,7 @@ export default function AllstarVotingPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Lade...</div>
+        <div className="text-white">Loading...</div>
       </div>
     }>
       <AllstarVotingContent />

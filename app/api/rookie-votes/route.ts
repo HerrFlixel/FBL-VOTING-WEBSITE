@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
+import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -19,9 +20,9 @@ export async function GET(req: Request) {
     ])
     if (!vote) return NextResponse.json(vote)
     const teamLogoByName = Object.fromEntries(
-      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), normalizeTeamLogoUrl(t.logoUrl)!])
+      teams.filter((t) => t.logoUrl).map((t) => [normalizeTeamNameForLogoMatch(t.name), normalizeTeamLogoUrl(t.logoUrl)!])
     )
-    const teamKey = (vote.player?.team || '').trim().toLowerCase()
+    const teamKey = normalizeTeamNameForLogoMatch(vote.player?.team)
     const teamLogoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
     const voteWithTeamLogo = { ...vote, player: vote.player ? { ...vote.player, teamLogoUrl } : vote.player }
     return NextResponse.json(voteWithTeamLogo)

@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
+import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 
 const allowedPositions = ['gk', 'ld', 'rd', 'c', 'lw', 'rw']
 
@@ -31,10 +32,10 @@ export async function GET(req: Request) {
       prisma.team.findMany({ select: { name: true, logoUrl: true } })
     ])
     const teamLogoByName = Object.fromEntries(
-      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), normalizeTeamLogoUrl(t.logoUrl)!])
+      teams.filter((t) => t.logoUrl).map((t) => [normalizeTeamNameForLogoMatch(t.name), normalizeTeamLogoUrl(t.logoUrl)!])
     )
     const votesWithTeamLogo = votes.map((v) => {
-      const teamKey = (v.player?.team || '').trim().toLowerCase()
+      const teamKey = normalizeTeamNameForLogoMatch(v.player?.team)
       const teamLogoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
       return {
         ...v,

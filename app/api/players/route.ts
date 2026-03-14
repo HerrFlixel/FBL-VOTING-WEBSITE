@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
+import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -25,10 +26,10 @@ export async function GET(req: Request) {
     ])
 
     const teamLogoByName = Object.fromEntries(
-      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), normalizeTeamLogoUrl(t.logoUrl)!])
+      teams.filter((t) => t.logoUrl).map((t) => [normalizeTeamNameForLogoMatch(t.name), normalizeTeamLogoUrl(t.logoUrl)!])
     )
     const playersWithTeamLogo = players.map((p) => {
-      const teamKey = (p.team || '').trim().toLowerCase()
+      const teamKey = normalizeTeamNameForLogoMatch(p.team)
       const logoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
       return { ...p, teamLogoUrl: logoUrl }
     })

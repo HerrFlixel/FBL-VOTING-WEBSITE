@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
+import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 
 function pointsForRank(rank: number) {
   return 11 - rank // Platz 1 = 10 Punkte, Platz 10 = 1 Punkt
@@ -13,18 +14,23 @@ export async function GET(req: Request) {
   const { voterId } = getVoterInfo()
 
   try {
-    const votes = await prisma.mVPVote.findMany({
-      where: {
-        voterId,
-        userId: null,
-        league
-      },
-      include: {
-        player: true
-      },
-      orderBy: { rank: 'asc' }
+    const [votes, teams] = await Promise.all([
+      prisma.mVPVote.findMany({
+        where: { voterId, userId: null, league },
+        include: { player: true },
+        orderBy: { rank: 'asc' }
+      }),
+      prisma.team.findMany({ select: { name: true, logoUrl: true } })
+    ])
+    const teamLogoByName = Object.fromEntries(
+      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), normalizeTeamLogoUrl(t.logoUrl)!])
+    )
+    const votesWithTeamLogo = votes.map((v) => {
+      const teamKey = (v.player?.team || '').trim().toLowerCase()
+      const teamLogoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
+      return { ...v, player: v.player ? { ...v.player, teamLogoUrl } : v.player }
     })
-    return NextResponse.json(votes)
+    return NextResponse.json(votesWithTeamLogo)
   } catch (error) {
     console.error('Fehler beim Laden der MVP-Votes', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Votes' }, { status: 500 })

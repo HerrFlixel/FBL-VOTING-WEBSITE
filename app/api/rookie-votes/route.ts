@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
+import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -9,17 +10,21 @@ export async function GET(req: Request) {
   const { voterId } = getVoterInfo()
 
   try {
-    const vote = await prisma.rookieVote.findFirst({
-      where: {
-        voterId,
-        userId: null,
-        league
-      },
-      include: {
-        player: true
-      }
-    })
-    return NextResponse.json(vote)
+    const [vote, teams] = await Promise.all([
+      prisma.rookieVote.findFirst({
+        where: { voterId, userId: null, league },
+        include: { player: true }
+      }),
+      prisma.team.findMany({ select: { name: true, logoUrl: true } })
+    ])
+    if (!vote) return NextResponse.json(vote)
+    const teamLogoByName = Object.fromEntries(
+      teams.filter((t) => t.logoUrl).map((t) => [t.name.trim().toLowerCase(), normalizeTeamLogoUrl(t.logoUrl)!])
+    )
+    const teamKey = (vote.player?.team || '').trim().toLowerCase()
+    const teamLogoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
+    const voteWithTeamLogo = { ...vote, player: vote.player ? { ...vote.player, teamLogoUrl } : vote.player }
+    return NextResponse.json(voteWithTeamLogo)
   } catch (error) {
     console.error('Fehler beim Laden der Rookie Votes', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Votes' }, { status: 500 })

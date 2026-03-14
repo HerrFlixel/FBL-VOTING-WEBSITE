@@ -37,12 +37,14 @@ export async function POST(
       await mkdir(publicUploadsDir, { recursive: true })
     }
 
-    const compressedBuffer = await sharp(buffer)
-      .resize(400, 400, { fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 80, progressive: true, mozjpeg: true })
-      .toBuffer()
+    const isPng = file.type === 'image/png' || buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e
+    const resized = sharp(buffer).resize(400, 400, { fit: 'inside', withoutEnlargement: true })
+    const compressedBuffer = isPng
+      ? await resized.png({ compressionLevel: 9 }).toBuffer()
+      : await resized.jpeg({ quality: 80, progressive: true, mozjpeg: true }).toBuffer()
 
-    const filename = `team-${id}-${Date.now()}.jpg`
+    const ext = isPng ? 'png' : 'jpg'
+    const filename = `team-${id}-${Date.now()}.${ext}`
     const localFilePath = join(publicUploadsDir, filename)
     await writeFile(localFilePath, compressedBuffer)
 

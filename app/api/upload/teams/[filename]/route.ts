@@ -33,9 +33,10 @@ export async function GET(
     }
 
     const buffer = await readFile(path)
+    const isPng = filename.toLowerCase().endsWith('.png')
     return new NextResponse(buffer, {
       headers: {
-        'Content-Type': 'image/jpeg',
+        'Content-Type': isPng ? 'image/png' : 'image/jpeg',
         'Cache-Control': 'public, max-age=86400'
       }
     })

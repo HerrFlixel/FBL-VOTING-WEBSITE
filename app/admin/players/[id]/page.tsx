@@ -33,7 +33,6 @@ export default function EditPlayerPage() {
   const [player, setPlayer] = useState<Player | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -134,33 +133,6 @@ export default function EditPlayerPage() {
     }
   }
 
-  const handleImageUpload = async (file: File) => {
-    setUploadingImage(true)
-    try {
-      const formData = new FormData()
-      formData.append('image', file)
-
-      const response = await fetch(`/api/players/${playerId}/upload`, {
-        method: 'POST',
-        body: formData
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        if (player) {
-          setPlayer({ ...player, imageUrl: data.imageUrl })
-        }
-      } else {
-        alert('Fehler beim Hochladen des Bildes')
-      }
-    } catch (error) {
-      console.error('Fehler beim Hochladen', error)
-      alert('Fehler beim Hochladen des Bildes')
-    } finally {
-      setUploadingImage(false)
-    }
-  }
-
   if (loading) {
     return <div className="text-center py-8 text-gray-900">Lade Spieler...</div>
   }
@@ -183,10 +155,10 @@ export default function EditPlayerPage() {
             </button>
           </div>
 
-          {/* Bild-Upload */}
+          {/* Team-Logo (nur Anzeige, kein Upload mehr) */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Spielerbild
+              Bild (Team-Logo)
             </label>
             <div className="flex items-center gap-4">
               {(player.imageUrl || player.teamLogoUrl) ? (
@@ -214,23 +186,7 @@ export default function EditPlayerPage() {
                   </svg>
                 </div>
               )}
-              <div>
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) handleImageUpload(file)
-                    }}
-                    disabled={uploadingImage}
-                  />
-                  <span className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-heading">
-                    {uploadingImage ? 'Upload...' : 'Bild hochladen'}
-                  </span>
-                </label>
-              </div>
+              <p className="text-sm text-gray-500">Logo kommt vom zugewiesenen Team.</p>
             </div>
           </div>
 

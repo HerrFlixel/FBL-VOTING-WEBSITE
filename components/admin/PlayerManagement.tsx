@@ -27,6 +27,7 @@ export default function PlayerManagement() {
   const [selectedLeague, setSelectedLeague] = useState<'herren' | 'damen' | 'all'>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('name')
+  const [clearingImages, setClearingImages] = useState(false)
 
   useEffect(() => {
     fetchPlayers()
@@ -98,6 +99,26 @@ export default function PlayerManagement() {
     }
   }
 
+  const handleClearAllPlayerImages = async () => {
+    if (!confirm('Bei allen Spielern das individuelle Bild entfernen? Es werden nur noch Team-Logos angezeigt.')) return
+    setClearingImages(true)
+    try {
+      const res = await fetch('/api/players/clear-images', { method: 'POST' })
+      const data = res.ok ? await res.json() : null
+      if (res.ok && data?.success) {
+        alert(`${data.count ?? 0} Spieler aktualisiert. Es werden nur noch Team-Logos angezeigt.`)
+        fetchPlayers()
+      } else {
+        alert('Fehler beim Entfernen der Spielerbilder.')
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Fehler beim Entfernen der Spielerbilder.')
+    } finally {
+      setClearingImages(false)
+    }
+  }
+
   const PlayerAvatar = ({ player }: { player: Player }) => {
     const avatarUrl = player.imageUrl || player.teamLogoUrl
     if (avatarUrl) {
@@ -166,7 +187,14 @@ export default function PlayerManagement() {
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-heading text-gray-900">Spieler-Verwaltung</h2>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleClearAllPlayerImages}
+              disabled={clearingImages}
+              className="px-4 py-2 rounded-lg font-heading bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+            >
+              {clearingImages ? 'Wird ausgeführt…' : 'Alle Spielerbilder entfernen'}
+            </button>
             {selectedLeague === 'herren' && (
               <button
                 onClick={() => handleDeleteAllByLeague('herren')}

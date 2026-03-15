@@ -375,7 +375,7 @@ export default function RefereeVotingPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">{t('common.loading')}</div>
+        <div className="text-white">Loading...</div>
       </div>
     }>
       <RefereeVotingContent />

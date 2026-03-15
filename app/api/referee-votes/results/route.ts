@@ -43,6 +43,13 @@ export async function GET(req: Request) {
 
     return NextResponse.json(results)
   } catch (error) {
+    // Bei Build/Deploy ohne DB (z. B. Render) keine DB-Datei vorhanden – leeres Ergebnis zurückgeben
+    const isDbUnavailable =
+      error && typeof error === 'object' && 'message' in error &&
+      String((error as Error).message).includes('Unable to open the database file')
+    if (isDbUnavailable) {
+      return NextResponse.json([])
+    }
     console.error('Fehler beim Berechnen der Schiedsrichter-Ergebnisse', error)
     return NextResponse.json({ error: 'Fehler beim Berechnen der Ergebnisse' }, { status: 500 })
   }

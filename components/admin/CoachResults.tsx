@@ -74,7 +74,7 @@ export default function CoachResults({ league }: CoachResultsProps) {
                       <img
                         src={result.coach.imageUrl || result.coach.teamLogoUrl || ''}
                         alt={result.coach.name}
-                        className="w-full h-full object-cover"
+                        className={result.coach.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                       />
                     </div>
                   ) : (

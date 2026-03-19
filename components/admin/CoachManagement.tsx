@@ -177,7 +177,7 @@ export default function CoachManagement() {
                       <img
                         src={coach.imageUrl || coach.teamLogoUrl || ''}
                         alt={coach.name}
-                        className="w-full h-full object-cover"
+                        className={coach.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                       />
                     </div>
                   ) : (

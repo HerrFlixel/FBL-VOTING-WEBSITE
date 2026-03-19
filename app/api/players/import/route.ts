@@ -9,6 +9,13 @@ function parseNumber(value: any): number {
   return Number.isFinite(n) ? n : 0
 }
 
+function parseNullableNumber(value: any): number | null {
+  const s = String(value ?? '').trim()
+  if (!s) return null
+  const n = Number(s.replace(',', '.'))
+  return Number.isFinite(n) ? n : null
+}
+
 function getCell(row: Row, keys: string[]): any {
   for (const key of keys) {
     if (row[key] !== undefined) return row[key]
@@ -54,6 +61,9 @@ export async function POST(req: Request) {
     const sheetName = workbook.SheetNames[0]
     const sheet = workbook.Sheets[sheetName]
     const rows: Row[] = XLSX.utils.sheet_to_json(sheet, { defval: '' })
+
+    // Roh-Daten inkl. Spaltenreihenfolge (für die 3 neuen Spalten nach "MS")
+    const rawRows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' })
     
     if (rows.length === 0) {
       return NextResponse.json({ error: 'Excel-Datei enthält keine Daten' }, { status: 400 })
@@ -62,7 +72,16 @@ export async function POST(req: Request) {
     let created = 0
     let updated = 0
 
-    for (const row of rows) {
+    const headerRow = rawRows?.[0] ?? []
+    const headerLower = headerRow.map((c) => String(c ?? '').toLowerCase())
+    // Erwartung: "MS = Match Strafen" ist im Header vorhanden, und die 3 relevanten Spalten kommen direkt danach.
+    let msColIndex = headerLower.findIndex((h) => h.includes('ms') && (h.includes('match') || h.includes('strafe')))
+    if (msColIndex < 0) msColIndex = headerLower.findIndex((h) => h.includes('ms'))
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const rawRow = rawRows?.[i + 1] ?? []
+
       // Spielername: kann "1 Florian Weißkirchen" oder nur "Florian Weißkirchen" sein
       let name = String(
         getCell(row, ['Spieler', 'Spielername', 'Name', 'Player']) ?? ''
@@ -86,8 +105,16 @@ export async function POST(req: Request) {
       const msValue = getCell(row, ['MS', 'Match', 'Matchstrafe'])
       const pimMatch = msValue ? parseNumber(String(msValue).split('-')[0]) : 0
       
-      // Position (GK, LD, etc.) ist nicht in der Excel-Datei, bleibt null
-      const position = null
+      // Neue Spalten: nach MS kommt (1) Trikotnummer, (2) Rookie-X, (3) Rolle O/D/G
+      const jerseyNumberFromExcel =
+        msColIndex >= 0 ? parseNullableNumber(rawRow?.[msColIndex + 1]) : null
+      const rookieFromExcel =
+        msColIndex >= 0 ? String(rawRow?.[msColIndex + 2] ?? '').trim().toUpperCase() === 'X' : null
+      const roleFromExcelRaw = msColIndex >= 0 ? String(rawRow?.[msColIndex + 3] ?? '').trim().toUpperCase() : ''
+      const roleFromExcelChar = roleFromExcelRaw ? roleFromExcelRaw[0] : ''
+      const roleFromExcel = ['O', 'D', 'G'].includes(roleFromExcelChar) ? roleFromExcelChar : null
+
+      const position = roleFromExcel
 
       // Prüfe, ob es den Spieler mit gleichem Namen + Liga + Team schon gibt
       const existing = await prisma.player.findFirst({
@@ -99,12 +126,17 @@ export async function POST(req: Request) {
       })
 
       if (existing) {
+        const rookieCandidateDamen =
+          rookieFromExcel === null ? existing.rookieCandidateDamen : league === 'damen' ? rookieFromExcel : false
+        const rookieCandidateHerren =
+          rookieFromExcel === null ? existing.rookieCandidateHerren : league === 'herren' ? rookieFromExcel : false
+
         await prisma.player.update({
           where: { id: existing.id },
           data: {
             team,
             league,
-            position: position || existing.position,
+            position: position ?? existing.position,
             scorerRank: scorerRank || existing.scorerRank,
             games,
             goals,
@@ -113,11 +145,17 @@ export async function POST(req: Request) {
             pim2,
             pim2x2,
             pim10,
-            pimMatch
+            pimMatch,
+            jerseyNumber: jerseyNumberFromExcel ?? existing.jerseyNumber,
+            rookieCandidateDamen,
+            rookieCandidateHerren
           }
         })
         updated++
       } else {
+        const rookieCandidateDamen = rookieFromExcel === null ? false : league === 'damen' ? rookieFromExcel : false
+        const rookieCandidateHerren = rookieFromExcel === null ? false : league === 'herren' ? rookieFromExcel : false
+
         await prisma.player.create({
           data: {
             name,
@@ -132,7 +170,10 @@ export async function POST(req: Request) {
             pim2,
             pim2x2,
             pim10,
-            pimMatch
+            pimMatch,
+            jerseyNumber: jerseyNumberFromExcel,
+            rookieCandidateDamen,
+            rookieCandidateHerren
           }
         })
         created++

@@ -189,7 +189,7 @@ function CoachVotingContent() {
                   <img
                     src={selectedCoach.imageUrl || selectedCoach.teamLogoUrl || ''}
                     alt={selectedCoach.name}
-                    className="w-full h-full object-cover"
+                        className={selectedCoach.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                   />
                 </div>
               ) : (
@@ -315,7 +315,7 @@ function CoachVotingContent() {
                           <img
                             src={coach.imageUrl || coach.teamLogoUrl || ''}
                             alt={coach.name}
-                            className="w-full h-full object-cover"
+                            className={coach.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
                           />
                         </div>
                       ) : (

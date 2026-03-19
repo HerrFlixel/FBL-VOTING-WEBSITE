@@ -152,6 +152,9 @@ export default function ExcelImport({ league }: ExcelImportProps) {
           <li>• 2'+2' = 2 + 2 min Strafen</li>
           <li>• 10' = 10 min Strafen</li>
           <li>• MS = Match Strafen</li>
+          <li>• Direkt danach: Trikotnummer (Nummer des Spielers)</li>
+          <li>• Direkt danach: Rookie (wenn Rookie dann X, sonst leer)</li>
+          <li>• Direkt danach: Rolle O/D/G (O = Angreifer, D = Verteidiger, G = Torwart)</li>
         </ul>
       </div>
     </div>

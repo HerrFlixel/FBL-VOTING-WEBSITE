@@ -48,6 +48,26 @@ function AllstarVotingContent() {
     if (key === 'ld' || key === 'rd') return t('positions.defender')
     return t('positions.forward')
   }
+
+  // Excel liefert künftig nur O/D/G (Angreifer/Verteidiger/Torwart).
+  // Ältere Imports können ggf. bereits GK/LD/RD/C/LW/RW enthalten.
+  const positionBucket = (pos?: string | null) => {
+    if (!pos) return null
+    const p = String(pos).trim().toUpperCase()
+    if (p === 'G' || p === 'GK') return 'G'
+    if (p === 'D' || p === 'LD' || p === 'RD') return 'D'
+    if (p === 'O' || p === 'C' || p === 'LW' || p === 'RW') return 'O'
+    return null
+  }
+
+  const isPlayerAllowedForActivePosition = (player: Player, active: PositionKey) => {
+    const bucket = positionBucket(player.position)
+    if (!bucket) return false
+    if (active === 'gk') return bucket === 'G'
+    if (active === 'ld' || active === 'rd') return bucket === 'D'
+    // c/lw/rw
+    return bucket === 'O'
+  }
   
   // Setze Flag in sessionStorage wenn von Cross-League kommend und speichere Liga
   useEffect(() => {
@@ -139,7 +159,11 @@ function AllstarVotingContent() {
   const openSelect = (pos: PositionKey) => {
     setActivePosition(pos)
     const current = selections[currentLine][pos]
-    setSelectedPlayerId(current?.id ?? null)
+    if (current && !isPlayerAllowedForActivePosition(current, pos)) {
+      setSelectedPlayerId(null)
+    } else {
+      setSelectedPlayerId(current?.id ?? null)
+    }
     setModalOpen(true)
   }
 
@@ -167,6 +191,11 @@ function AllstarVotingContent() {
     // Team-Filter
     if (selectedTeam) {
       filtered = filtered.filter((p) => p.team === selectedTeam)
+    }
+
+    // Positions-Filter: Im Modal darf nur gewählt werden, wenn die Position passt.
+    if (activePosition) {
+      filtered = filtered.filter((p) => isPlayerAllowedForActivePosition(p, activePosition))
     }
 
     // Such-Filter
@@ -199,7 +228,7 @@ function AllstarVotingContent() {
     // 'default' behält die ursprüngliche Reihenfolge bei
 
     return uniquePlayers
-  }, [players, searchTerm, selectedTeam, sortBy])
+  }, [players, searchTerm, selectedTeam, sortBy, activePosition])
 
   const saveSelection = async () => {
     if (!activePosition || !selectedPlayerId) {
@@ -215,6 +244,13 @@ function AllstarVotingContent() {
     }
     setSaving(true)
     try {
+      const selectedPlayer = players.find((p) => p.id === selectedPlayerId)
+      if (!selectedPlayer || !isPlayerAllowedForActivePosition(selectedPlayer, activePosition)) {
+        // Sicherheitscheck (sollte durch Filter bereits verhindert sein)
+        setSaving(false)
+        return
+      }
+
       const res = await fetchWithVoterId('/api/allstar-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

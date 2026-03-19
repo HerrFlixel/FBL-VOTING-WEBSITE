@@ -247,6 +247,9 @@ export default function EditPlayerPage() {
                 <option value="C">Mitte (C)</option>
                 <option value="LW">Links Außen (LW)</option>
                 <option value="RW">Rechts Außen (RW)</option>
+                <option value="G">Torwart (G)</option>
+                <option value="D">Verteidiger (D)</option>
+                <option value="O">Angreifer (O)</option>
               </select>
             </div>
 

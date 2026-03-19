@@ -72,20 +72,28 @@ function SpecialAwardContent() {
 
   const leagueName =
     league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
-  
-  const backgroundImage = league === 'damen' ? '/Hintergrund Damen.png' : '/Hintergrund Herren.png'
 
   return (
     <div className="min-h-screen relative">
       <VotingProgress />
-      {/* Hintergrundbild */}
-      <div className="fixed inset-0 z-0">
-        <img
-          src={backgroundImage}
-          alt={`${leagueName} Hintergrund`}
-          className="w-full h-full object-cover blur-sm"
-        />
-        <div className="absolute inset-0 bg-black/30"></div>
+      {/* Splitscreen Hintergrund wie bei der Schiedsrichter-Auswahl */}
+      <div className="fixed inset-0 z-0 flex flex-col md:flex-row">
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Damen.png"
+            alt="Damen Hintergrund"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        <div className="flex-1 h-1/2 md:h-full relative overflow-hidden">
+          <img
+            src="/Hintergrund Herren.png"
+            alt="Herren Hintergrund"
+            className="absolute inset-0 w-full h-full object-cover blur-sm"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
       </div>
       
       {/* Content */}

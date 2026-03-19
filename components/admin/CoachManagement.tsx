@@ -14,6 +14,7 @@ export default function CoachManagement() {
   const [coaches, setCoaches] = useState<Coach[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     team: '',
@@ -62,14 +63,22 @@ export default function CoachManagement() {
     if (!confirm('Möchtest du diesen Trainer wirklich löschen?')) return
 
     try {
+      setDeletingId(id)
       const response = await fetch(`/api/coaches/${id}`, {
         method: 'DELETE'
       })
       if (response.ok) {
         fetchCoaches()
+        return
       }
+
+      const err = await response.json().catch(() => null)
+      alert(err?.error || 'Trainer konnte nicht gelöscht werden.')
     } catch (error) {
       console.error('Fehler beim Löschen', error)
+      alert('Trainer konnte nicht gelöscht werden.')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -201,6 +210,7 @@ export default function CoachManagement() {
                   <button
                     onClick={() => handleDelete(coach.id)}
                     className="text-red-600 hover:text-red-900"
+                    disabled={deletingId === coach.id}
                   >
                     Löschen
                   </button>

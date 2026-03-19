@@ -26,6 +26,11 @@ export async function DELETE(
 ) {
   const { id } = params
   try {
+    // Coach wird von CoachVote referenziert. Ohne vorheriges Entfernen der Votes
+    // schlägt das Delete typischerweise an der FK/Constraint fehl.
+    await prisma.coachVote.deleteMany({
+      where: { coachId: id }
+    })
     await prisma.coach.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (error) {

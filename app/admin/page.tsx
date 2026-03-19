@@ -62,6 +62,9 @@ function AdminContent() {
     { id: 'voters' as Tab, label: 'Voter-Verwaltung' }
   ]
 
+  const managementTabs = tabs.filter((tab) => !tab.id.startsWith('results-'))
+  const resultTabs = tabs.filter((tab) => tab.id.startsWith('results-'))
+
   const handleDownloadAll = async () => {
     try {
       setExporting(true)
@@ -114,7 +117,30 @@ function AdminContent() {
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6">
           <nav className="-mb-px flex flex-wrap gap-2">
-            {tabs.map((tab) => (
+            <span className="w-full px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide pt-2 pb-1">
+              Verwaltung
+            </span>
+            {managementTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors
+                  ${
+                    activeTab === tab.id
+                      ? 'border-primary-600 text-primary-600 bg-primary-50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                  }
+                `}
+              >
+                {tab.label}
+              </button>
+            ))}
+            <div className="w-full h-px bg-gray-200 my-1" />
+            <span className="w-full px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide pt-2 pb-1">
+              Ergebnisse
+            </span>
+            {resultTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}

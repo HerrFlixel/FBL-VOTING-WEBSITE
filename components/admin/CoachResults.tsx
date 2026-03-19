@@ -12,6 +12,7 @@ interface CoachResult {
     name: string
     team: string | null
     imageUrl: string | null
+    teamLogoUrl?: string | null
   }
   voteCount: number
 }
@@ -68,10 +69,10 @@ export default function CoachResults({ league }: CoachResultsProps) {
                   {index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {result.coach.imageUrl ? (
+                  {result.coach.imageUrl || result.coach.teamLogoUrl ? (
                     <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
                       <img
-                        src={result.coach.imageUrl}
+                        src={result.coach.imageUrl || result.coach.teamLogoUrl || ''}
                         alt={result.coach.name}
                         className="w-full h-full object-cover"
                       />

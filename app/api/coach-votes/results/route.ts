@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { normalizeTeamLogoUrl } from '../../../../lib/upload-urls'
+import { normalizeTeamNameForLogoMatch } from '../../../../lib/team-name'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -38,13 +40,23 @@ export async function GET(req: Request) {
       }
     }
 
+    const teams = await prisma.team.findMany({ select: { name: true, logoUrl: true } })
+    const teamLogoByName = Object.fromEntries(
+      teams
+        .filter((t) => t.logoUrl)
+        .map((t) => [normalizeTeamNameForLogoMatch(t.name), normalizeTeamLogoUrl(t.logoUrl)!])
+    )
+
     const results = Array.from(coachMap.values())
       .map((r) => ({
         coach: {
           id: r.coach.id,
           name: r.coach.name,
           team: r.coach.team,
-          imageUrl: r.coach.imageUrl
+          imageUrl: r.coach.imageUrl,
+          teamLogoUrl: r.coach.team
+            ? (teamLogoByName[normalizeTeamNameForLogoMatch(r.coach.team)] ?? null)
+            : null
         },
         voteCount: r.voteCount
       }))

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
+import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
+import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -19,7 +21,26 @@ export async function GET(req: Request) {
         coach: true
       }
     })
-    return NextResponse.json(vote)
+    if (!vote) return NextResponse.json(null)
+
+    // Coach-Voting UI soll Team-Logo anzeigen, auch wenn coach.imageUrl leer ist.
+    const teams = await prisma.team.findMany({ select: { name: true, logoUrl: true } })
+    const teamLogoByName = Object.fromEntries(
+      teams
+        .filter((t) => t.logoUrl)
+        .map((t) => [normalizeTeamNameForLogoMatch(t.name), normalizeTeamLogoUrl(t.logoUrl)!])
+    )
+
+    const teamKey = normalizeTeamNameForLogoMatch(vote.coach.team)
+    const teamLogoUrl = teamKey ? (teamLogoByName[teamKey] ?? null) : null
+
+    return NextResponse.json({
+      ...vote,
+      coach: {
+        ...vote.coach,
+        teamLogoUrl
+      }
+    })
   } catch (error) {
     console.error('Fehler beim Laden der Coach-Votes', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Votes' }, { status: 500 })

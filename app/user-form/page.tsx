@@ -101,10 +101,10 @@ function UserFormContent() {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
-        <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900 px-2">
+      <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex items-center justify-center min-h-screen">
+        <div className="bg-white/95 rounded-lg shadow-xl p-3 sm:p-6 md:p-8 w-full">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-heading uppercase mb-2 text-gray-900 px-2">
               {t('userForm.title')}
             </h1>
             <p className="text-xs sm:text-sm text-gray-600 mt-2 px-2">
@@ -121,7 +121,7 @@ function UserFormContent() {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
             <div>
               <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 {t('userForm.firstName')}
@@ -132,7 +132,7 @@ function UserFormContent() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
 
@@ -146,7 +146,7 @@ function UserFormContent() {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
 
@@ -160,7 +160,7 @@ function UserFormContent() {
                 onChange={(e) => setTeamId(e.target.value)}
                 required
                 disabled={loading}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
               >
                 <option value="">{t('common.pleaseChoose')}</option>
                 {teams.map((team) => (
@@ -177,7 +177,7 @@ function UserFormContent() {
             <button
               type="submit"
               disabled={!canSubmit || submitting || loading}
-              className={`w-full px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase ${
+              className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm uppercase ${
                 canSubmit && !submitting && !loading
                   ? 'bg-primary-600 hover:bg-primary-700 text-white'
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'

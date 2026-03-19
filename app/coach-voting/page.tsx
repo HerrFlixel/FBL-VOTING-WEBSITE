@@ -11,6 +11,7 @@ type Coach = {
   name: string
   team?: string | null
   imageUrl?: string | null
+  teamLogoUrl?: string | null
   league: string
 }
 
@@ -183,10 +184,10 @@ function CoachVotingContent() {
         <div className="max-w-md mx-auto mb-8">
           {selectedCoach ? (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative group">
-              {selectedCoach.imageUrl ? (
+              {selectedCoach.imageUrl || selectedCoach.teamLogoUrl ? (
                 <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200">
                   <img
-                    src={selectedCoach.imageUrl}
+                    src={selectedCoach.imageUrl || selectedCoach.teamLogoUrl || ''}
                     alt={selectedCoach.name}
                     className="w-full h-full object-cover"
                   />
@@ -309,10 +310,10 @@ function CoachVotingContent() {
                           : 'border-gray-200 hover:border-primary-300'
                       }`}
                     >
-                      {coach.imageUrl ? (
+                      {coach.imageUrl || coach.teamLogoUrl ? (
                         <div className="relative w-full h-20 sm:h-28 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
                           <img
-                            src={coach.imageUrl}
+                            src={coach.imageUrl || coach.teamLogoUrl || ''}
                             alt={coach.name}
                             className="w-full h-full object-cover"
                           />

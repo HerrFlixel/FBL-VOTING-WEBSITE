@@ -7,6 +7,7 @@ interface Coach {
   name: string
   team: string | null
   imageUrl: string | null
+  teamLogoUrl?: string | null
   league: string
 }
 
@@ -171,10 +172,10 @@ export default function CoachManagement() {
             {coaches.map((coach) => (
               <tr key={coach.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {coach.imageUrl ? (
+                  {coach.imageUrl || coach.teamLogoUrl ? (
                     <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200">
                       <img
-                        src={coach.imageUrl}
+                        src={coach.imageUrl || coach.teamLogoUrl || ''}
                         alt={coach.name}
                         className="w-full h-full object-cover"
                       />

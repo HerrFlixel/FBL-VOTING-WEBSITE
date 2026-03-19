@@ -32,6 +32,7 @@ function AdminContent() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'import-herren')
+  const [exporting, setExporting] = useState(false)
 
   useEffect(() => {
     if (tabParam) {
@@ -61,12 +62,54 @@ function AdminContent() {
     { id: 'voters' as Tab, label: 'Voter-Verwaltung' }
   ]
 
+  const handleDownloadAll = async () => {
+    try {
+      setExporting(true)
+      const res = await fetch('/api/admin/export', { cache: 'no-store' })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        throw new Error(data?.error || 'Export fehlgeschlagen')
+      }
+
+      const pretty = JSON.stringify(data, null, 2)
+      const blob = new Blob([pretty], { type: 'application/json;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      a.href = url
+      a.download = `admin-export-${ts}.json`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (error: any) {
+      alert(error?.message || 'Export fehlgeschlagen')
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl md:text-4xl font-heading text-gray-900 mb-6">
-          Admin-Bereich
-        </h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          <h1 className="text-3xl md:text-4xl font-heading text-gray-900">
+            Admin-Bereich
+          </h1>
+
+          <button
+            type="button"
+            onClick={handleDownloadAll}
+            disabled={exporting}
+            className={`px-4 py-2 rounded-lg font-heading text-sm sm:text-base ${
+              exporting
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-primary-600 hover:bg-primary-700 text-white'
+            }`}
+          >
+            {exporting ? 'Export läuft...' : 'Alle Daten herunterladen'}
+          </button>
+        </div>
 
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6">

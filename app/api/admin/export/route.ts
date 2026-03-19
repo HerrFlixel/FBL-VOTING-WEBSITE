@@ -9,8 +9,151 @@ function normalizeNameToKey(name: string | null | undefined) {
   return normalizeTeamNameForLogoMatch(name)
 }
 
-export async function GET() {
+function escapeHtml(input: any) {
+  return String(input ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
+}
+
+function flattenRow(row: any, prefix = ''): Record<string, any> {
+  const out: Record<string, any> = {}
+  if (!row || typeof row !== 'object') {
+    if (prefix) out[prefix] = row
+    return out
+  }
+
+  for (const [key, value] of Object.entries(row)) {
+    const nextKey = prefix ? `${prefix}.${key}` : key
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      out[nextKey] = JSON.stringify(value)
+    } else if (Array.isArray(value)) {
+      out[nextKey] = value.length ? JSON.stringify(value) : ''
+    } else {
+      out[nextKey] = value
+    }
+  }
+
+  return out
+}
+
+function renderTable(title: string, rows: any[]) {
+  const safeTitle = escapeHtml(title)
+  if (!rows || rows.length === 0) {
+    return `<h2>${safeTitle}</h2><p><em>Keine Daten</em></p>`
+  }
+
+  const flatRows = rows.map((r) => flattenRow(r))
+  const columns = Array.from(
+    new Set(flatRows.flatMap((r) => Object.keys(r)))
+  )
+
+  const thead = columns
+    .map((c) => `<th>${escapeHtml(c)}</th>`)
+    .join('')
+
+  const tbody = flatRows
+    .map((r) => {
+      const tds = columns
+        .map((c) => `<td>${escapeHtml((r as any)[c])}</td>`)
+        .join('')
+      return `<tr>${tds}</tr>`
+    })
+    .join('')
+
+  return `
+    <h2>${safeTitle}</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${thead}</tr></thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>
+  `
+}
+
+function renderTotals(title: string, totals: any) {
+  return renderTable(`${title} (Totals)`, totals ? [totals] : [])
+}
+
+function buildAdminExportHtml(payload: any) {
+  const { generatedAt, baseData, categories } = payload ?? {}
+
+  const css = `
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; padding: 16px; }
+    h1 { margin: 0 0 12px; }
+    h2 { margin: 18px 0 8px; }
+    p { margin: 6px 0; }
+    .table-wrap { overflow-x: auto; margin-bottom: 22px; border: 1px solid #e5e7eb; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; background: white; }
+    th, td { border-bottom: 1px solid #f3f4f6; padding: 6px 8px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { position: sticky; top: 0; background: #f9fafb; z-index: 1; }
+    td { white-space: nowrap; }
+  `
+
+  let html = `<!doctype html><html><head><meta charset="utf-8" /><title>Admin Export</title><style>${css}</style></head><body>`
+  html += `<h1>Admin Export</h1>`
+  html += `<p><strong>generatedAt:</strong> ${escapeHtml(generatedAt)}</p>`
+
+  // Base Data
+  if (baseData) {
+    html += `<h2>Base Data</h2>`
+    html += renderTable('Teams', baseData.teams || [])
+    html += renderTable('Players', baseData.players || [])
+    html += renderTable('Coaches', baseData.coaches || [])
+    html += renderTable('RefereePairs', baseData.refereePairs || [])
+    html += renderTable('Users', baseData.users || [])
+  }
+
+  // Categories
+  if (categories) {
+    const leagues = ['herren', 'damen'] as const
+    const categoryKeys = ['allstar', 'mvp', 'coach', 'fairplay', 'rookie'] as const
+
+    for (const cat of categoryKeys) {
+      const catData = (categories as any)[cat]
+      if (!catData) continue
+
+      for (const league of leagues) {
+        const entry = catData[league]
+        if (!entry) continue
+        html += `<h2>${escapeHtml(cat)} - ${escapeHtml(league)}</h2>`
+        html += renderTotals(`${cat} ${league}`, entry.totals)
+        html += renderTable(`${cat} ${league} - bestList`, entry.bestList || [])
+        html += renderTable(`${cat} ${league} - votesRaw`, entry.votesRaw || [])
+      }
+    }
+
+    // Referee (no league split)
+    if ((categories as any).referee) {
+      const entry = (categories as any).referee
+      html += `<h2>referee</h2>`
+      html += renderTotals('referee', entry.totals)
+      html += renderTable('referee - bestList', entry.bestList || [])
+      html += renderTable('referee - votesRaw', entry.votesRaw || [])
+    }
+
+    // Special Award (no league split)
+    if ((categories as any).specialAward) {
+      const entry = (categories as any).specialAward
+      html += `<h2>specialAward</h2>`
+      html += renderTotals('specialAward', entry.totals)
+      html += renderTable('specialAward - bestList', entry.bestList || [])
+      html += renderTable('specialAward - votesRaw', entry.votesRaw || [])
+    }
+  }
+
+  html += `</body></html>`
+  return html
+}
+
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const format = searchParams.get('format')
+
     const teams = await prisma.team.findMany({ select: { id: true, name: true, logoUrl: true } })
     const teamLogoByName = Object.fromEntries(
       teams
@@ -472,11 +615,23 @@ export async function GET() {
       }))
     }
 
-    return NextResponse.json({
+    const payload = {
       generatedAt: new Date().toISOString(),
       baseData,
       categories: categoryResults,
-    })
+    }
+
+    if (format === 'html') {
+      const html = buildAdminExportHtml(payload)
+      return new NextResponse(html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': 'attachment; filename="admin-export.html"'
+        }
+      })
+    }
+
+    return NextResponse.json(payload)
   } catch (error) {
     console.error('Admin export failed', error)
     return NextResponse.json({ error: 'Admin export failed' }, { status: 500 })

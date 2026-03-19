@@ -33,6 +33,7 @@ function AdminContent() {
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'import-herren')
   const [exporting, setExporting] = useState(false)
+  const [exportingHtml, setExportingHtml] = useState(false)
 
   useEffect(() => {
     if (tabParam) {
@@ -92,6 +93,39 @@ function AdminContent() {
     }
   }
 
+  const handleDownloadAllHtml = async () => {
+    try {
+      setExportingHtml(true)
+      const res = await fetch('/api/admin/export?format=html', { cache: 'no-store' })
+      const text = await res.text()
+
+      if (!res.ok) {
+        // Backend gibt im Fehlerfall meist JSON zurück.
+        try {
+          const data = JSON.parse(text)
+          throw new Error(data?.error || 'HTML Export fehlgeschlagen')
+        } catch {
+          throw new Error('HTML Export fehlgeschlagen')
+        }
+      }
+
+      const blob = new Blob([text], { type: 'text/html;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      a.href = url
+      a.download = `admin-export-${ts}.html`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (error: any) {
+      alert(error?.message || 'HTML Export fehlgeschlagen')
+    } finally {
+      setExportingHtml(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -100,18 +134,33 @@ function AdminContent() {
             Admin-Bereich
           </h1>
 
-          <button
-            type="button"
-            onClick={handleDownloadAll}
-            disabled={exporting}
-            className={`px-4 py-2 rounded-lg font-heading text-sm sm:text-base ${
-              exporting
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-primary-600 hover:bg-primary-700 text-white'
-            }`}
-          >
-            {exporting ? 'Export läuft...' : 'Alle Daten herunterladen'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleDownloadAll}
+              disabled={exporting}
+              className={`px-4 py-2 rounded-lg font-heading text-sm sm:text-base ${
+                exporting
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-primary-600 hover:bg-primary-700 text-white'
+              }`}
+            >
+              {exporting ? 'Export JSON läuft...' : 'Alle Daten herunterladen (JSON)'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadAllHtml}
+              disabled={exportingHtml}
+              className={`px-4 py-2 rounded-lg font-heading text-sm sm:text-base ${
+                exportingHtml
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-primary-600 hover:bg-primary-700 text-white'
+              }`}
+            >
+              {exportingHtml ? 'Export HTML läuft...' : 'Alle Daten herunterladen (HTML)'}
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}

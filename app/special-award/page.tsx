@@ -100,9 +100,6 @@ function SpecialAwardContent() {
       <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 flex items-center justify-center min-h-screen">
         <div className="bg-white/95 rounded-lg shadow-xl p-4 sm:p-8 md:p-12 w-full max-w-2xl">
           <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-block px-2 sm:px-3 py-0.5 sm:py-1 bg-primary-600 text-white rounded-lg font-heading uppercase text-xs sm:text-sm mb-2 sm:mb-3 shadow-lg">
-              {leagueName}
-            </div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading uppercase mb-2 text-gray-900">
               {t('special.title')}
             </h1>

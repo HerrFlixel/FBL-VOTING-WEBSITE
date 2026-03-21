@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { deleteVotesForPlayerIds } from '../../../../lib/delete-player-votes'
 import { normalizeTeamLogoUrl } from '../../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../../lib/team-name'
 
@@ -92,8 +93,9 @@ export async function DELETE(
 ) {
   const { id } = params
   try {
-    await prisma.player.delete({
-      where: { id }
+    await prisma.$transaction(async (tx) => {
+      await deleteVotesForPlayerIds(tx, [id])
+      await tx.player.delete({ where: { id } })
     })
     return NextResponse.json({ success: true })
   } catch (error) {

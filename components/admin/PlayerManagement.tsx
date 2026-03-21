@@ -195,7 +195,7 @@ export default function PlayerManagement() {
             >
               {clearingImages ? 'Wird ausgeführt…' : 'Alle Spielerbilder entfernen'}
             </button>
-            {selectedLeague === 'herren' && (
+            {(selectedLeague === 'herren' || selectedLeague === 'all') && (
               <button
                 onClick={() => handleDeleteAllByLeague('herren')}
                 className="px-4 py-2 rounded-lg font-heading bg-red-600 hover:bg-red-700 text-white"
@@ -203,7 +203,7 @@ export default function PlayerManagement() {
                 Alle Herren löschen
               </button>
             )}
-            {selectedLeague === 'damen' && (
+            {(selectedLeague === 'damen' || selectedLeague === 'all') && (
               <button
                 onClick={() => handleDeleteAllByLeague('damen')}
                 className="px-4 py-2 rounded-lg font-heading bg-red-600 hover:bg-red-700 text-white"

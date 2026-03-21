@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
+import { deleteVotesForPlayerIds } from '../../../lib/delete-player-votes'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -49,9 +50,13 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Gültige Liga (herren oder damen) ist erforderlich' }, { status: 400 })
     }
 
-    // Lösche alle Spieler der angegebenen Liga
-    const result = await prisma.player.deleteMany({
-      where: { league }
+    // Zuerst abhängige Stimmen löschen (SQLite: kein ON DELETE CASCADE auf Player)
+    const result = await prisma.$transaction(async (tx) => {
+      const ids = (await tx.player.findMany({ where: { league }, select: { id: true } })).map(
+        (p) => p.id
+      )
+      await deleteVotesForPlayerIds(tx, ids)
+      return tx.player.deleteMany({ where: { league } })
     })
 
     return NextResponse.json({ 

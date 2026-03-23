@@ -6,6 +6,7 @@ interface User {
   id: string
   firstName: string
   lastName: string
+  email: string
   team: { name: string } | null
   createdAt: string
 }
@@ -204,6 +205,7 @@ export default function VoterManagement() {
                 <thead className="bg-gray-50 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">E-Mail</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Team</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aktionen</th>
                   </tr>
@@ -229,6 +231,9 @@ export default function VoterManagement() {
                             </span>
                           )}
                         </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {user.email || '-'}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {user.team?.name || '-'}
@@ -270,6 +275,9 @@ export default function VoterManagement() {
                   <h4 className="font-heading text-gray-900 mb-2">
                     {selectedUser.firstName} {selectedUser.lastName}
                   </h4>
+                  <p className="text-sm text-gray-600">
+                    E-Mail: {selectedUser.email || '-'}
+                  </p>
                   <p className="text-sm text-gray-600">
                     Team: {selectedUser.team?.name || '-'}
                   </p>

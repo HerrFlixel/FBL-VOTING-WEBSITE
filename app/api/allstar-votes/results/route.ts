@@ -23,9 +23,17 @@ export async function GET(req: Request) {
       }
     })
 
+    const roleFromVotePosition = (position: string): 'goalie' | 'defense' | 'offense' => {
+      const p = String(position || '').toLowerCase()
+      if (p === 'gk') return 'goalie'
+      if (p === 'ld' || p === 'rd') return 'defense'
+      return 'offense'
+    }
+
     // Gruppiere nach Spieler
     const playerMap = new Map<string, {
       player: typeof votes[0]['player']
+      role: 'goalie' | 'defense' | 'offense'
       totalPoints: number
       line1Count: number
       line2Count: number
@@ -42,6 +50,7 @@ export async function GET(req: Request) {
       } else {
         playerMap.set(vote.playerId, {
           player: vote.player,
+          role: roleFromVotePosition(vote.position),
           totalPoints: vote.points,
           line1Count: vote.line === 1 ? 1 : 0,
           line2Count: vote.line === 2 ? 1 : 0,
@@ -66,6 +75,7 @@ export async function GET(req: Request) {
           imageUrl: r.player.imageUrl,
           teamLogoUrl
         },
+        role: r.role,
         totalPoints: r.totalPoints,
         line1Count: r.line1Count,
         line2Count: r.line2Count,

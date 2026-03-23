@@ -14,6 +14,7 @@ interface PlayerResult {
     imageUrl: string | null
     teamLogoUrl?: string | null
   }
+  role: 'goalie' | 'defense' | 'offense'
   totalPoints: number
   line1Count: number
   line2Count: number
@@ -45,6 +46,12 @@ export default function AllstarResults({ league }: AllstarResultsProps) {
     return <div className="text-center py-8 text-gray-900">Lade Ergebnisse...</div>
   }
 
+  const sections: Array<{ key: PlayerResult['role']; title: string }> = [
+    { key: 'goalie', title: 'Torwart' },
+    { key: 'defense', title: 'Verteidigung' },
+    { key: 'offense', title: 'Angriff' }
+  ]
+
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="p-6 border-b border-gray-200">
@@ -54,91 +61,61 @@ export default function AllstarResults({ league }: AllstarResultsProps) {
         </h2>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rang
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Bild
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Team
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                1. Reihe
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                2. Reihe
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                3. Reihe
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Gesamtpunkte
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {results.map((result, index) => (
-              <tr key={result.player.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {index + 1}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {(result.player.imageUrl || result.player.teamLogoUrl) ? (
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                      <img
-                        src={result.player.imageUrl || result.player.teamLogoUrl || ''}
-                        alt={result.player.name}
-                        className={result.player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                      <svg
-                        className="w-8 h-8 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {result.player.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {result.player.team || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {result.line1Count}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {result.line2Count}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {result.line3Count}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary-600">
-                  {result.totalPoints}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-6 p-4 sm:p-6">
+        {sections.map((section) => {
+          const sectionResults = results.filter((r) => r.role === section.key)
+          return (
+            <div key={section.key}>
+              <h3 className="text-lg font-heading text-gray-900 mb-3">{section.title}</h3>
+              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rang</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bild</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">1. Reihe</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">2. Reihe</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">3. Reihe</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gesamtpunkte</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {sectionResults.length === 0 ? (
+                      <tr>
+                        <td className="px-6 py-4 text-sm text-gray-500" colSpan={8}>Keine Ergebnisse in dieser Kategorie</td>
+                      </tr>
+                    ) : sectionResults.map((result, index) => (
+                      <tr key={result.player.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {(result.player.imageUrl || result.player.teamLogoUrl) ? (
+                            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                              <img src={result.player.imageUrl || result.player.teamLogoUrl || ''} alt={result.player.name} className={result.player.imageUrl ? 'w-full h-full object-cover' : 'w-full h-full object-contain'} />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{result.player.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.player.team || '-'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.line1Count}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.line2Count}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.line3Count}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary-600">{result.totalPoints}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

@@ -329,11 +329,11 @@ function AllstarVotingContent() {
           className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
           style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
         >
-          <div className="w-14 h-16 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
+          <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
             <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-[7px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{getPositionLabel(position)}</span>
+            <span className="text-[8px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{getPositionLabel(position)}</span>
           </div>
         </div>
       )
@@ -345,9 +345,9 @@ function AllstarVotingContent() {
         className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
         style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
       >
-        <div className="w-14 h-16 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
+        <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
           {(player.imageUrl || player.teamLogoUrl) ? (
-            <div className="relative w-full h-7 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
+            <div className="relative w-full h-8 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
               <img
                 src={player.imageUrl || player.teamLogoUrl || ''}
                 alt={player.name}
@@ -369,16 +369,16 @@ function AllstarVotingContent() {
               />
             </div>
           ) : (
-            <div className="w-full h-7 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+            <div className="w-full h-8 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           )}
-          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0 overflow-y-auto">
-            <div className="font-heading text-[7px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
+          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0">
+            <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
             {player.team && (
-              <div className="text-[7px] sm:text-[8px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
+              <div className="text-[8px] sm:text-[8px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
             )}
             {player.jerseyNumber && (
               <div className="text-[7px] sm:text-[8px] md:text-[10px] text-gray-500 flex-shrink-0">#{player.jerseyNumber}</div>
@@ -456,7 +456,7 @@ function AllstarVotingContent() {
         </div>
 
         {/* Floorball Field */}
-        <div className={`relative w-full max-w-3xl mx-auto aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ${league === 'damen' ? 'bg-red-200' : 'bg-blue-300'}`}>
+        <div className={`relative w-full max-w-3xl mx-auto aspect-[5/6] sm:aspect-[4/3] rounded-lg overflow-hidden shadow-2xl ${league === 'damen' ? 'bg-red-200' : 'bg-blue-300'}`}>
           {/* Field Background Image */}
           <div className="absolute inset-0">
             <img

@@ -298,7 +298,7 @@ function RefereeVotingContent() {
               ) : filteredPairs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">{t('common.noReferees')}</div>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
                   {filteredPairs.map((pair) => (
                     <div
                       key={pair.id}
@@ -324,8 +324,10 @@ function RefereeVotingContent() {
                           </svg>
                         </div>
                       )}
-                      <div className="p-2 text-center space-y-1">
-                        <div className="font-heading text-xs font-bold text-gray-900 truncate">{pair.name}</div>
+                      <div className="p-2 text-center">
+                        <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 leading-tight break-words whitespace-normal">
+                          {pair.name}
+                        </div>
                       </div>
                       {selectedPairId === pair.id && (
                         <div className="absolute top-1 right-1 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">

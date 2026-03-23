@@ -91,6 +91,35 @@ Neue Finalisierungen schreiben weiterhin verpflichtend eine E-Mail (Validierung 
 4. Schiedsrichter-Paare hinzufügen: "Schiedsrichter" Tab (falls vorhanden)
 5. Teams für Formular hinzufügen: "Teams" Tab
 
+### Backup (Datenbank + Uploads)
+
+Die SQLite-Datei und die Bilder liegen auf der **Persistent Disk** (z. B. unter `/mnt/data`). Backups erzeugst du manuell per Skript:
+
+**Lokal:**
+
+```bash
+npm run backup
+```
+
+**Auf Render:**
+
+1. Im Web Service **Shell** öffnen.
+2. Ausführen:
+
+```bash
+cd /opt/render/project/src && npm run backup
+```
+
+Es wird ein Ordner angelegt, z. B. `/mnt/data/backups/backup-2026-03-23T20-47-04/` mit:
+
+- `dev.db` – Datenbank (wenn `sqlite3` installiert ist: konsistentes Backup per `.backup`, sonst Dateikopie)
+- `uploads.tar.gz` – optional, wenn `public/uploads/players` bzw. `teams` auf der Disk existieren
+
+**Hinweise:**
+
+- Alte Backup-Ordner auf der Disk regelmäßig löschen oder herunterladen, damit der Speicher nicht voll läuft.
+- Render bietet **kein** automatisches Offsite-Backup der Disk – wichtige Backups lokal herunterladen oder woanders ablegen.
+
 ## Projektstruktur
 
 ```

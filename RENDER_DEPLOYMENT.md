@@ -126,8 +126,16 @@ Nach dem ersten erfolgreichen Deployment:
 
 ### Backups
 
-- SQLite-Datenbank liegt auf Persistent Disk
-- Regelmäßige Backups empfohlen (über Shell: `cp prisma/dev.db backup.db`)
+- SQLite-Datenbank und Uploads liegen auf der Persistent Disk (z. B. `/mnt/data/prisma/dev.db`).
+- **Empfohlen:** im Render **Shell**:
+
+```bash
+cd /opt/render/project/src && npm run backup
+```
+
+Das legt unter `/mnt/data/backups/backup-<Zeitstempel>/` u. a. `dev.db` und optional `uploads.tar.gz` ab (siehe README „Backup“).
+
+- Optional manuell: `cp` der DB – weniger sicher bei laufender App als `sqlite3 .backup` (nutzt das Skript, wenn `sqlite3` verfügbar ist).
 
 ### Logs
 

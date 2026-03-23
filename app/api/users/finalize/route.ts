@@ -44,7 +44,7 @@ async function withRetry<T>(
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { firstName, lastName, teamId, league } = body as {
+    const { firstName, lastName, email, teamId, league } = body as {
       firstName: string
       lastName: string
       email: string

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import ExcelImport from '../../components/admin/ExcelImport'
 import PlayerManagement from '../../components/admin/PlayerManagement'
 import CoachManagement from '../../components/admin/CoachManagement'
@@ -29,6 +29,7 @@ type Tab =
   | 'voters'
 
 function AdminContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'import-herren')
@@ -134,7 +135,7 @@ function AdminContent() {
             Admin-Bereich
           </h1>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               type="button"
               onClick={handleDownloadAll}
@@ -159,6 +160,18 @@ function AdminContent() {
               }`}
             >
               {exportingHtml ? 'Export HTML läuft...' : 'Alle Daten herunterladen (HTML)'}
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch('/api/admin-auth/logout', { method: 'POST' })
+                router.replace('/admin-login')
+                router.refresh()
+              }}
+              className="px-4 py-2 rounded-lg font-heading text-sm sm:text-base bg-gray-700 hover:bg-gray-800 text-white"
+            >
+              Logout
             </button>
           </div>
         </div>

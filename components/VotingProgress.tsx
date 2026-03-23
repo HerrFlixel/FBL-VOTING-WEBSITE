@@ -30,7 +30,11 @@ export default function VotingProgress() {
   const stepIndex = Math.max(1, Math.min(STEP_IDS.length, currentStep))
   const progressPercent = (stepIndex / STEP_IDS.length) * 100
   const stepLabels = translations[lang].progress.steps
-  const [unlockedStep, setUnlockedStep] = useState(stepIndex)
+  const [unlockedStep, setUnlockedStep] = useState(() => {
+    if (typeof window === 'undefined') return stepIndex
+    const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+    return Math.max(stepIndex, Number.isFinite(saved) ? saved : 0)
+  })
 
   useEffect(() => {
     const leagueParam = searchParams.get('league')
@@ -104,9 +108,13 @@ export default function VotingProgress() {
         if (refereeComplete) maxUnlocked = 7
         if (specialComplete) maxUnlocked = 8
 
-        setUnlockedStep(Math.max(stepIndex, maxUnlocked))
+        const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+        const nextUnlocked = Math.max(stepIndex, maxUnlocked, Number.isFinite(saved) ? saved : 0)
+        sessionStorage.setItem('votingUnlockedStep', String(nextUnlocked))
+        setUnlockedStep(nextUnlocked)
       } catch {
-        setUnlockedStep(stepIndex)
+        const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+        setUnlockedStep(Math.max(stepIndex, Number.isFinite(saved) ? saved : 0))
       }
     }
 

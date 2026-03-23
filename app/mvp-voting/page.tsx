@@ -361,7 +361,7 @@ function MVPVotingContent() {
 
       {modalOpen && selectedRank && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center p-2 sm:p-2 sm:p-4">
-          <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
+          <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[92vh] sm:max-h-[92vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex-1 min-w-0">
                 <div className="font-heading text-base sm:text-xl text-gray-900 truncate">{t('common.rank')} {selectedRank} ({11 - selectedRank} {t('common.points')})</div>
@@ -430,7 +430,7 @@ function MVPVotingContent() {
                           <div className="mb-3 pb-2 border-b-2 border-primary-500">
                             <h3 className="font-heading text-sm text-gray-900">{team}</h3>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                             {players.map((p) => {
                               const taken = isTaken(p.id) && selectedPlayerId !== p.id
                               const isSelected = selectedPlayerId === p.id
@@ -452,7 +452,7 @@ function MVPVotingContent() {
                                 >
                                   <div className="bg-white">
                                     {(p.imageUrl || p.teamLogoUrl) ? (
-                                      <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                                      <div className="relative w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
                                         <img
                                           src={p.imageUrl || p.teamLogoUrl || ''}
                                           alt={p.name}
@@ -460,19 +460,19 @@ function MVPVotingContent() {
                                         />
                                       </div>
                                     ) : (
-                                      <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <div className="w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                        <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                       </div>
                                     )}
-                                    <div className="p-2 text-center space-y-1 min-w-0">
-                                      <div className="font-heading text-xs font-bold text-gray-900 break-words">{p.name}</div>
+                                    <div className="p-1.5 sm:p-2 text-center space-y-0.5 min-w-0">
+                                      <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight">{p.name}</div>
                                     {p.team && (
-                                        <div className="text-[10px] text-gray-600 break-words">{p.team}</div>
+                                        <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight">{p.team}</div>
                                     )}
                                       {p.jerseyNumber && (
-                                        <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                                        <div className="text-[9px] sm:text-[10px] text-gray-500">#{p.jerseyNumber}</div>
                                       )}
                                       {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
                                         <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">
@@ -516,7 +516,7 @@ function MVPVotingContent() {
                     })()
                   ) : (
                     // Standard-Grid ohne Gruppierung
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                       {filteredPlayers.map((p) => {
                         const taken = isTaken(p.id) && selectedPlayerId !== p.id
                         const isSelected = selectedPlayerId === p.id
@@ -538,7 +538,7 @@ function MVPVotingContent() {
                           >
                         <div className="bg-white">
                           {(p.imageUrl || p.teamLogoUrl) ? (
-                            <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                            <div className="relative w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
                               <img
                                 src={p.imageUrl || p.teamLogoUrl || ''}
                                 alt={p.name}
@@ -546,19 +546,19 @@ function MVPVotingContent() {
                               />
                             </div>
                           ) : (
-                            <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                              <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                              <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
                             </div>
                           )}
-                          <div className="p-2 text-center space-y-1 min-w-0">
-                            <div className="font-heading text-xs font-bold text-gray-900 break-words">{p.name}</div>
+                          <div className="p-1.5 sm:p-2 text-center space-y-0.5 min-w-0">
+                            <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight">{p.name}</div>
                             {p.team && (
-                              <div className="text-[10px] text-gray-600 break-words">{p.team}</div>
+                              <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight">{p.team}</div>
                             )}
                             {p.jerseyNumber && (
-                              <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                              <div className="text-[9px] sm:text-[10px] text-gray-500">#{p.jerseyNumber}</div>
                             )}
                             {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
                               <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">

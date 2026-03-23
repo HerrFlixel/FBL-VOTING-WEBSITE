@@ -211,7 +211,7 @@ function RefereeVotingContent() {
           ) : (
             <div
               onClick={openSelect}
-              className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[300px] cursor-pointer"
+              className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[220px] sm:min-h-[280px] cursor-pointer"
             >
               <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -266,7 +266,7 @@ function RefereeVotingContent() {
       {/* Pair Selection Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4 bg-black/50">
-          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[92vh] sm:max-h-[92vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('common.selectReferee')}</h2>
               <button
@@ -298,7 +298,7 @@ function RefereeVotingContent() {
               ) : filteredPairs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">{t('common.noReferees')}</div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                   {filteredPairs.map((pair) => (
                     <div
                       key={pair.id}
@@ -310,7 +310,7 @@ function RefereeVotingContent() {
                       }`}
                     >
                       {pair.imageUrl ? (
-                        <div className="relative w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="relative w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200">
                           <img
                             src={pair.imageUrl}
                             alt={pair.name}
@@ -318,8 +318,8 @@ function RefereeVotingContent() {
                           />
                         </div>
                       ) : (
-                        <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-full h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                          <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                         </div>

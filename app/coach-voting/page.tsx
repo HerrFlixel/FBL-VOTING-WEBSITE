@@ -221,7 +221,7 @@ function CoachVotingContent() {
           ) : (
             <div
               onClick={openSelect}
-              className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[300px] cursor-pointer"
+              className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[220px] sm:min-h-[280px] cursor-pointer"
             >
               <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -267,7 +267,7 @@ function CoachVotingContent() {
       {/* Coach Selection Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-2 sm:p-4 bg-black/50">
-          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[92vh] sm:max-h-[92vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('common.selectCoach')}</h2>
               <button
@@ -299,7 +299,7 @@ function CoachVotingContent() {
               ) : filteredCoaches.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">{t('common.noCoaches')}</div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                   {filteredCoaches.map((coach) => (
                     <div
                       key={coach.id}
@@ -325,10 +325,10 @@ function CoachVotingContent() {
                           </svg>
                         </div>
                       )}
-                      <div className="p-2 text-center space-y-1 min-w-0">
-                        <div className="font-heading text-xs font-bold text-gray-900 break-words">{coach.name}</div>
+                      <div className="p-1.5 sm:p-2 text-center space-y-0.5 min-w-0">
+                        <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight">{coach.name}</div>
                         {coach.team && (
-                          <div className="text-[10px] text-gray-600 break-words">{coach.team}</div>
+                          <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight">{coach.team}</div>
                         )}
                       </div>
                       {selectedCoachId === coach.id && (

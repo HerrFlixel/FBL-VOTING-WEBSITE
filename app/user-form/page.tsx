@@ -20,6 +20,7 @@ function UserFormContent() {
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
   const [teamId, setTeamId] = useState('')
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
@@ -43,7 +44,11 @@ function UserFormContent() {
     loadTeams()
   }, [])
 
-  const canSubmit = firstName.trim().length > 0 && lastName.trim().length > 0 && teamId.length > 0
+  const canSubmit =
+    firstName.trim().length > 0 &&
+    lastName.trim().length > 0 &&
+    email.trim().length > 0 &&
+    teamId.length > 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,6 +62,7 @@ function UserFormContent() {
         body: JSON.stringify({
           firstName: firstName.trim(),
           lastName: lastName.trim(),
+          email: email.trim(),
           teamId,
           league
         })
@@ -145,6 +151,20 @@ function UserFormContent() {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                required
+                className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                {t('userForm.email')}
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />

@@ -47,13 +47,22 @@ export async function POST(req: Request) {
     const { firstName, lastName, teamId, league } = body as {
       firstName: string
       lastName: string
+      email: string
       teamId?: string
       league?: string
     }
 
-    if (!firstName || !lastName) {
+    if (!firstName || !lastName || !email) {
       return NextResponse.json(
-        { error: 'Vorname und Nachname sind erforderlich.' },
+        { error: 'Vorname, Nachname und E-Mail sind erforderlich.' },
+        { status: 400 }
+      )
+    }
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(normalizedEmail)) {
+      return NextResponse.json(
+        { error: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.' },
         { status: 400 }
       )
     }
@@ -115,6 +124,7 @@ export async function POST(req: Request) {
           data: {
             firstName,
             lastName,
+            email: normalizedEmail,
             voterId,
             voterIp: ip,
             league,

@@ -23,6 +23,32 @@ function getCell(row: Row, keys: string[]): any {
   return undefined
 }
 
+/** Zeilenobjekt aus Header + Rohzeile (gleiche Logik wie sheet_to_json, ohne Zeilenversatz). */
+function rowFromRaw(headerRow: any[], rawRow: any[]): Row {
+  const row: Row = {}
+  headerRow.forEach((h, i) => {
+    const key = String(h ?? '').trim()
+    if (!key) return
+    row[key] = rawRow[i]
+  })
+  return row
+}
+
+/** Erste Spalte, deren Header eines der Muster enthält (lowercase). */
+function findColIndex(headerLower: string[], patterns: string[]): number {
+  return headerLower.findIndex((h) => patterns.some((p) => h.includes(p)))
+}
+
+/** Rookie: X, x, Ja, 1, J → true; leer → false; Spalte fehlt → null (Import nicht gesetzt). */
+function parseRookieFlag(value: any, columnPresent: boolean): boolean | null {
+  if (!columnPresent) return null
+  const s = String(value ?? '').trim()
+  if (!s) return false
+  const u = s.toUpperCase()
+  if (u === 'X' || u === 'JA' || u === 'J' || u === '1' || u === 'YES' || u === 'Y') return true
+  return false
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -60,36 +86,56 @@ export async function POST(req: Request) {
 
     const sheetName = workbook.SheetNames[0]
     const sheet = workbook.Sheets[sheetName]
-    const rows: Row[] = XLSX.utils.sheet_to_json(sheet, { defval: '' })
-
-    // Roh-Daten inkl. Spaltenreihenfolge (für die 3 neuen Spalten nach "MS")
+    /** Nur mit header:1 iterieren – vermeidet Zeilenversatz zu sheet_to_json (leere Zeilen). */
     const rawRows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' })
-    
-    if (rows.length === 0) {
+
+    if (!rawRows.length || rawRows.length < 2) {
       return NextResponse.json({ error: 'Excel-Datei enthält keine Daten' }, { status: 400 })
     }
 
     let created = 0
     let updated = 0
 
-    const headerRow = rawRows?.[0] ?? []
-    const headerLower = headerRow.map((c) => String(c ?? '').toLowerCase())
-    // Erwartung: "MS = Match Strafen" ist im Header vorhanden, und die 3 relevanten Spalten kommen direkt danach.
-    let msColIndex = headerLower.findIndex((h) => h.includes('ms') && (h.includes('match') || h.includes('strafe')))
-    if (msColIndex < 0) msColIndex = headerLower.findIndex((h) => h.includes('ms'))
+    const headerRow = rawRows[0] ?? []
+    const headerLower = headerRow.map((c) => String(c ?? '').toLowerCase().trim())
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i]
-      const rawRow = rawRows?.[i + 1] ?? []
+    // MS-Spalte (Match-Strafen)
+    let msColIndex = headerLower.findIndex(
+      (h) => h.includes('ms') && (h.includes('match') || h.includes('strafe'))
+    )
+    if (msColIndex < 0) {
+      msColIndex = headerLower.findIndex((h) => h === 'ms' || h.startsWith('ms'))
+    }
+    if (msColIndex < 0) {
+      msColIndex = headerLower.findIndex((h) => h.includes('ms'))
+    }
 
-      // Spielername: kann "1 Florian Weißkirchen" oder nur "Florian Weißkirchen" sein
+    // Benannte Spalten (Fallback, falls nicht direkt rechts von MS)
+    const trikotColIndex = findColIndex(headerLower, [
+      'trikotnummer',
+      'trikot',
+      'trikotnr',
+      'nr spieler',
+      'spieler nr',
+      'rückennummer'
+    ])
+    const rookieColIndex = findColIndex(headerLower, ['rookie'])
+    const rolleColIndex = findColIndex(headerLower, ['rolle', 'o/d/g', 'o/d', 'position o', 'angriff'])
+
+    for (let r = 1; r < rawRows.length; r++) {
+      const rawRow = rawRows[r] ?? []
+      // Komplett leere Zeile überspringen (wie sheet_to_json ohne header:1)
+      const rowNonEmpty = rawRow.some((c) => String(c ?? '').trim() !== '')
+      if (!rowNonEmpty) continue
+
+      const row = rowFromRaw(headerRow, rawRow)
+
       let name = String(
         getCell(row, ['Spieler', 'Spielername', 'Name', 'Player']) ?? ''
       ).trim()
-      
-      // Entferne führende Nummer falls vorhanden (z.B. "1 Florian Weißkirchen" -> "Florian Weißkirchen")
+
       name = name.replace(/^\d+\s+/, '').trim()
-      
+
       if (!name) continue
 
       const team = String(getCell(row, ['Verein', 'Team', 'Club']) ?? '').trim() || null
@@ -101,22 +147,52 @@ export async function POST(req: Request) {
       const pim2 = parseNumber(getCell(row, ["2'", "2min", '2', '2 min']))
       const pim2x2 = parseNumber(getCell(row, ["2'+2'", "2'+2'", '2+2', '2x2', '2+2 min']))
       const pim10 = parseNumber(getCell(row, ["10'", '10min', '10', '10 min']))
-      // MS kann "0-0" Format haben, extrahiere nur die erste Zahl
       const msValue = getCell(row, ['MS', 'Match', 'Matchstrafe'])
       const pimMatch = msValue ? parseNumber(String(msValue).split('-')[0]) : 0
-      
-      // Neue Spalten: nach MS kommt (1) Trikotnummer, (2) Rookie-X, (3) Rolle O/D/G
-      const jerseyNumberFromExcel =
-        msColIndex >= 0 ? parseNullableNumber(rawRow?.[msColIndex + 1]) : null
-      const rookieFromExcel =
-        msColIndex >= 0 ? String(rawRow?.[msColIndex + 2] ?? '').trim().toUpperCase() === 'X' : null
-      const roleFromExcelRaw = msColIndex >= 0 ? String(rawRow?.[msColIndex + 3] ?? '').trim().toUpperCase() : ''
-      const roleFromExcelChar = roleFromExcelRaw ? roleFromExcelRaw[0] : ''
-      const roleFromExcel = ['O', 'D', 'G'].includes(roleFromExcelChar) ? roleFromExcelChar : null
+
+      // Trikot: benannte Spalte > Zelle direkt nach MS
+      let jerseyNumberFromExcel: number | null = null
+      if (trikotColIndex >= 0) {
+        jerseyNumberFromExcel = parseNullableNumber(rawRow[trikotColIndex])
+      } else if (msColIndex >= 0) {
+        jerseyNumberFromExcel = parseNullableNumber(rawRow[msColIndex + 1])
+      } else {
+        jerseyNumberFromExcel = parseNullableNumber(
+          getCell(row, ['Trikot', 'Trikotnummer', 'Nr', 'Nr.', '#'])
+        )
+      }
+
+      // Rookie
+      let rookieFromExcel: boolean | null = null
+      if (rookieColIndex >= 0) {
+        rookieFromExcel = parseRookieFlag(rawRow[rookieColIndex], true)
+      } else if (msColIndex >= 0) {
+        rookieFromExcel = parseRookieFlag(rawRow[msColIndex + 2], true)
+      } else {
+        const v = getCell(row, ['Rookie'])
+        if (v !== undefined) rookieFromExcel = parseRookieFlag(v, true)
+      }
+
+      // Rolle O/D/G
+      let roleFromExcel: string | null = null
+      if (rolleColIndex >= 0) {
+        const roleFromExcelRaw = String(rawRow[rolleColIndex] ?? '').trim().toUpperCase()
+        const ch = roleFromExcelRaw ? roleFromExcelRaw[0] : ''
+        roleFromExcel = ['O', 'D', 'G'].includes(ch) ? ch : null
+      } else if (msColIndex >= 0) {
+        const roleFromExcelRaw = String(rawRow[msColIndex + 3] ?? '').trim().toUpperCase()
+        const ch = roleFromExcelRaw ? roleFromExcelRaw[0] : ''
+        roleFromExcel = ['O', 'D', 'G'].includes(ch) ? ch : null
+      } else {
+        const v = getCell(row, ['Rolle', 'O/D/G', 'Position Rolle'])
+        if (v !== undefined && v !== '') {
+          const ch = String(v).trim().toUpperCase()[0] || ''
+          roleFromExcel = ['O', 'D', 'G'].includes(ch) ? ch : null
+        }
+      }
 
       const position = roleFromExcel
 
-      // Prüfe, ob es den Spieler mit gleichem Namen + Liga + Team schon gibt
       const existing = await prisma.player.findFirst({
         where: {
           name,
@@ -190,5 +266,3 @@ export async function POST(req: Request) {
     )
   }
 }
-
-

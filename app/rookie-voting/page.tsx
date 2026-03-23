@@ -234,7 +234,7 @@ function RookieVotingContent() {
               <button onClick={handleRemove} className="absolute top-2 left-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity">×</button>
             </div>
           ) : (
-            <div onClick={openSelect} className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[300px] cursor-pointer">
+            <div onClick={openSelect} className="bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all min-h-[220px] sm:min-h-[280px] cursor-pointer">
               <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -279,7 +279,7 @@ function RookieVotingContent() {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-2 sm:p-4 bg-black/50">
-          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-t-xl sm:rounded-lg shadow-xl max-w-4xl w-full max-h-[92vh] sm:max-h-[92vh] overflow-hidden flex flex-col">
             <div className="p-3 sm:p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <h2 className="text-base sm:text-xl font-heading text-gray-900">{t('rookie.selectCandidate')}</h2>
               <button onClick={() => { setModalOpen(false); setSelectedPlayerId(null) }} className="text-gray-500 hover:text-gray-700">
@@ -302,7 +302,7 @@ function RookieVotingContent() {
             </div>
             <div className="flex-1 overflow-y-auto p-2 sm:p-4">
               {loadingPlayers ? <div className="text-center py-8 text-gray-500">{t('common.loadCandidates')}</div> : filteredPlayers.length === 0 ? <div className="text-center py-8 text-gray-500">{t('rookie.noCandidates')}</div> : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                   {filteredPlayers.map((player) => (
                     <div
                       key={player.id}
@@ -318,10 +318,10 @@ function RookieVotingContent() {
                           <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         </div>
                       )}
-                      <div className="p-2 text-center space-y-1 min-w-0">
-                        <div className="font-heading text-xs font-bold text-gray-900 break-words">{player.name}</div>
-                        {player.team && <div className="text-[10px] text-gray-600 break-words">{player.team}</div>}
-                        {player.jerseyNumber && <div className="text-[10px] text-gray-500">#{player.jerseyNumber}</div>}
+                      <div className="p-1.5 sm:p-2 text-center space-y-0.5 min-w-0">
+                        <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight">{player.name}</div>
+                        {player.team && <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight">{player.team}</div>}
+                        {player.jerseyNumber && <div className="text-[9px] sm:text-[10px] text-gray-500">#{player.jerseyNumber}</div>}
                       </div>
                       {selectedPlayerId === player.id && (
                         <div className="absolute top-1 right-1 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">

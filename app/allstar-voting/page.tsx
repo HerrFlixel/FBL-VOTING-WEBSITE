@@ -329,11 +329,11 @@ function AllstarVotingContent() {
           className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
           style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
         >
-          <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
+          <div className="w-14 h-16 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white/90 border-2 border-dashed border-gray-400 rounded-lg shadow-lg flex flex-col items-center justify-center hover:border-primary-500 hover:bg-white transition-all">
             <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-[8px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{getPositionLabel(position)}</span>
+            <span className="text-[7px] sm:text-[10px] md:text-xs text-gray-500 mt-1 sm:mt-2 text-center px-1 sm:px-2">{getPositionLabel(position)}</span>
           </div>
         </div>
       )
@@ -345,9 +345,9 @@ function AllstarVotingContent() {
         className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
         style={{ left: `${pos?.x}%`, top: `${pos?.y}%` }}
       >
-        <div className="w-16 h-20 sm:w-20 sm:h-28 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
+        <div className="w-14 h-16 sm:w-20 sm:h-24 md:w-24 md:h-32 lg:w-28 lg:h-36 bg-white rounded-lg shadow-lg overflow-hidden border-2 border-primary-500 relative flex flex-col">
           {(player.imageUrl || player.teamLogoUrl) ? (
-            <div className="relative w-full h-8 sm:h-10 md:h-12 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
+            <div className="relative w-full h-7 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
               <img
                 src={player.imageUrl || player.teamLogoUrl || ''}
                 alt={player.name}
@@ -369,19 +369,19 @@ function AllstarVotingContent() {
               />
             </div>
           ) : (
-            <div className="w-full h-8 sm:h-10 md:h-12 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+            <div className="w-full h-7 sm:h-9 md:h-11 lg:h-14 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
               <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           )}
           <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0 overflow-y-auto">
-            <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
+            <div className="font-heading text-[7px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
             {player.team && (
-              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
+              <div className="text-[7px] sm:text-[8px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
             )}
             {player.jerseyNumber && (
-              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-500 flex-shrink-0">#{player.jerseyNumber}</div>
+              <div className="text-[7px] sm:text-[8px] md:text-[10px] text-gray-500 flex-shrink-0">#{player.jerseyNumber}</div>
             )}
           </div>
           <button
@@ -555,7 +555,7 @@ function AllstarVotingContent() {
       {/* Player Selection Modal */}
       {modalOpen && activePosition && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center p-2 sm:p-2 sm:p-4">
-          <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[85vh] sm:max-h-[90vh] flex flex-col shadow-2xl">
+          <div className="bg-white border border-gray-300 rounded-t-xl sm:rounded-xl sm:rounded-2xl max-w-6xl w-full max-h-[92vh] sm:max-h-[92vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex-1 min-w-0">
                 <div className="font-heading text-base sm:text-xl text-gray-900 truncate">{getPositionLabel(activePosition)}</div>
@@ -624,7 +624,7 @@ function AllstarVotingContent() {
                           <div className="mb-3 pb-2 border-b-2 border-primary-500">
                             <h3 className="font-heading text-sm text-gray-900">{team}</h3>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+                          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                             {players.map((p) => {
                               const taken = usedPlayerIds.has(p.id) && selections[currentLine][activePosition]?.id !== p.id
                               const isSelected = selectedPlayerId === p.id
@@ -662,12 +662,12 @@ function AllstarVotingContent() {
                                       </div>
                                     )}
                                     <div className="p-2 text-center space-y-1 min-w-0 flex-1">
-                                      <div className="font-heading text-xs font-bold text-gray-900 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
+                                      <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
                                       {p.team && (
-                                        <div className="text-[10px] text-gray-600 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.team}</div>
+                                        <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.team}</div>
                                       )}
                                       {p.jerseyNumber && (
-                                        <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                                        <div className="text-[9px] sm:text-[10px] text-gray-500">#{p.jerseyNumber}</div>
                                       )}
                                       {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
                                         <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">
@@ -711,7 +711,7 @@ function AllstarVotingContent() {
                     })()
                   ) : (
                     // Standard-Grid ohne Gruppierung
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                       {filteredPlayers.map((p) => {
                         const taken = usedPlayerIds.has(p.id) && selections[currentLine][activePosition]?.id !== p.id
                         const isSelected = selectedPlayerId === p.id
@@ -749,12 +749,12 @@ function AllstarVotingContent() {
                                 </div>
                               )}
                               <div className="p-2 text-center space-y-1 min-w-0 flex-1">
-                                <div className="font-heading text-xs font-bold text-gray-900 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
+                                <div className="font-heading text-[11px] sm:text-xs font-bold text-gray-900 break-words leading-tight" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.name}</div>
                                 {p.team && (
-                                  <div className="text-[10px] text-gray-600 break-words" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.team}</div>
+                                  <div className="text-[9px] sm:text-[10px] text-gray-600 break-words leading-tight" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{p.team}</div>
                                 )}
                                 {p.jerseyNumber && (
-                                  <div className="text-[10px] text-gray-500">#{p.jerseyNumber}</div>
+                                  <div className="text-[9px] sm:text-[10px] text-gray-500">#{p.jerseyNumber}</div>
                                 )}
                                 {(p.points !== undefined || p.goals !== undefined || p.assists !== undefined) && (
                                   <div className="pt-1 border-t border-gray-200 flex items-center justify-center gap-2 flex-wrap">

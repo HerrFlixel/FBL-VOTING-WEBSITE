@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
 import { getVoterInfo } from '../../../../lib/voter'
+import { checkRateLimit } from '../../../../lib/rate-limit'
 
 /**
  * Retry-Logik für SQLite-Locks
@@ -8,8 +9,8 @@ import { getVoterInfo } from '../../../../lib/voter'
  */
 async function withRetry<T>(
   fn: () => Promise<T>,
-  maxRetries: number = 3,
-  baseDelay: number = 50
+  maxRetries: number = 5,
+  baseDelay: number = 100
 ): Promise<T> {
   let lastError: any
   
@@ -20,15 +21,20 @@ async function withRetry<T>(
       lastError = error
       
       // Prüfe ob es ein SQLite-Lock-Error ist
-      const isLockError = 
+      const isTransientSqliteError =
         error?.code === 'SQLITE_BUSY' ||
+        error?.code === 'P1008' || // operation timeout under contention
+        error?.code === 'P2028' || // transaction API timeout/failure
+        error?.code === 'P2034' || // transaction conflict
         error?.message?.includes('database is locked') ||
-        error?.message?.includes('SQLITE_BUSY')
+        error?.message?.includes('SQLITE_BUSY') ||
+        error?.message?.includes('Transaction API error') ||
+        error?.message?.includes('timed out')
       
-      if (isLockError && attempt < maxRetries - 1) {
-        // Exponentielles Backoff: 50ms, 100ms, 200ms
+      if (isTransientSqliteError && attempt < maxRetries - 1) {
+        // Exponentielles Backoff: 100ms, 200ms, 400ms, 800ms, ...
         const delay = baseDelay * Math.pow(2, attempt)
-        console.log(`[Finalize] SQLite lock detected, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`)
+        console.log(`[Finalize] Transient DB error detected, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`)
         await new Promise(resolve => setTimeout(resolve, delay))
         continue
       }
@@ -39,6 +45,19 @@ async function withRetry<T>(
   }
   
   throw lastError
+}
+
+async function hasAnyFinalizedVotes(db: any, voterId: string): Promise<boolean> {
+  const checks = await Promise.all([
+    db.allstarVote.count({ where: { voterId, userId: { not: null } } }),
+    db.mVPVote.count({ where: { voterId, userId: { not: null } } }),
+    db.coachVote.count({ where: { voterId, userId: { not: null } } }),
+    db.fairPlayVote.count({ where: { voterId, userId: { not: null } } }),
+    db.rookieVote.count({ where: { voterId, userId: { not: null } } }),
+    db.refereePairVote.count({ where: { voterId, userId: { not: null } } }),
+    db.specialAwardVote.count({ where: { voterId, userId: { not: null } } })
+  ])
+  return checks.some((c) => c > 0)
 }
 
 export async function POST(req: Request) {
@@ -69,15 +88,20 @@ export async function POST(req: Request) {
 
     const { ip, voterId } = getVoterInfo()
     console.log('[Finalize] voterId:', voterId)
-
-    // Prüfe ob bereits finalisierte Votes für diese voterId existieren
-    // Dies verhindert doppelte Finalisierungen bei gleichzeitigen Requests
-    const existingFinalized = await prisma.refereePairVote.findFirst({
-      where: { 
-        voterId, 
-        userId: { not: null } 
-      }
+    const limiter = checkRateLimit({
+      key: `finalize:${voterId}:${ip}`,
+      limit: 15,
+      windowMs: 5 * 60 * 1000
     })
+    if (!limiter.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Finalisierungsversuche. Bitte später erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(limiter.retryAfterSeconds) } }
+      )
+    }
+
+    // Prüfe ob bereits finalisierte Votes für diese voterId existieren (über alle Kategorien)
+    const existingFinalized = await hasAnyFinalizedVotes(prisma, voterId)
     
     if (existingFinalized) {
       console.log(`[Finalize] Votes für voterId ${voterId} wurden bereits finalisiert`)
@@ -102,12 +126,7 @@ export async function POST(req: Request) {
       // Wenn ein Fehler auftritt, werden alle Änderungen zurückgerollt
       return await prisma.$transaction(async (tx) => {
         // Prüfe nochmal innerhalb der Transaktion (Double-Check)
-        const doubleCheck = await tx.refereePairVote.findFirst({
-          where: { 
-            voterId, 
-            userId: { not: null } 
-          }
-        })
+        const doubleCheck = await hasAnyFinalizedVotes(tx, voterId)
         
         if (doubleCheck) {
           const existingUser = await tx.user.findFirst({
@@ -146,6 +165,11 @@ export async function POST(req: Request) {
           special: await tx.specialAwardVote.count({ where: whereVoter })
         }
         
+        const totalPending = Object.values(countsBefore).reduce((sum, n) => sum + n, 0)
+        if (totalPending === 0) {
+          throw new Error('Keine offenen Votes zum Finalisieren gefunden.')
+        }
+
         console.log(`[Finalize] Finalizing votes for voterId: ${voterId}, counts:`, countsBefore)
 
         // Alle Updates in der Transaktion ausführen
@@ -198,8 +222,8 @@ export async function POST(req: Request) {
 
         return { user, finalizedCounts, alreadyFinalized: false }
       }, {
-        // Timeout für Transaktionen: 10 Sekunden
-        timeout: 10000,
+        // Bei hoher Last mehr Puffer gegen Timeout
+        timeout: 20000,
         // Isolation Level: Read Committed (Standard für SQLite)
       })
     })

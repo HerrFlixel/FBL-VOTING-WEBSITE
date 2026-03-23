@@ -4,6 +4,7 @@ import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
+import { checkRateLimit } from '../../../lib/rate-limit'
 
 function pointsForRank(rank: number) {
   return 11 - rank // Platz 1 = 10 Punkte, Platz 10 = 1 Punkt
@@ -55,6 +56,17 @@ export async function POST(req: Request) {
     }
 
     const { voterId, ip } = getVoterInfo()
+    const limiter = checkRateLimit({
+      key: `vote:mvp:${league}:${voterId}:${ip}`,
+      limit: 80,
+      windowMs: 60 * 1000
+    })
+    if (!limiter.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Anfragen. Bitte kurz warten und erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(limiter.retryAfterSeconds) } }
+      )
+    }
 
     // Prüfe, ob Spieler bereits auf anderem Platz gewählt wurde
     const duplicate = await prisma.mVPVote.findFirst({

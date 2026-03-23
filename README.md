@@ -70,7 +70,18 @@ Die App läuft dann auf [http://localhost:3000](http://localhost:3000)
 
 ### Environment Variables
 
-Aktuell werden keine Environment Variables benötigt. Falls später benötigt, können diese in Render unter "Environment" hinzugefügt werden.
+Für den produktiven Betrieb mindestens setzen:
+
+- `ADMIN_PASSWORD` = Passwort für `/admin-login`
+- `DATABASE_URL` = Prisma-Datenbank-URL
+
+Hinweis: Für höheres Traffic-Aufkommen wird eine serverbasierte DB (z. B. PostgreSQL) empfohlen.
+
+### Render Migration-Sicherheit (bestehende SQLite-Daten)
+
+Die Spalte `User.email` ist im Schema absichtlich optional (`String?`), damit `prisma db push`
+auch bei bestehenden User-Datensätzen ohne E-Mail ohne Datenverlust durchläuft.
+Neue Finalisierungen schreiben weiterhin verpflichtend eine E-Mail (Validierung in API + Formular).
 
 ### Nach dem Deployment
 

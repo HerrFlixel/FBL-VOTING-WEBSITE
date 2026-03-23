@@ -6,7 +6,7 @@ interface User {
   id: string
   firstName: string
   lastName: string
-  email: string
+  email: string | null
   team: { name: string } | null
   createdAt: string
 }

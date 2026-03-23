@@ -3,6 +3,9 @@ import { prisma } from '../../../../lib/prisma'
 import { normalizeTeamLogoUrl } from '../../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../../lib/team-name'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const leagues = ['herren', 'damen'] as const
 
 function normalizeNameToKey(name: string | null | undefined) {

@@ -318,6 +318,15 @@ function AllstarVotingContent() {
 
   const canGoNext = currentLine === 1 ? lineComplete(1) : true
 
+  useEffect(() => {
+    if (lineComplete(1)) {
+      const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+      if (!Number.isFinite(saved) || saved < 2) {
+        sessionStorage.setItem('votingUnlockedStep', '2')
+      }
+    }
+  }, [selections])
+
   const leagueTitle = league === 'damen' ? t('wahl.leagueWomen') : t('wahl.leagueMen')
 
   const PlayerCard = ({ player, position, onClick }: { player: Player | null; position: PositionKey; onClick: () => void }) => {
@@ -585,17 +594,17 @@ function AllstarVotingContent() {
             </div>
 
             <div className="p-3 sm:p-6 space-y-3 sm:space-y-4 overflow-hidden flex-1 flex flex-col min-h-0">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="relative z-10 pointer-events-auto flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 [touch-action:manipulation]">
                 <input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={t('common.searchPlayer')}
-                  className="w-full sm:flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full sm:flex-1 min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-2 text-base sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 [touch-action:manipulation]"
                 />
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full sm:w-48 min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-2 text-base sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 [touch-action:manipulation]"
                 >
                   <option value="">Alle Teams</option>
                   {availableTeams.map((team) => (
@@ -607,7 +616,7 @@ function AllstarVotingContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'default' | 'team' | 'name')}
-                  className="w-full sm:w-48 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full sm:w-48 min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-2 text-base sm:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 [touch-action:manipulation]"
                 >
                   <option value="default">Standard</option>
                   <option value="team">Nach Team</option>

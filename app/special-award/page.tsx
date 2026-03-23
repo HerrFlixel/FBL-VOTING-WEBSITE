@@ -119,7 +119,7 @@ function SpecialAwardContent() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('special.placeholder')}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg text-base sm:text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 disabled={loading || saving}
               />
             </div>
@@ -129,6 +129,7 @@ function SpecialAwardContent() {
                 className="px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-heading text-sm sm:text-lg uppercase bg-gray-500 hover:bg-gray-600 text-white shadow-lg transition-colors"
                 onClick={async () => {
                   if (saving) return
+                  ;(document.activeElement as HTMLElement | null)?.blur()
                   await new Promise(resolve => setTimeout(resolve, 100))
                   router.push(`/referee-voting?league=${league}`)
                 }}
@@ -143,6 +144,7 @@ function SpecialAwardContent() {
                     return
                   }
                   if (saving) return
+                  ;(document.activeElement as HTMLElement | null)?.blur()
                   // Speichere vor dem Weiterleiten
                   setSaving(true)
                   try {

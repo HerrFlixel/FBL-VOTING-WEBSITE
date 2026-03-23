@@ -4,6 +4,7 @@ import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
+import { checkRateLimit } from '../../../lib/rate-limit'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -45,6 +46,17 @@ export async function POST(req: Request) {
     }
 
     const { voterId, ip } = getVoterInfo()
+    const limiter = checkRateLimit({
+      key: `vote:fairplay:${league}:${voterId}:${ip}`,
+      limit: 50,
+      windowMs: 60 * 1000
+    })
+    if (!limiter.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Anfragen. Bitte kurz warten und erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(limiter.retryAfterSeconds) } }
+      )
+    }
 
     // Prüfe, ob bereits ein Vote existiert
     const existing = await prisma.fairPlayVote.findFirst({

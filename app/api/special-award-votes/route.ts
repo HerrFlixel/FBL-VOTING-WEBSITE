@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
+import { checkRateLimit } from '../../../lib/rate-limit'
 
 export async function GET(req: Request) {
   const { voterId } = getVoterInfo()
@@ -32,6 +33,17 @@ export async function POST(req: Request) {
     }
 
     const { voterId, ip } = getVoterInfo()
+    const limiter = checkRateLimit({
+      key: `vote:special:${voterId}:${ip}`,
+      limit: 30,
+      windowMs: 60 * 1000
+    })
+    if (!limiter.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Anfragen. Bitte kurz warten und erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(limiter.retryAfterSeconds) } }
+      )
+    }
 
     // Prüfe, ob bereits ein Vote existiert
     const existing = await prisma.specialAwardVote.findFirst({

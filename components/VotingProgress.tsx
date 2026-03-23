@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useLanguage } from './LanguageProvider'
 import LanguageToggle from './LanguageToggle'
 import { translations } from '../lib/translations'
@@ -20,12 +21,34 @@ function getProgressStep(pathname: string): number {
 }
 
 export default function VotingProgress() {
+  const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { lang, t } = useLanguage()
   const currentStep = getProgressStep(pathname ?? '')
   const stepIndex = Math.max(1, Math.min(STEP_IDS.length, currentStep))
   const progressPercent = (stepIndex / STEP_IDS.length) * 100
   const stepLabels = translations[lang].progress.steps
+
+  const getStepPath = (stepNum: number) => {
+    const leagueParam = searchParams.get('league')
+    const savedLeague =
+      typeof window !== 'undefined' ? sessionStorage.getItem('lastLeague') : null
+    const league = leagueParam === 'herren' || leagueParam === 'damen'
+      ? leagueParam
+      : savedLeague === 'herren' || savedLeague === 'damen'
+        ? savedLeague
+        : 'herren'
+
+    if (stepNum === 1) return `/allstar-voting?league=${league}`
+    if (stepNum === 2) return `/mvp-voting?league=${league}`
+    if (stepNum === 3) return `/coach-voting?league=${league}`
+    if (stepNum === 4) return `/fair-play-voting?league=${league}`
+    if (stepNum === 5) return `/rookie-voting?league=${league}`
+    if (stepNum === 6) return '/referee-voting'
+    if (stepNum === 7) return '/special-award'
+    return `/user-form?league=${league}`
+  }
 
   return (
     <div className="w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm sticky top-0 z-30">
@@ -47,13 +70,21 @@ export default function VotingProgress() {
             const stepNum = i + 1
             const isDone = stepNum < stepIndex
             const isCurrent = stepNum === stepIndex
+            const isAccessible = stepNum <= stepIndex
             const short = stepLabels[i] ?? ''
             return (
-              <div
+              <button
                 key={stepNum}
+                type="button"
+                disabled={!isAccessible}
+                onClick={() => {
+                  if (!isAccessible) return
+                  router.push(getStepPath(stepNum))
+                }}
                 className={`
                   flex-shrink-0 px-2 py-1 rounded-md text-center transition-colors
                   text-[10px] sm:text-xs font-medium
+                  ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed'}
                   ${isCurrent ? 'bg-primary-600 text-white' : ''}
                   ${isDone && !isCurrent ? 'bg-primary-100 text-primary-800' : ''}
                   ${!isDone && !isCurrent ? 'bg-gray-100 text-gray-500' : ''}
@@ -61,7 +92,7 @@ export default function VotingProgress() {
                 title={short}
               >
                 {short}
-              </div>
+              </button>
             )
           })}
         </div>

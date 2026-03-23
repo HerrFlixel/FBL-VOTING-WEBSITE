@@ -28,6 +28,8 @@ export default function PageReloadHandler() {
     const isReload = navigationEntries.length > 0 && navigationEntries[0].type === 'reload'
 
     if (isReload && isVotingPath(pathname)) {
+      // Fallback für mobile Browser: beforeunload-Dialoge werden dort oft nicht angezeigt.
+      alert('Die Seite wurde neu geladen. Aus Sicherheitsgründen startet die Abstimmung wieder auf der Startseite.')
       window.location.replace('/')
       return
     }

@@ -375,13 +375,13 @@ function AllstarVotingContent() {
               </svg>
             </div>
           )}
-          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0">
+          <div className="p-1 sm:p-2 text-center space-y-0.5 sm:space-y-1 flex-1 flex flex-col justify-center min-h-0 overflow-y-auto">
             <div className="font-heading text-[8px] sm:text-[10px] md:text-xs font-bold text-gray-900 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.name}</div>
             {player.team && (
-              <div className="text-[8px] sm:text-[8px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
+              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-600 leading-tight break-words px-0.5 sm:px-1" style={{ wordBreak: 'break-word', hyphens: 'auto' }}>{player.team}</div>
             )}
             {player.jerseyNumber && (
-              <div className="text-[7px] sm:text-[8px] md:text-[10px] text-gray-500 flex-shrink-0">#{player.jerseyNumber}</div>
+              <div className="text-[7px] sm:text-[9px] md:text-[10px] text-gray-500 flex-shrink-0">#{player.jerseyNumber}</div>
             )}
           </div>
           <button

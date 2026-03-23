@@ -29,17 +29,31 @@ export function clearClientVoterId(): void {
 /**
  * Wrapper für fetch, der automatisch die voterId im Header mitsendet
  */
+/** Wird nach erfolgreichen Vote-Schreibvorgängen ausgelöst (Progress-Leiste aktualisieren). */
+export const VOTING_DATA_CHANGED_EVENT = 'voting-data-changed'
+
 export async function fetchWithVoterId(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
   const voterId = getClientVoterId()
-  
+
   const headers = new Headers(options.headers)
   headers.set('x-voter-id', voterId)
-  
-  return fetch(url, {
+
+  const res = await fetch(url, {
     ...options,
     headers
   })
+
+  const method = (options.method || 'GET').toUpperCase()
+  const isWrite = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
+  if (isWrite && res.ok && typeof window !== 'undefined') {
+    const u = String(url)
+    if (/-votes/.test(u) || u.includes('/api/users/finalize')) {
+      window.dispatchEvent(new Event(VOTING_DATA_CHANGED_EVENT))
+    }
+  }
+
+  return res
 }

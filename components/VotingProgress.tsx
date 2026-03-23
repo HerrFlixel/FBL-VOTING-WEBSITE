@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 import { useLanguage } from './LanguageProvider'
 import LanguageToggle from './LanguageToggle'
 import { translations } from '../lib/translations'
+import { fetchWithVoterId, VOTING_DATA_CHANGED_EVENT } from './client-voter'
 
 const STEP_IDS = [1, 2, 3, 4, 5, 6, 7, 8] as const
 
@@ -36,9 +37,10 @@ export default function VotingProgress() {
     return Math.max(stepIndex, Number.isFinite(saved) ? saved : 0)
   })
 
-  useEffect(() => {
+  const loadUnlockState = useCallback(async () => {
     const leagueParam = searchParams.get('league')
-    const savedLeague = sessionStorage.getItem('lastLeague')
+    const savedLeague =
+      typeof window !== 'undefined' ? sessionStorage.getItem('lastLeague') : null
     const league =
       leagueParam === 'herren' || leagueParam === 'damen'
         ? leagueParam
@@ -46,25 +48,24 @@ export default function VotingProgress() {
           ? savedLeague
           : 'herren'
 
-    const loadUnlockState = async () => {
-      try {
-        const [
-          allstarRes,
-          mvpRes,
-          coachRes,
-          fairRes,
-          rookieRes,
-          refereeRes,
-          specialRes
-        ] = await Promise.all([
-          fetch(`/api/allstar-votes?league=${league}`, { cache: 'no-store' }),
-          fetch(`/api/mvp-votes?league=${league}`, { cache: 'no-store' }),
-          fetch(`/api/coach-votes?league=${league}`, { cache: 'no-store' }),
-          fetch(`/api/fairplay-votes?league=${league}`, { cache: 'no-store' }),
-          fetch(`/api/rookie-votes?league=${league}`, { cache: 'no-store' }),
-          fetch('/api/referee-votes', { cache: 'no-store' }),
-          fetch('/api/special-award-votes', { cache: 'no-store' })
-        ])
+    try {
+      const [
+        allstarRes,
+        mvpRes,
+        coachRes,
+        fairRes,
+        rookieRes,
+        refereeRes,
+        specialRes
+      ] = await Promise.all([
+        fetchWithVoterId(`/api/allstar-votes?league=${league}`, { cache: 'no-store' }),
+        fetchWithVoterId(`/api/mvp-votes?league=${league}`, { cache: 'no-store' }),
+        fetchWithVoterId(`/api/coach-votes?league=${league}`, { cache: 'no-store' }),
+        fetchWithVoterId(`/api/fairplay-votes?league=${league}`, { cache: 'no-store' }),
+        fetchWithVoterId(`/api/rookie-votes?league=${league}`, { cache: 'no-store' }),
+        fetchWithVoterId('/api/referee-votes', { cache: 'no-store' }),
+        fetchWithVoterId('/api/special-award-votes', { cache: 'no-store' })
+      ])
 
         const [
           allstarVotes,
@@ -108,18 +109,27 @@ export default function VotingProgress() {
         if (refereeComplete) maxUnlocked = 7
         if (specialComplete) maxUnlocked = 8
 
-        const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
-        const nextUnlocked = Math.max(stepIndex, maxUnlocked, Number.isFinite(saved) ? saved : 0)
-        sessionStorage.setItem('votingUnlockedStep', String(nextUnlocked))
-        setUnlockedStep(nextUnlocked)
-      } catch {
-        const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
-        setUnlockedStep(Math.max(stepIndex, Number.isFinite(saved) ? saved : 0))
-      }
+      const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+      const nextUnlocked = Math.max(stepIndex, maxUnlocked, Number.isFinite(saved) ? saved : 0)
+      sessionStorage.setItem('votingUnlockedStep', String(nextUnlocked))
+      setUnlockedStep(nextUnlocked)
+    } catch {
+      const saved = Number(sessionStorage.getItem('votingUnlockedStep') || '0')
+      setUnlockedStep(Math.max(stepIndex, Number.isFinite(saved) ? saved : 0))
     }
-
-    loadUnlockState()
   }, [searchParams, stepIndex])
+
+  useEffect(() => {
+    void loadUnlockState()
+  }, [loadUnlockState])
+
+  useEffect(() => {
+    const onVoteChange = () => {
+      void loadUnlockState()
+    }
+    window.addEventListener(VOTING_DATA_CHANGED_EVENT, onVoteChange)
+    return () => window.removeEventListener(VOTING_DATA_CHANGED_EVENT, onVoteChange)
+  }, [loadUnlockState])
 
   const getStepPath = (stepNum: number) => {
     const leagueParam = searchParams.get('league')

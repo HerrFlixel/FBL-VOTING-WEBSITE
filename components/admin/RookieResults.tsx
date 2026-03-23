@@ -28,7 +28,7 @@ export default function RookieResults({ league }: RookieResultsProps) {
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/rookie-votes/results?league=${league}`)
+      const response = await fetch(`/api/rookie-votes/results?league=${league}`, { cache: 'no-store' })
       const data = await response.json()
       setResults(Array.isArray(data) ? data : [])
     } catch (error) {

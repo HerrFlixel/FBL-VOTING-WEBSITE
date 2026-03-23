@@ -3,6 +3,9 @@ import { prisma } from '../../../../lib/prisma'
 import { normalizeTeamLogoUrl } from '../../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../../lib/team-name'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const league = searchParams.get('league')

@@ -25,7 +25,7 @@ export default function SpecialAwardResults({ league }: SpecialAwardResultsProps
         const url = league 
           ? `/api/special-award-votes/results?league=${league}`
           : '/api/special-award-votes/results'
-        const res = await fetch(url)
+        const res = await fetch(url, { cache: 'no-store' })
         if (res.ok) {
           const data = await res.json()
           setVotes(data)

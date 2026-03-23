@@ -32,7 +32,7 @@ export default function AllstarResults({ league }: AllstarResultsProps) {
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/allstar-votes/results?league=${league}`)
+      const response = await fetch(`/api/allstar-votes/results?league=${league}`, { cache: 'no-store' })
       const data = await response.json()
       setResults(data)
     } catch (error) {

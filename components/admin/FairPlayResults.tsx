@@ -28,7 +28,7 @@ export default function FairPlayResults({ league }: FairPlayResultsProps) {
   const fetchResults = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/fairplay-votes/results?league=${league}`)
+      const response = await fetch(`/api/fairplay-votes/results?league=${league}`, { cache: 'no-store' })
       const data = await response.json()
       setResults(data)
     } catch (error) {

@@ -1,7 +1,8 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useLanguage } from './LanguageProvider'
 import LanguageToggle from './LanguageToggle'
 import { translations } from '../lib/translations'
@@ -29,6 +30,88 @@ export default function VotingProgress() {
   const stepIndex = Math.max(1, Math.min(STEP_IDS.length, currentStep))
   const progressPercent = (stepIndex / STEP_IDS.length) * 100
   const stepLabels = translations[lang].progress.steps
+  const [unlockedStep, setUnlockedStep] = useState(stepIndex)
+
+  useEffect(() => {
+    const leagueParam = searchParams.get('league')
+    const savedLeague = sessionStorage.getItem('lastLeague')
+    const league =
+      leagueParam === 'herren' || leagueParam === 'damen'
+        ? leagueParam
+        : savedLeague === 'herren' || savedLeague === 'damen'
+          ? savedLeague
+          : 'herren'
+
+    const loadUnlockState = async () => {
+      try {
+        const [
+          allstarRes,
+          mvpRes,
+          coachRes,
+          fairRes,
+          rookieRes,
+          refereeRes,
+          specialRes
+        ] = await Promise.all([
+          fetch(`/api/allstar-votes?league=${league}`, { cache: 'no-store' }),
+          fetch(`/api/mvp-votes?league=${league}`, { cache: 'no-store' }),
+          fetch(`/api/coach-votes?league=${league}`, { cache: 'no-store' }),
+          fetch(`/api/fairplay-votes?league=${league}`, { cache: 'no-store' }),
+          fetch(`/api/rookie-votes?league=${league}`, { cache: 'no-store' }),
+          fetch('/api/referee-votes', { cache: 'no-store' }),
+          fetch('/api/special-award-votes', { cache: 'no-store' })
+        ])
+
+        const [
+          allstarVotes,
+          mvpVotes,
+          coachVote,
+          fairVote,
+          rookieVote,
+          refereeVote,
+          specialVote
+        ] = await Promise.all([
+          allstarRes.ok ? allstarRes.json() : [],
+          mvpRes.ok ? mvpRes.json() : [],
+          coachRes.ok ? coachRes.json() : null,
+          fairRes.ok ? fairRes.json() : null,
+          rookieRes.ok ? rookieRes.json() : null,
+          refereeRes.ok ? refereeRes.json() : null,
+          specialRes.ok ? specialRes.json() : null
+        ])
+
+        const line1Positions = new Set(
+          Array.isArray(allstarVotes)
+            ? allstarVotes
+                .filter((v: any) => v?.line === 1 && typeof v?.position === 'string')
+                .map((v: any) => String(v.position).toLowerCase())
+            : []
+        )
+        const line1Complete = ['gk', 'ld', 'rd', 'c', 'lw', 'rw'].every((p) => line1Positions.has(p))
+        const mvpComplete = Array.isArray(mvpVotes) && mvpVotes.length >= 5
+        const coachComplete = Boolean(coachVote?.coach)
+        const fairComplete = Boolean(fairVote?.player)
+        const rookieComplete = Boolean(rookieVote?.player)
+        const refereeComplete = Boolean(refereeVote?.refereePair)
+        const specialComplete = Boolean(String(specialVote?.name ?? '').trim())
+
+        let maxUnlocked = 1
+        if (line1Complete) maxUnlocked = 2
+        if (mvpComplete) maxUnlocked = 3
+        if (coachComplete) maxUnlocked = 4
+        if (fairComplete) maxUnlocked = 5
+        if (rookieComplete) maxUnlocked = 6
+        if (refereeComplete) maxUnlocked = 7
+        if (specialComplete) maxUnlocked = 8
+
+        setUnlockedStep(Math.max(stepIndex, maxUnlocked))
+      } catch {
+        setUnlockedStep(stepIndex)
+      }
+    }
+
+    loadUnlockState()
+  }, [searchParams, stepIndex])
 
   const getStepPath = (stepNum: number) => {
     const leagueParam = searchParams.get('league')
@@ -70,7 +153,7 @@ export default function VotingProgress() {
             const stepNum = i + 1
             const isDone = stepNum < stepIndex
             const isCurrent = stepNum === stepIndex
-            const isAccessible = stepNum <= stepIndex
+            const isAccessible = stepNum <= unlockedStep
             const short = stepLabels[i] ?? ''
             return (
               <button

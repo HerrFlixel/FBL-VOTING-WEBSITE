@@ -68,7 +68,7 @@ export const translations = {
       title: 'Allstar-Auswahl',
       line: 'Reihe',
       lineFull: 'Reihe 1 vollständig',
-      lineOptional: 'Reihe 1 muss vollständig sein, bevor du zu Reihe 2 oder 3 wechseln kannst. Reihen 2 & 3 sind optional.',
+      lineOptional: 'Bitte wähle die besten Spieler*innen der vergangenen Spielzeit auf jeder Position. Reihe 1 muss vollständig sein, bevor du zu Reihe 2 oder 3 wechseln kannst. Reihen 2 & 3 sind optional.',
       nextToLine: 'Weiter zu Reihe',
       selectForLine: 'Spieler auswählen',
       playerAlreadyChosen: 'Dieser Spieler ist bereits gewählt.',

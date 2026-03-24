@@ -4,11 +4,11 @@ export const translations = {
   de: {
     intro: {
       title: 'FBL Allstar Voting',
-      p1: 'Hier können Sie Ihre Stimmen für das Allstar-Voting der 1. Damen- und Herren-Bundesliga abgeben.',
-      p2: 'Zur Teilnahme am Voting müssen Sie in der ersten oder zweiten Bundesliga lizenziert sein oder als Trainer tätig sein.',
-      p3: 'Jede Person darf nur einmal abstimmen!',
-      p4: 'Nach dem Start wählen Sie zuerst Ihre Liga (Damen oder Herren). Anschließend durchlaufen Sie die einzelnen Kategorien: Allstar-Auswahl, MVP, Trainer, Fair-Play, Rookie of the Season, Schiedsrichter-Paar und Sonderpreis. Am Ende füllen Sie noch ein kurzes Abschlussformular aus und geben Ihre Stimmen verbindlich ab.',
-      p5: 'Sie können jederzeit zwischen den Schritten zurückgehen und Ihre Angaben anpassen, bis Sie die Abstimmung final abschließen.',
+      p1: 'Willkommen zum Allstar-/MVP-Voting der Saison 2024/25 der 1. Damen- und Herren-Bundesliga. Abstimmungsberechtigt sind alle Spieler*innen der 1. und 2. Bundesligen. Jede*r Spieler*in darf nur einmal abstimmen.',
+      p2: 'Bewertet werden ausschließlich Leistungen der regulären Saison, nicht der Playoffs. Zur Auswahl stehen Spieler*innen, die in der vergangenen Saison bei mehr als einem Drittel der Spiele auf dem Spielberichtsbogen standen.',
+      p3: 'Bitte nehmt euch etwas Zeit und füllt für ein besseres Ergebnis möglichst alle Felder aus. Um Betrug zu vermeiden, sollten die eigenen Informationen am Ende vollständig angegeben werden. In Problemfällen bitte ebenfalls die E-Mail-Adresse angeben.',
+      p4: 'Alle Angaben werden vertraulich behandelt, nicht an Dritte weitergegeben und bleiben anonym. Persönliche Daten dienen ausschließlich der Überprüfung der Stimmberechtigung und werden ebenfalls nicht an Dritte weitergegeben.',
+      p5: 'Wähle zu Beginn aus, mit welcher Liga du starten möchtest. Während der Umfrage wirst du gefragt, ob du auch für die andere Liga abstimmen möchtest. Für die beste Nutzererfahrung nutze bitte ein großes Display.',
       start: 'Start',
     },
     progress: {
@@ -75,7 +75,7 @@ export const translations = {
     },
     mvp: {
       title: 'MVP Voting',
-      subtitle: 'Wähle deine Top 10 MVP-Kandidaten (mindestens 5 erforderlich)',
+      subtitle: 'Wähle die wertvollsten Spieler*innen der Saison auf den Plätzen 1-10. Dieses Voting beinhaltet auch Torhüter*innen (mindestens 5 Votes erforderlich).',
       minRequired: 'mindestens 5 erforderlich',
       selectPlayer: 'Spieler auswählen',
       playerAlreadyOnRank: 'Dieser Spieler ist bereits auf Platz',
@@ -83,28 +83,28 @@ export const translations = {
     },
     coach: {
       title: 'Trainer des Jahres',
-      subtitle: 'Wähle deinen Trainer des Jahres',
+      subtitle: 'Wähle deinen Coach des Jahres. Zur Auswahl stehen alle eingereichten Coaches der Bundesligisten.',
     },
     fairplay: {
       title: 'Fair Play Award',
-      subtitle: 'Wähle deinen Fair Play Award Gewinner',
+      subtitle: 'Welche*r Spieler*in hat in der vergangenen Saison das vorbildlichste und fairste Verhalten auf dem Spielfeld gezeigt?',
     },
     rookie: {
       title: 'Rookie of the Season',
-      subtitle: 'Wähle deinen Rookie of the Season',
+      subtitle: 'Welcher dieser U19-Spieler*innen hatte den besten Start in die persönlich erste Bundesliga-Saison?',
       selectCandidate: 'Rookie-Kandidat auswählen',
       noCandidates: 'Keine Rookie-Kandidaten für diese Liga. Bitte im Admin unter Spieler welche markieren.',
     },
     referee: {
       title: 'Schiedsrichter-Paar Voting',
-      subtitle: 'Wähle dein Schiedsrichter-Paar des Jahres',
+      subtitle: 'Welches Schiedsrichterpaar hat deiner Meinung nach die besten Leistungen in der Saison gezeigt?',
     },
     special: {
       title: 'Sonderpreis',
-      subtitle: 'Geben Sie den vollständigen Namen für den Sonderpreis ein',
+      subtitle: 'Welche Person hat neben dem Feld besonders viel für den deutschen Floorball geleistet und verdient eine Würdigung?',
       fullName: 'Vollständiger Name',
       placeholder: 'z.B. Max Mustermann',
-      enterName: 'Bitte geben Sie einen Namen ein',
+      enterName: 'Bitte den vollen Namen angeben.',
     },
     userForm: {
       title: 'Abschluss',
@@ -138,11 +138,11 @@ export const translations = {
   en: {
     intro: {
       title: 'FBL Allstar Voting',
-      p1: 'Here you can submit your votes for the Allstar Voting of the 1st Men\'s and Women\'s Bundesliga.',
-      p2: 'To participate in the voting you must be licensed in the first or second Bundesliga, or be a coach.',
-      p3: 'Each person may only vote once!',
-      p4: 'After starting, you first choose your league (Women or Men). Then you go through the categories: Allstar selection, MVP, Coach, Fair Play, Rookie of the Season, Referee Pair, and Special Award. At the end you fill in a short form and submit your votes.',
-      p5: 'You can go back between steps and change your choices at any time until you finally submit the vote.',
+      p1: 'Welcome to the Allstar/MVP voting for the 2024/25 season of the 1st Women\'s and Men\'s Bundesliga. All players from the 1st and 2nd Bundesliga are eligible to vote. Each player may vote only once.',
+      p2: 'Please evaluate only performances from the regular season, not the playoffs. Eligible players are those who appeared on the game sheet in more than one third of last season\'s matches.',
+      p3: 'Please take a little time and complete as many fields as possible for better results. To prevent fraud, your personal information should be entered completely at the end. In case of issues, please also provide your email address.',
+      p4: 'All information is treated confidentially, is not shared with third parties, and remains anonymous. Personal data is used only to verify voting eligibility and is also not shared with third parties.',
+      p5: 'At the beginning, choose which league you want to start with. During the survey, you will be asked whether you also want to vote for the other league. For the best user experience, please use a larger display.',
       start: 'Start',
     },
     progress: {
@@ -209,7 +209,7 @@ export const translations = {
     },
     mvp: {
       title: 'MVP Voting',
-      subtitle: 'Select your top 10 MVP candidates (minimum 5 required)',
+      subtitle: 'Select the most valuable players of the season from rank 1-10. This vote also includes goalkeepers (minimum 5 votes required).',
       minRequired: 'minimum 5 required',
       selectPlayer: 'Select player',
       playerAlreadyOnRank: 'This player has already been selected for rank',
@@ -217,28 +217,28 @@ export const translations = {
     },
     coach: {
       title: 'Coach of the Year',
-      subtitle: 'Select your Coach of the Year',
+      subtitle: 'Select your Coach of the Year. All submitted Bundesliga coaches are available for selection.',
     },
     fairplay: {
       title: 'Fair Play Award',
-      subtitle: 'Select your Fair Play Award winner',
+      subtitle: 'Which player showed the most exemplary and fairest behavior on the field during the past season?',
     },
     rookie: {
       title: 'Rookie of the Season',
-      subtitle: 'Select your Rookie of the Season',
+      subtitle: 'Which U19 player had the best start to their very first Bundesliga season?',
       selectCandidate: 'Select Rookie candidate',
       noCandidates: 'No Rookie candidates for this league. Please mark some in Admin under Players.',
     },
     referee: {
       title: 'Referee Pair Voting',
-      subtitle: 'Select your Referee Pair of the Year',
+      subtitle: 'Which referee pair delivered the best performances during the season in your opinion?',
     },
     special: {
       title: 'Special Award',
-      subtitle: 'Enter the full name for the special award',
+      subtitle: 'Which person has contributed significantly to German floorball off the field and deserves recognition?',
       fullName: 'Full name',
       placeholder: 'e.g. John Doe',
-      enterName: 'Please enter a name',
+      enterName: 'Please enter the full name.',
     },
     userForm: {
       title: 'Finish',

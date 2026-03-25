@@ -4,7 +4,7 @@ export const translations = {
   de: {
     intro: {
       title: 'FBL Allstar Voting',
-      p1: 'Willkommen zum Allstar-/MVP-Voting der Saison 2024/25 der 1. Damen- und Herren-Bundesliga. Abstimmungsberechtigt sind alle Spieler*innen der 1. und 2. Bundesligen. Jede*r Spieler*in darf nur einmal abstimmen.',
+      p1: 'Willkommen zum Allstar-/MVP-Voting der Saison 2025/26 der 1. Damen- und Herren-Bundesliga. Abstimmungsberechtigt sind alle Spieler*innen der 1. und 2. Bundesligen sowie alle Trainer*innen und Schiedsrichter*innen der Bundesligen. Jede*r darf nur einmal abstimmen.',
       p2: 'Bewertet werden ausschließlich Leistungen der regulären Saison, nicht der Playoffs. Zur Auswahl stehen Spieler*innen, die in der vergangenen Saison bei mehr als einem Drittel der Spiele auf dem Spielberichtsbogen standen.',
       p3: 'Bitte nehmt euch etwas Zeit und füllt für ein besseres Ergebnis möglichst alle Felder aus. Um Betrug zu vermeiden, sollten die eigenen Informationen am Ende vollständig angegeben werden. In Problemfällen bitte ebenfalls die E-Mail-Adresse angeben.',
       p4: 'Alle Angaben werden vertraulich behandelt, nicht an Dritte weitergegeben und bleiben anonym. Persönliche Daten dienen ausschließlich der Überprüfung der Stimmberechtigung und werden ebenfalls nicht an Dritte weitergegeben.',
@@ -138,7 +138,7 @@ export const translations = {
   en: {
     intro: {
       title: 'FBL Allstar Voting',
-      p1: 'Welcome to the Allstar/MVP voting for the 2024/25 season of the 1st Women\'s and Men\'s Bundesliga. All players from the 1st and 2nd Bundesliga are eligible to vote. Each player may vote only once.',
+      p1: 'Welcome to the Allstar/MVP voting for the 2025/26 season of the 1st Women\'s and Men\'s Bundesliga. All players from the 1st and 2nd Bundesliga, as well as all coaches and referees of the Bundesligen, are eligible to vote. Each person may vote only once.',
       p2: 'Please evaluate only performances from the regular season, not the playoffs. Eligible players are those who appeared on the game sheet in more than one third of last season\'s matches.',
       p3: 'Please take a little time and complete as many fields as possible for better results. To prevent fraud, your personal information should be entered completely at the end. In case of issues, please also provide your email address.',
       p4: 'All information is treated confidentially, is not shared with third parties, and remains anonymous. Personal data is used only to verify voting eligibility and is also not shared with third parties.',

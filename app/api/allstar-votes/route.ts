@@ -5,6 +5,7 @@ import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 import { checkRateLimit } from '../../../lib/rate-limit'
+import { isVotingClosed } from '../../../lib/voting-status'
 
 const allowedPositions = ['gk', 'ld', 'rd', 'c', 'lw', 'rw']
 
@@ -52,6 +53,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { line, position, playerId, league } = body as {
       line: number
@@ -147,6 +151,9 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { line, position, league } = body as {
       line: number

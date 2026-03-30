@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma'
 import { getVoterInfo } from '../../../lib/voter'
 import { withDbRetry } from '../../../lib/db-retry'
 import { checkRateLimit } from '../../../lib/rate-limit'
+import { isVotingClosed } from '../../../lib/voting-status'
 
 export async function GET(req: Request) {
   const { voterId } = getVoterInfo()
@@ -23,6 +24,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { name } = body as {
       name: string
@@ -82,6 +86,9 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const { voterId } = getVoterInfo()
 
     const existing = await prisma.specialAwardVote.findFirst({

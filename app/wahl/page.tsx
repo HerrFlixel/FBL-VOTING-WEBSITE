@@ -2,10 +2,24 @@
 
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../components/LanguageProvider'
+import { useEffect } from 'react'
 
 export default function WahlPage() {
   const router = useRouter()
   const { t } = useLanguage()
+
+  useEffect(() => {
+    const checkClosed = async () => {
+      try {
+        const res = await fetch('/api/voting-status', { cache: 'no-store' })
+        const data = await res.json().catch(() => null)
+        if (data?.closed) router.replace('/closed')
+      } catch {
+        // ignore
+      }
+    }
+    checkClosed()
+  }, [router])
 
   const handleStart = (league: 'herren' | 'damen') => {
     router.push(`/allstar-voting?league=${league}`)

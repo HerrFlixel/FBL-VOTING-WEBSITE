@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
 import { getVoterInfo } from '../../../../lib/voter'
 import { checkRateLimit } from '../../../../lib/rate-limit'
+import { isVotingClosed } from '../../../../lib/voting-status'
 
 /**
  * Retry-Logik für SQLite-Locks
@@ -62,6 +63,9 @@ async function hasAnyFinalizedVotes(db: any, voterId: string): Promise<boolean> 
 
 export async function POST(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { firstName, lastName, email, teamId, league } = body as {
       firstName: string

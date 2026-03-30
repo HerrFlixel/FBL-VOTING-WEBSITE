@@ -25,6 +25,21 @@ export default function HomePage() {
     clearSession()
   }, [])
 
+  useEffect(() => {
+    const checkClosed = async () => {
+      try {
+        const res = await fetch('/api/voting-status', { cache: 'no-store' })
+        const data = await res.json().catch(() => null)
+        if (data?.closed) {
+          router.replace('/closed')
+        }
+      } catch {
+        // ignore
+      }
+    }
+    checkClosed()
+  }, [router])
+
   return (
     <main className="min-h-screen relative flex flex-col items-center justify-center">
       {/* Splitscreen-Hintergrund wie Schiri/User-Form (ohne weißen Trennstrich) */}

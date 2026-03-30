@@ -5,6 +5,7 @@ import { withDbRetry } from '../../../lib/db-retry'
 import { normalizeTeamLogoUrl } from '../../../lib/upload-urls'
 import { normalizeTeamNameForLogoMatch } from '../../../lib/team-name'
 import { checkRateLimit } from '../../../lib/rate-limit'
+import { isVotingClosed } from '../../../lib/voting-status'
 
 function pointsForRank(rank: number) {
   return 11 - rank // Platz 1 = 10 Punkte, Platz 10 = 1 Punkt
@@ -41,6 +42,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { rank, playerId, league } = body as {
       rank: number
@@ -130,6 +134,9 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    if (await isVotingClosed()) {
+      return NextResponse.json({ error: 'Voting ist geschlossen.' }, { status: 403 })
+    }
     const body = await req.json()
     const { rank, league } = body as {
       rank: number

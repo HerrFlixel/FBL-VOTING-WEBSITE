@@ -35,12 +35,27 @@ function AdminContent() {
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'import-herren')
   const [exporting, setExporting] = useState(false)
   const [exportingHtml, setExportingHtml] = useState(false)
+  const [votingClosed, setVotingClosed] = useState<boolean | null>(null)
+  const [togglingVoting, setTogglingVoting] = useState(false)
 
   useEffect(() => {
     if (tabParam) {
       setActiveTab(tabParam)
     }
   }, [tabParam])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/admin/voting', { cache: 'no-store' })
+        const data = await res.json().catch(() => null)
+        if (res.ok) setVotingClosed(Boolean(data?.closed))
+      } catch {
+        // ignore
+      }
+    }
+    load()
+  }, [])
 
   const tabs = [
     { id: 'import-herren' as Tab, label: 'Import Herren' },
@@ -136,6 +151,47 @@ function AdminContent() {
           </h1>
 
           <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={async () => {
+                if (votingClosed === null) return
+                const next = !votingClosed
+                const label = next ? 'Voting wirklich schließen? Danach können User nicht mehr voten.' : 'Voting wieder öffnen?'
+                if (!confirm(label)) return
+                try {
+                  setTogglingVoting(true)
+                  const res = await fetch('/api/admin/voting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ closed: next })
+                  })
+                  const data = await res.json().catch(() => null)
+                  if (!res.ok) throw new Error(data?.error || 'Änderung fehlgeschlagen')
+                  setVotingClosed(Boolean(data?.closed))
+                  alert(next ? 'Voting ist jetzt geschlossen.' : 'Voting ist wieder geöffnet.')
+                } catch (e: any) {
+                  alert(e?.message || 'Änderung fehlgeschlagen')
+                } finally {
+                  setTogglingVoting(false)
+                }
+              }}
+              disabled={votingClosed === null || togglingVoting}
+              className={`px-4 py-2 rounded-lg font-heading text-sm sm:text-base ${
+                togglingVoting || votingClosed === null
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : votingClosed
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+              }`}
+              title="Schaltet die Abstimmung global ein/aus (Daten bleiben erhalten)."
+            >
+              {togglingVoting
+                ? 'Speichere...'
+                : votingClosed
+                  ? 'Voting öffnen'
+                  : 'Voting schließen'}
+            </button>
+
             <button
               type="button"
               onClick={handleDownloadAll}
